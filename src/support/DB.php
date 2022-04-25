@@ -284,8 +284,8 @@ class DB
             'host' => $this->CONFIG['database']['host'],
             'username' => $this->CONFIG['database']['username'],
             'password' => $this->CONFIG['database']['password'],
-            'db' => $this->CONFIG['database']['name'],
-            'port' => $this->CONFIG['database']['posrt'],
+            'db' => $this->CONFIG['database']['db'],
+            'port' => $this->CONFIG['database']['port'],
             'charset' => $this->CONFIG['database']['charset'],
             'socket' => null
         ));
