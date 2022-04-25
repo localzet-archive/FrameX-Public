@@ -1,10 +1,18 @@
 <?php
+
 /**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
+
 namespace localzet\FrameX\Exception;
 
 use Throwable;
@@ -31,9 +39,7 @@ class ExceptionHandler implements ExceptionHandlerInterface
     /**
      * @var array
      */
-    public $dontReport = [
-
-    ];
+    public $dontReport = [];
 
     /**
      * ExceptionHandler constructor.
@@ -64,14 +70,17 @@ class ExceptionHandler implements ExceptionHandlerInterface
      * @param Throwable $exception
      * @return Response
      */
-    public function render(Request $request, Throwable $exception) : Response
+    public function render(Request $request, Throwable $exception): Response
     {
         $code = $exception->getCode();
         if ($request->expectsJson()) {
             $json = ['code' => $code ? $code : 500, 'msg' => $exception->getMessage()];
             $this->_debug && $json['traces'] = (string)$exception;
-            return new Response(200, ['Content-Type' => 'application/json'],
-                json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            return new Response(
+                200,
+                ['Content-Type' => 'application/json'],
+                json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            );
         }
         $error = $this->_debug ? nl2br((string)$exception) : 'Server internal error';
         return new Response(500, [], $error);
@@ -81,7 +90,8 @@ class ExceptionHandler implements ExceptionHandlerInterface
      * @param Throwable $e
      * @return bool
      */
-    protected function shouldntReport(Throwable $e) {
+    protected function shouldntReport(Throwable $e)
+    {
         foreach ($this->dontReport as $type) {
             if ($e instanceof $type) {
                 return true;

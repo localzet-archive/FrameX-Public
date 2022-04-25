@@ -1,10 +1,16 @@
 <?php
 
 /**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
@@ -198,7 +204,7 @@ class Route
                     static::any("/{$name}/{$action}[/{id}]", [$controller, $action])->name("{$name}.{$action}");
                 }
             }
-            // 注册路由 由于顺序不同会导致路由无效 因此不适用循环注册
+            // Регистрация маршрутизации вызовет маршрутизацию для того, чтобы вызвать маршрутизацию, поэтому не применяет регистрацию цикла.
             if (in_array('index', $options)) static::get("/{$name}", [$controller, 'index'])->name("{$name}.index");
             if (in_array('create', $options)) static::get("/{$name}/create", [$controller, 'create'])->name("{$name}.create");
             if (in_array('store', $options)) static::post("/{$name}", [$controller, 'store'])->name("{$name}.store");
@@ -208,7 +214,7 @@ class Route
             if (in_array('destroy', $options)) static::delete("/{$name}/{id}", [$controller, 'destroy'])->name("{$name}.destroy");
             if (in_array('recovery', $options)) static::put("/{$name}/{id}/recovery", [$controller, 'recovery'])->name("{$name}.recovery");
         } else {
-            //为空时自动注册所有常用路由
+            // Автоматически регистрироваться для всех общих маршрутов, когда пусто
             if (method_exists($controller, 'index')) static::get("/{$name}", [$controller, 'index'])->name("{$name}.index");
             if (method_exists($controller, 'create')) static::get("/{$name}/create", [$controller, 'create'])->name("{$name}.create");
             if (method_exists($controller, 'store')) static::post("/{$name}", [$controller, 'store'])->name("{$name}.store");
@@ -348,20 +354,30 @@ class Route
             $config_path = pathinfo($config_path, PATHINFO_DIRNAME);
         }
         static::$_dispatcher = simpleDispatcher(function (RouteCollector $route) use ($config_path) {
+            // Устанавливаем коллектор в $_collector
             Route::setCollector($route);
+
+            // Роутер из глобальной конфигурации
             $route_config_file = $config_path . '/route.php';
             if (\is_file($route_config_file)) {
                 require_once $route_config_file;
             }
+
+            // Роутеры плагинов
             foreach (glob($config_path . '/plugin/*/*/route.php') as $file) {
+                // Проверка плагин ли это? Существует ли app.php?
                 $app_config_file = pathinfo($file, PATHINFO_DIRNAME) . '/app.php';
                 if (!is_file($app_config_file)) {
                     continue;
                 }
+
+                // Включён ли плагин?
                 $app_config = include $app_config_file;
                 if (empty($app_config['enable'])) {
                     continue;
                 }
+
+                // Если всё в порядке - запрашиваем роутер
                 require_once $file;
             }
         });

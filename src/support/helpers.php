@@ -1,15 +1,21 @@
 <?php
 
 /**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
+use support\DB;
 use support\Request;
 use support\Response;
-use support\Translation;
 use support\Container;
 use support\view\Raw;
 use support\view\Blade;
@@ -275,31 +281,6 @@ function session($key = null, $default = null)
 }
 
 /**
- * @param null|string $id
- * @param array $parameters
- * @param string|null $domain
- * @param string|null $locale
- * @return string
- */
-function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
-{
-    $res = Translation::trans($id, $parameters, $domain, $locale);
-    return $res === '' ? $id : $res;
-}
-
-/**
- * @param null|string $locale
- * @return string
- */
-function locale(string $locale = null)
-{
-    if (!$locale) {
-        return Translation::getLocale();
-    }
-    Translation::setLocale($locale);
-}
-
-/**
  * 404 not found
  *
  * @return Response
@@ -471,4 +452,9 @@ function cpu_count()
         }
     }
     return $count > 0 ? $count : 4;
+}
+
+function db()
+{
+    $DB = new DB(config());
 }

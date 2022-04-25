@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @version     0.1.0
- * @package     FrameX V3
+ * @version     1.0.0-dev
+ * @package     FrameX
  * @link        https://framex.localzet.ru
  * 
  * @author      localzet <creator@localzet.ru>

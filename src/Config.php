@@ -1,9 +1,16 @@
 <?php
+
 /**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
@@ -64,17 +71,6 @@ class Config
             static::$_config = array_replace_recursive(static::$_config, $config);
         }
 
-        // Merge database config
-        foreach (static::$_config['plugin'] ?? [] as $firm => $projects) {
-            foreach ($projects as $name => $project) {
-                foreach ($project['database']['connections'] ?? [] as $key => $connection) {
-                    static::$_config['database']['connections']["plugin.$firm.$name.$key"] = $connection;
-                }
-            }
-        }
-        if (!empty(static::$_config['database']['connections'])) {
-            static::$_config['database']['default'] = static::$_config['database']['default'] ?? key(static::$_config['database']['connections']);
-        }
         // Merge thinkorm config
         foreach (static::$_config['plugin'] ?? [] as $firm => $projects) {
             foreach ($projects as $name => $project) {
@@ -85,14 +81,6 @@ class Config
         }
         if (!empty(static::$_config['thinkorm']['connections'])) {
             static::$_config['thinkorm']['default'] = static::$_config['thinkorm']['default'] ?? key(static::$_config['thinkorm']['connections']);
-        }
-        // Merge redis config
-        foreach (static::$_config['plugin'] ?? [] as $firm => $projects) {
-            foreach ($projects as $name => $project) {
-                foreach ($project['redis'] ?? [] as $key => $connection) {
-                    static::$_config['redis']["plugin.$firm.$name.$key"] = $connection;
-                }
-            }
         }
 
         static::$_loaded = true;
@@ -183,5 +171,4 @@ class Config
         static::$_config = [];
         static::load($config_path, $exclude_file);
     }
-
 }

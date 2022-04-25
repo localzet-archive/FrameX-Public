@@ -1,15 +1,24 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\FrameX;
 
 use Psr\Container\ContainerInterface;
 use localzet\FrameX\App;
 
-/**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
- */
+
 
 class Middleware
 {
@@ -28,16 +37,28 @@ class Middleware
      */
     public static function load($all_middlewares)
     {
+        // $all_middlewares = [
+        //     'app1' => [
+        //         'Class1',
+        //         'Class2',
+        //         'Class3'
+        //     ],
+        //     'app2' => [
+        //         'Class1',
+        //         'Class2',
+        //         'Class3'
+        //     ]
+        // ];
         foreach ($all_middlewares as $app_name => $middlewares) {
             if (!\is_array($middlewares)) {
-                throw new \RuntimeException('Bad middleware config');
+                throw new \RuntimeException('Некорректная конфигурация промежуточного ПО');
             }
             foreach ($middlewares as $class_name) {
                 if (\method_exists($class_name, 'process')) {
                     static::$_instances[$app_name][] = [static::container()->get($class_name), 'process'];
                 } else {
                     // @todo Log
-                    echo "middleware $class_name::process not exsits\n";
+                    echo "Промежуточный $class_name::process не существует\n";
                 }
             }
         }
@@ -50,10 +71,12 @@ class Middleware
      */
     public static function getMiddleware($app_name, $with_global_middleware = true)
     {
+        // Глобальная midleware
         $global_middleware = $with_global_middleware && isset(static::$_instances['']) ? static::$_instances[''] : [];
         if ($app_name === '') {
             return \array_reverse($global_middleware);
         }
+        // midleware приложения
         $app_middleware = static::$_instances[$app_name] ?? [];
         return \array_reverse(\array_merge($global_middleware, $app_middleware));
     }
@@ -81,5 +104,4 @@ class Middleware
         }
         return static::$_container;
     }
-
 }

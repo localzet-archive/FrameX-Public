@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\FrameX;
 
 use Psr\Container\ContainerInterface;
@@ -26,7 +39,7 @@ class Container implements ContainerInterface
     {
         if (!isset($this->_instances[$name])) {
             if (!class_exists($name)) {
-                throw new NotFoundException("Class '$name' not found");
+                throw new NotFoundException("Класс '$name' не найден");
             }
             $this->_instances[$name] = new $name();
         }
@@ -51,7 +64,7 @@ class Container implements ContainerInterface
     public function make($name, array $constructor = [])
     {
         if (!class_exists($name)) {
-            throw new NotFoundException("Class '$name' not found");
+            throw new NotFoundException("Класс '$name' не найден");
         }
         return new $name(...array_values($constructor));
     }

@@ -1,5 +1,19 @@
 #!/usr/bin/env php
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use localzet\V3\Worker;
@@ -9,34 +23,39 @@ use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 use localzet\FrameX\Middleware;
-use Dotenv\Dotenv;
 use support\Request;
 use support\Log;
 use support\Container;
 
+// Отображать ошибки
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
 
+// Загрузить конфигурацию
 Config::load(config_path(), ['route', 'container']);
 
+// Часовой пояс (если есть)
 if ($timezone = config('app.default_timezone')) {
     date_default_timezone_set($timezone);
 }
 
+// Рабочая папка логов
 $runtime_logs_path = runtime_path() . DIRECTORY_SEPARATOR . 'logs';
-if ( !file_exists($runtime_logs_path) || !is_dir($runtime_logs_path) ) {
-    if (!mkdir($runtime_logs_path,0777,true)) {
-        throw new \RuntimeException("Failed to create runtime logs directory. Please check the permission.");
+if (!file_exists($runtime_logs_path) || !is_dir($runtime_logs_path)) {
+    if (!mkdir($runtime_logs_path, 0777, true)) {
+        throw new \RuntimeException("Не удалось создать рабочую папку логов. Пожалуйста, проверьте права.");
     }
 }
 
+// Рабочая папка шаблонов
 $runtime_views_path = runtime_path() . DIRECTORY_SEPARATOR . 'views';
-if ( !file_exists($runtime_views_path) || !is_dir($runtime_views_path) ) {
-    if (!mkdir($runtime_views_path,0777,true)) {
-        throw new \RuntimeException("Failed to create runtime views directory. Please check the permission.");
+if (!file_exists($runtime_views_path) || !is_dir($runtime_views_path)) {
+    if (!mkdir($runtime_views_path, 0777, true)) {
+        throw new \RuntimeException("Не удалось создать рабочую папку шаблонов. Пожалуйста, проверьте права.");
     }
 }
 
+// Обнуление кэша при перезагрузке воркера
 Worker::$onMasterReload = function () {
     if (function_exists('opcache_get_status')) {
         if ($status = opcache_get_status()) {
@@ -49,6 +68,7 @@ Worker::$onMasterReload = function () {
     }
 };
 
+// Конфигурация для воркера
 $config = config('server');
 Worker::$pidFile = $config['pid_file'];
 Worker::$stdoutFile = $config['stdout_file'];
@@ -59,8 +79,12 @@ if (property_exists(Worker::class, 'statusFile')) {
     Worker::$statusFile = $config['status_file'] ?? '';
 }
 
+// Прослушка воркера
 if ($config['listen']) {
+    // Запуск
     $worker = new Worker($config['listen'], $config['context']);
+
+    // Назначение конфигурации
     $property_map = [
         'name',
         'count',
@@ -75,6 +99,7 @@ if ($config['listen']) {
         }
     }
 
+    // Запуск приложения
     $worker->onWorkerStart = function ($worker) {
         require_once base_path() . '/support/bootstrap.php';
         $app = new App($worker, Container::instance(), Log::channel('default'), app_path(), public_path());
@@ -83,7 +108,7 @@ if ($config['listen']) {
     };
 }
 
-// Windows does not support custom processes.
+// Винда не поддерживает кастомные процессы ::>_<::
 if (\DIRECTORY_SEPARATOR === '/') {
     foreach (config('process', []) as $process_name => $config) {
         worker_start($process_name, $config);
@@ -97,4 +122,5 @@ if (\DIRECTORY_SEPARATOR === '/') {
     }
 }
 
+// Запуск движка))
 Worker::runAll();

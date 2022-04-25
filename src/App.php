@@ -1,10 +1,16 @@
 <?php
 
 /**
- * @author    localzet<creator@localzet.ru>
- * @copyright localzet<creator@localzet.ru>
- * @link      https://www.localzet.ru/
- * @license   https://www.localzet.ru/license GNU GPLv3 License
+ * @version     1.0.0-dev
+ * @package     FrameX
+ * @link        https://framex.localzet.ru
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
@@ -49,7 +55,7 @@ class App
     protected static $_worker = null;
 
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected static $_container = null;
 
@@ -89,20 +95,19 @@ class App
     protected static $_gracefulStopTimer = null;
 
     /**
-     * App constructor.
      * @param Worker $worker
-     * @param $container
-     * @param $logger
-     * @param $app_path
-     * @param $public_path
+     * @param Container $container
+     * @param Logger $logger
+     * @param string $app_path
+     * @param string $public_path
      */
-    public function __construct(Worker $worker, $container, $logger, $app_path, $public_path)
+    public function __construct(Worker $worker, Container $container, Logger $logger, string $app_path, string $public_path)
     {
         static::$_worker = $worker;
         static::$_container = $container;
         static::$_logger = $logger;
         static::$_publicPath = $public_path;
-        // Phar support.
+
         if (class_exists(\Phar::class, false) && \Phar::running()) {
             static::$_appPath = $app_path;
         } else {
@@ -171,8 +176,8 @@ class App
     {
         if (strpos($path, '/../') !== false || strpos($path, "\\") !== false || strpos($path, "\0") !== false) {
             $callback = static::getFallback();
-            $request->app = $request->controller = $request->action = '';
-            static::send($connection, $callback($request), $request);
+            static::$_request->app = static::$_request->controller = static::$_request->action = '';
+            static::send(static::$_connection, $callback(static::$_request), static::$_request);
             return true;
         }
         return false;
