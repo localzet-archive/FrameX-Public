@@ -456,5 +456,5 @@ function cpu_count()
 
 function db()
 {
-    $DB = new DB(config());
+    return new DB(config());
 }
