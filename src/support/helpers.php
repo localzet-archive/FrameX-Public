@@ -14,9 +14,11 @@
  */
 
 use support\DB;
+use support\JWT;
 use support\Request;
 use support\Response;
 use support\Container;
+use support\bot\Telegram;
 use support\view\Raw;
 use support\view\Blade;
 use support\view\ThinkPHP;
@@ -439,7 +441,7 @@ function is_phar()
  */
 function cpu_count()
 {
-    // Windows does not support the number of processes setting.
+    // Винда опять не поддерживает это
     if (\DIRECTORY_SEPARATOR === '\\') {
         return 1;
     }
@@ -457,4 +459,14 @@ function cpu_count()
 function db()
 {
     return new DB(config());
+}
+
+function tgBot()
+{
+    return new Telegram(config('bot'));
+}
+
+function jwt()
+{
+    return new JWT(config('jwt'));
 }
