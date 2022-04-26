@@ -49,6 +49,7 @@ class Middleware
         //         'Class3'
         //     ]
         // ];
+
         foreach ($all_middlewares as $app_name => $middlewares) {
             if (!\is_array($middlewares)) {
                 throw new \RuntimeException('Некорректная конфигурация промежуточного ПО');

@@ -13,7 +13,6 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-use Dotenv\Dotenv;
 use support\Container;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -54,6 +53,47 @@ foreach (config('plugin', []) as $firm => $projects) {
         }
     }
 }
+// ['plugin' => [
+//     'firm' => [
+//         'name' => [
+//             // Конфигурация
+//             'middleware' => [
+//                 'app1' => [
+//                     'Class1',
+//                     'Class2',
+//                     'Class3'
+//                 ],
+//                 'app2' => [
+//                     'Class1',
+//                     'Class2',
+//                     'Class3'
+//                 ]
+//             ],
+//             'process' => [
+//                 'process_name' => [
+//                     'listen',
+//                     'context',
+//                     'count',
+//                     'user',
+//                     'group',
+//                     'reloadable',
+//                     'reusePort',
+//                     'transport',
+//                     'protocol',
+//                     'handler',
+//                     'constructor'
+//                 ]
+//             ],
+//             'autoload' => [
+//                 'files' => [
+//                     'file1',
+//                     'file2',
+//                     'file3'
+//                 ]
+//             ]
+//         ]
+//     ]
+// ]];
 
 // Ну и файлы автозагрузки
 foreach (config('autoload.files', []) as $file) {
@@ -62,6 +102,7 @@ foreach (config('autoload.files', []) as $file) {
 
 // Вот теперь грузим container из конфигурации
 // Который мы так усердно пропускали вместе с route
+// Container - загрузчик классов с хранилищем, дабы не создавать кучу экземпляров
 $container = Container::instance();
 Route::container($container);
 Middleware::container($container);
