@@ -44,5 +44,5 @@
             "Support\\View\\": "./src/support/view"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
