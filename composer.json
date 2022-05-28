@@ -43,5 +43,6 @@
             "Support\\Exception\\": "./src/support/exception",
             "Support\\View\\": "./src/support/view"
         }
-    }
+    },
+    "minimum-stability": "stable"
 }
