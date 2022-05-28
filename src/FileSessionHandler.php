@@ -17,7 +17,7 @@ namespace localzet\FrameX;
 
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
-use localzet\V3\Protocols\Http\Session\FileSessionHandler as SessionHandler;
+use localzet\Core\Protocols\Http\Session\FileSessionHandler as SessionHandler;
 
 /**
  * Class FileSessionHandler

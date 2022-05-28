@@ -15,8 +15,8 @@
 
 namespace localzet\FrameX;
 
-use localzet\V3\Worker;
-use localzet\V3\Connection\TcpConnection;
+use localzet\Core\Server;
+use localzet\Core\Connection\TcpConnection;
 use localzet\FrameX\Http\Request;
 use localzet\FrameX\Http\Response;
 use localzet\FrameX\Route\Route as RouteObject;
@@ -50,9 +50,9 @@ class App
     protected static $_callbacks = [];
 
     /**
-     * @var Worker
+     * @var Server
      */
-    protected static $_worker = null;
+    protected static $_server = null;
 
     /**
      * @var Container
@@ -95,15 +95,15 @@ class App
     protected static $_gracefulStopTimer = null;
 
     /**
-     * @param Worker $worker
+     * @param Server $server
      * @param Container $container
      * @param Logger $logger
      * @param string $app_path
      * @param string $public_path
      */
-    public function __construct(Worker $worker, Container $container, Logger $logger, string $app_path, string $public_path)
+    public function __construct(Server $server, Container $container, Logger $logger, string $app_path, string $public_path)
     {
-        static::$_worker = $worker;
+        static::$_server = $server;
         static::$_container = $container;
         static::$_logger = $logger;
         static::$_publicPath = $public_path;
@@ -298,11 +298,11 @@ class App
     }
 
     /**
-     * @return Worker
+     * @return Server
      */
-    public static function worker()
+    public static function server()
     {
-        return static::$_worker;
+        return static::$_server;
     }
 
     /**

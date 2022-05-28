@@ -18,7 +18,7 @@ use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 use localzet\FrameX\Middleware;
 
-$worker = $worker ?? null;
+$server = $server ?? null;
 
 // Часовой пояс (если есть)
 if ($timezone = config('app.default_timezone')) {
@@ -34,7 +34,7 @@ set_error_handler(function ($level, $message, $file = '', $line = 0, $context = 
 
 // Костыль, но работает
 // Если начинаешь падать - тупо жди 1 секунду и продолжай работать
-if ($worker) {
+if ($server) {
     register_shutdown_function(function ($start_time) {
         if (time() - $start_time <= 1) {
             sleep(1);
@@ -123,7 +123,7 @@ Middleware::load(['__static__' => config('static.middleware', [])]);
 // Запуск системы из конфигурации
 foreach (config('bootstrap', []) as $class_name) {
     /** @var \localzet\FrameX\Bootstrap $class_name */
-    $class_name::start($worker);
+    $class_name::start($server);
 }
 
 // Запуск плагинов
@@ -131,7 +131,7 @@ foreach (config('plugin', []) as $firm => $projects) {
     foreach ($projects as $name => $project) {
         foreach ($project['bootstrap'] ?? [] as $class_name) {
             /** @var \localzet\FrameX\Bootstrap $class_name */
-            $class_name::start($worker);
+            $class_name::start($server);
         }
     }
 }

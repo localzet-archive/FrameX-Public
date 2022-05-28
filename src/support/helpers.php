@@ -23,7 +23,7 @@ use support\view\Raw;
 use support\view\Blade;
 use support\view\ThinkPHP;
 use support\view\Twig;
-use localzet\V3\Worker;
+use localzet\Core\Server;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -334,10 +334,10 @@ function remove_dir($dir)
 }
 
 /**
- * @param $worker
+ * @param $server
  * @param $class
  */
-function worker_bind($worker, $class)
+function server_bind($server, $class)
 {
     $callback_map = [
         'onConnect',
@@ -346,16 +346,16 @@ function worker_bind($worker, $class)
         'onError',
         'onBufferFull',
         'onBufferDrain',
-        'onWorkerStop',
+        'onServerStop',
         'onWebSocketConnect'
     ];
     foreach ($callback_map as $name) {
         if (method_exists($class, $name)) {
-            $worker->$name = [$class, $name];
+            $server->$name = [$class, $name];
         }
     }
-    if (method_exists($class, 'onWorkerStart')) {
-        call_user_func([$class, 'onWorkerStart'], $worker);
+    if (method_exists($class, 'onServerStart')) {
+        call_user_func([$class, 'onServerStart'], $server);
     }
 }
 
@@ -364,9 +364,9 @@ function worker_bind($worker, $class)
  * @param $config
  * @return void
  */
-function worker_start($process_name, $config)
+function server_start($process_name, $config)
 {
-    $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
+    $server = new Server($config['listen'] ?? null, $config['context'] ?? []);
     $property_map = [
         'count',
         'user',
@@ -376,14 +376,14 @@ function worker_start($process_name, $config)
         'transport',
         'protocol',
     ];
-    $worker->name = $process_name;
+    $server->name = $process_name;
     foreach ($property_map as $property) {
         if (isset($config[$property])) {
-            $worker->$property = $config[$property];
+            $server->$property = $config[$property];
         }
     }
 
-    $worker->onWorkerStart = function ($worker) use ($config) {
+    $server->onServerStart = function ($server) use ($config) {
         require_once base_path() . '/support/bootstrap.php';
 
         foreach ($config['services'] ?? [] as $server) {
@@ -391,12 +391,12 @@ function worker_start($process_name, $config)
                 echo "process error: class {$server['handler']} not exists\r\n";
                 continue;
             }
-            $listen = new Worker($server['listen'] ?? null, $server['context'] ?? []);
+            $listen = new Server($server['listen'] ?? null, $server['context'] ?? []);
             if (isset($server['listen'])) {
                 echo "listen: {$server['listen']}\n";
             }
             $instance = Container::make($server['handler'], $server['constructor'] ?? []);
-            worker_bind($listen, $instance);
+            server_bind($listen, $instance);
             $listen->listen();
         }
 
@@ -407,7 +407,7 @@ function worker_start($process_name, $config)
             }
 
             $instance = Container::make($config['handler'], $config['constructor'] ?? []);
-            worker_bind($worker, $instance);
+            server_bind($server, $instance);
         }
     };
 }

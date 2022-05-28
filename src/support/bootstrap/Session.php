@@ -16,9 +16,9 @@
 namespace support\bootstrap;
 
 use localzet\FrameX\Bootstrap;
-use localzet\V3\Protocols\Http;
-use localzet\V3\Protocols\Http\Session as SessionBase;
-use localzet\V3\Worker;
+use localzet\Core\Protocols\Http;
+use localzet\Core\Protocols\Http\Session as SessionBase;
+use localzet\Core\Server;
 
 /**
  * Class Session
@@ -28,10 +28,10 @@ class Session implements Bootstrap
 {
 
     /**
-     * @param Worker $worker
+     * @param Server $server
      * @return void
      */
-    public static function start($worker)
+    public static function start($server)
     {
         $config = config('session');
         Http::sessionName($config['session_name']);

@@ -16,9 +16,9 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use localzet\V3\Worker;
-use localzet\V3\Protocols\Http;
-use localzet\V3\Connection\TcpConnection;
+use localzet\Core\Server;
+use localzet\Core\Protocols\Http;
+use localzet\Core\Connection\TcpConnection;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -56,7 +56,7 @@ if (!file_exists($runtime_views_path) || !is_dir($runtime_views_path)) {
 }
 
 // Обнуление кэша при перезагрузке воркера
-Worker::$onMasterReload = function () {
+Server::$onMasterReload = function () {
     if (function_exists('opcache_get_status')) {
         if ($status = opcache_get_status()) {
             if (isset($status['scripts']) && $scripts = $status['scripts']) {
@@ -70,19 +70,19 @@ Worker::$onMasterReload = function () {
 
 // Конфигурация для воркера
 $config = config('server');
-Worker::$pidFile = $config['pid_file'];
-Worker::$stdoutFile = $config['stdout_file'];
-Worker::$logFile = $config['log_file'];
-Worker::$eventLoopClass = $config['event_loop'] ?? '';
+Server::$pidFile = $config['pid_file'];
+Server::$stdoutFile = $config['stdout_file'];
+Server::$logFile = $config['log_file'];
+Server::$eventLoopClass = $config['event_loop'] ?? '';
 TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
-if (property_exists(Worker::class, 'statusFile')) {
-    Worker::$statusFile = $config['status_file'] ?? '';
+if (property_exists(Server::class, 'statusFile')) {
+    Server::$statusFile = $config['status_file'] ?? '';
 }
 
 // Прослушка воркера
 if ($config['listen']) {
     // Запуск
-    $worker = new Worker($config['listen'], $config['context']);
+    $server = new Server($config['listen'], $config['context']);
 
     // Назначение конфигурации
     $property_map = [
@@ -95,32 +95,32 @@ if ($config['listen']) {
     ];
     foreach ($property_map as $property) {
         if (isset($config[$property])) {
-            $worker->$property = $config[$property];
+            $server->$property = $config[$property];
         }
     }
 
     // Запуск приложения
-    $worker->onWorkerStart = function ($worker) {
+    $server->onServerStart = function ($server) {
         require_once base_path() . '/support/bootstrap.php';
-        $app = new App($worker, Container::instance(), Log::channel('default'), app_path(), public_path());
+        $app = new App($server, Container::instance(), Log::channel('default'), app_path(), public_path());
         Http::requestClass(config('app.request_class', config('server.request_class', Request::class)));
-        $worker->onMessage = [$app, 'onMessage'];
+        $server->onMessage = [$app, 'onMessage'];
     };
 }
 
 // Винда не поддерживает кастомные процессы ::>_<::
 if (\DIRECTORY_SEPARATOR === '/') {
     foreach (config('process', []) as $process_name => $config) {
-        worker_start($process_name, $config);
+        server_start($process_name, $config);
     }
     foreach (config('plugin', []) as $firm => $projects) {
         foreach ($projects as $name => $project) {
             foreach ($project['process'] ?? [] as $process_name => $config) {
-                worker_start("plugin.$firm.$name.$process_name", $config);
+                server_start("plugin.$firm.$name.$process_name", $config);
             }
         }
     }
 }
 
 // Запуск движка))
-Worker::runAll();
+Server::runAll();

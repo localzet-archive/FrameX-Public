@@ -15,15 +15,15 @@
 
 namespace localzet\FrameX;
 
-use localzet\V3\Worker;
+use localzet\Core\Server;
 
 interface Bootstrap
 {
     /**
-     * onWorkerStart
+     * onServerStart
      *
-     * @param Worker $worker
+     * @param Server $server
      * @return mixed
      */
-    public static function start($worker);
+    public static function start($server);
 }

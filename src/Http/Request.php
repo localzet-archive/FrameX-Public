@@ -23,7 +23,7 @@ use localzet\FrameX\Http\UploadFile;
  * Class Request
  * @package localzet\FrameX\Http
  */
-class Request extends \localzet\V3\Protocols\Http\Request
+class Request extends \localzet\Core\Protocols\Http\Request
 {
     /**
      * @var string

@@ -21,7 +21,7 @@ use localzet\FrameX\App;
  * Class Response
  * @package localzet\FrameX\Http
  */
-class Response extends \localzet\V3\Protocols\Http\Response
+class Response extends \localzet\Core\Protocols\Http\Response
 {
     /**
      * @param string $file
