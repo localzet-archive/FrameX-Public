@@ -1,7 +1,7 @@
 {
     "name": "localzet/framex",
+    "version": "v1.0.0",
     "description": "PHP WebFramework",
-    "version": "1.0.0-dev",
     "type": "library",
     "keywords": [
         "localzet"
@@ -44,5 +44,5 @@
             "Support\\View\\": "./src/support/view"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
