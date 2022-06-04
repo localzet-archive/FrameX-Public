@@ -91,16 +91,23 @@ function runtime_path()
     }
     return $path;
 }
-
 /**
  * @param int $status
  * @param array $headers
  * @param string $body
  * @return Response
  */
-function response($body = '', $status = 200, $headers = array())
+function response($body = '', $status = 200, $headers = array(), $http_status = false)
 {
-    return new Response($status, $headers, $body);
+    $headers = ['Content-Type' => 'application/json'] + $headers;
+
+    $body = json_encode(['status' => $status, 'data' => $body], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+
+    if ($http_status == true) {
+        return new Response($status, $headers, $body);
+    } else {
+        return new Response(200, $headers, $body);
+    }
 }
 
 /**
@@ -108,7 +115,7 @@ function response($body = '', $status = 200, $headers = array())
  * @param int $options
  * @return Response
  */
-function json($data, $options = JSON_UNESCAPED_UNICODE)
+function json($data, $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
     return new Response(200, ['Content-Type' => 'application/json'], json_encode($data, $options));
 }
@@ -469,4 +476,192 @@ function tgBot()
 function jwt()
 {
     return new JWT(config('jwt'));
+}
+
+/**
+ * Получение IP-адреса
+ *
+ * @return string IP-адрес
+ */
+function getRequestIp(Request $request)
+{
+    if (!empty($request->header('x-real-ip')) && validate_ip($request->header('x-real-ip'))) {
+        $ip = $request->header('x-real-ip');
+    } elseif (!empty($request->header('x-forwarded-for')) && validate_ip($request->header('x-forwarded-for'))) {
+        $ip = $request->header('x-forwarded-for');
+    } else {
+        $ip = null;
+    }
+
+    return $ip;
+}
+
+/**
+ * Валидация IP-адреса
+ *
+ * @param string $ip IP-адрес
+ *
+ * @return boolean
+ */
+function validate_ip(string $ip)
+{
+    if (strtolower($ip) === 'unknown')
+        return false;
+    $ip = ip2long($ip);
+    if ($ip !== false && $ip !== -1) {
+        $ip = sprintf('%u', $ip);
+        if ($ip >= 0 && $ip <= 50331647)
+            return false;
+        if ($ip >= 167772160 && $ip <= 184549375)
+            return false;
+        if ($ip >= 2130706432 && $ip <= 2147483647)
+            return false;
+        if ($ip >= 2851995648 && $ip <= 2852061183)
+            return false;
+        if ($ip >= 2886729728 && $ip <= 2887778303)
+            return false;
+        if ($ip >= 3221225984 && $ip <= 3221226239)
+            return false;
+        if ($ip >= 3232235520 && $ip <= 3232301055)
+            return false;
+        if ($ip >= 4294967040)
+            return false;
+    }
+    return true;
+}
+
+/**
+ * Получение данных
+ *
+ * @return array(
+ *      'userAgent',
+ *      'name',
+ *      'version',
+ *      'platform'
+ *  )
+ */
+function getBrowser(Request $request)
+{
+    $u_agent = $request->header('user-agent');
+    // echo $u_agent;
+    $bname = 'Неизвестно';
+    $ub = "Неизвестно";
+    $platform = 'Неизвестно';
+    $version = "";
+
+    if (preg_match('/macintosh|mac os x/i', $u_agent)) {
+        $platform = 'mac';
+    } elseif (preg_match('/windows|win32/i', $u_agent)) {
+        $platform = 'windows';
+    } elseif (preg_match('/iphone|IPhone/i', $u_agent)) {
+        $platform = 'IPhone Web';
+    } elseif (preg_match('/android|Android/i', $u_agent)) {
+        $platform = 'Android Web';
+    } else if (preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $u_agent)) {
+        $platform = 'Mobile';
+    } else if (preg_match('/linux/i', $u_agent)) {
+        $platform = 'linux';
+    }
+
+    if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
+        $bname = 'Internet Explorer';
+        $ub = "MSIE";
+    } elseif (preg_match('/Firefox/i', $u_agent)) {
+        $bname = 'Mozilla Firefox';
+        $ub = "Firefox";
+    } elseif (preg_match('/Chrome/i', $u_agent)) {
+        $bname = 'Google Chrome';
+        $ub = "Chrome";
+    } elseif (preg_match('/Safari/i', $u_agent)) {
+        $bname = 'Apple Safari';
+        $ub = "Safari";
+    } elseif (preg_match('/Opera/i', $u_agent)) {
+        $bname = 'Opera';
+        $ub = "Opera";
+    } elseif (preg_match('/Netscape/i', $u_agent)) {
+        $bname = 'Netscape';
+        $ub = "Netscape";
+    }
+
+    $known = array('Version', $ub, 'other');
+    $pattern = '#(?<browser>' . join('|', $known) . ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+    preg_match_all($pattern, $u_agent, $matches);
+
+    // if (!empty($matches['browser'])) {
+        $i = count($matches['browser']);
+    // }
+    // if (!empty($matches['version'])) {
+        if ($i != 1) {
+            if (strripos($u_agent, "Version") < strripos($u_agent, $ub)) {
+                $version = $matches['version'][0];
+            } else {
+                $version = $matches['version'][1];
+            }
+        } else {
+            $version = $matches['version'][0];
+        }
+    // }
+
+    if ($version == null || $version == "") {
+        $version = "?";
+    }
+    return array(
+        'userAgent' => $u_agent,
+        'name'      => $bname,
+        'version'   => $version,
+        'platform'  => $platform
+    );
+}
+
+/**
+ * Генерация ID
+ *
+ * @return string
+ */
+function generateId()
+{
+    return sprintf(
+        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff)
+    );
+}
+
+/**
+ * Окончание по числу
+ *
+ * @param int $num Количество
+ * @param string $nominative 1
+ * @param string $genitive_singular 2, 3, 4
+ * @param string $genitive_plural 5, 6, 7, 8, 9, 0
+ *
+ * @return string
+ */
+function getNumEnding(int $num, string $nominative, string $genitive_singular, string $genitive_plural)
+{
+    if ($num > 10 && (floor(($num % 100) / 10)) == 1) {
+        return $genitive_plural;
+    } else {
+        switch ($num % 10) {
+            case 1:
+                return $nominative; // 1 день
+            case 2:
+            case 3:
+            case 4:
+                return $genitive_singular; // 2, 3, 4 дня
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 0:
+                return $genitive_plural; // 5, 6, 7, 8, 9, 0 дней
+        }
+    }
 }
