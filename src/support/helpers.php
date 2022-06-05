@@ -13,7 +13,8 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-use support\DB;
+use support\MySQL;
+use support\PgSQL;
 use support\JWT;
 use support\Request;
 use support\Response;
@@ -463,9 +464,13 @@ function cpu_count()
     return $count > 0 ? $count : 4;
 }
 
-function db()
+function db($type = 'MySQL')
 {
-    return new DB(config());
+    if ($type == 'MySQL') {
+        return new MySQL(config('database.mysql'));
+    } elseif ($type == 'PgSQL') {
+        return new PgSQL(config('database.pgsql'));
+    }
 }
 
 function tgBot()
@@ -588,18 +593,18 @@ function getBrowser(Request $request)
     preg_match_all($pattern, $u_agent, $matches);
 
     // if (!empty($matches['browser'])) {
-        $i = count($matches['browser']);
+    $i = count($matches['browser']);
     // }
     // if (!empty($matches['version'])) {
-        if ($i != 1) {
-            if (strripos($u_agent, "Version") < strripos($u_agent, $ub)) {
-                $version = $matches['version'][0];
-            } else {
-                $version = $matches['version'][1];
-            }
-        } else {
+    if ($i != 1) {
+        if (strripos($u_agent, "Version") < strripos($u_agent, $ub)) {
             $version = $matches['version'][0];
+        } else {
+            $version = $matches['version'][1];
         }
+    } else {
+        $version = $matches['version'][0];
+    }
     // }
 
     if ($version == null || $version == "") {

@@ -28,15 +28,12 @@ namespace support;
  * @method static void rollBack($toLevel = null)
  * @method static void commit()
  */
-class DB
+class MySQL
 {
-    protected array $CONFIG;
-    // protected Bot $BOT;
-
     /**
      * Static instance of self
      *
-     * @var DB
+     * @var MySQL
      */
     protected static $_instance;
 
@@ -274,19 +271,15 @@ class DB
      */
     public function __construct($config)
     {
-        $this->CONFIG = $config;
-        // $this->BOT = new Bot($this->CONFIG);
-
-        // try {
         $isSubQuery = false;
 
         $this->addConnection('default', array(
-            'host' => $this->CONFIG['database']['host'],
-            'username' => $this->CONFIG['database']['username'],
-            'password' => $this->CONFIG['database']['password'],
-            'db' => $this->CONFIG['database']['db'],
-            'port' => $this->CONFIG['database']['port'],
-            'charset' => $this->CONFIG['database']['charset'],
+            'host' => $config['host'],
+            'username' => $config['username'],
+            'password' => $config['password'],
+            'db' => $config['db'],
+            'port' => $config['port'],
+            'charset' => $config['charset'],
             'socket' => null
         ));
 
@@ -300,10 +293,6 @@ class DB
         }
 
         self::$_instance = $this;
-        // } catch (\Exception $error) {
-        //     $this->BOT->sendDev("DB >> " . $error);
-        //     Response::Error('Ошибка подключения к БД (' . $error . ')');
-        // }
     }
 
     /**
@@ -773,7 +762,7 @@ class DB
     {
         $res = $this->get($tableName, 1, $columns);
 
-        if ($res instanceof DB) {
+        if ($res instanceof MySQL) {
             return $res;
         } elseif (is_array($res) && isset($res[0])) {
             return $res[0];
@@ -1772,7 +1761,7 @@ class DB
             }
 
             // Subquery value
-            if ($value instanceof DB) {
+            if ($value instanceof MySQL) {
                 $this->_query .= $this->_buildPair("", $value) . ", ";
                 continue;
             }
