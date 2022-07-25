@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * @version     1.0.0-dev
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      Jeffery Way <jeffrey@jeffrey-way.com>
+ * @author      Josh Campbell <jcampbell@ajillion.com>
+ * @author      Alexander V. Butenko <a.butenka@gmail.com>
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * 
+ * @see         https://github.com/SeinopSys/PHP-PostgreSQL-Database-Class
+ */
+
 namespace support;
 
 use InvalidArgumentException;
@@ -8,17 +26,6 @@ use PDOException;
 use PDOStatement;
 use RuntimeException;
 
-/**
- * PgSQL Class
- * by @SeinopSys | https://github.com/SeinopSys/PHP-PostgreSQL-Database-Class
- * Heavily based on MysqliDB version 2.4 as made by
- *   Jeffery Way <jeffrey@jeffrey-way.com>
- *   Josh Campbell <jcampbell@ajillion.com>
- *   Alexander V. Butenko <a.butenka@gmail.com>
- * and licensed under GNU Public License v3
- * (http://opensource.org/licenses/gpl-3.0.html)
- * http://github.com/joshcam/PHP-MySQLi-Database-Class
- **/
 class PgSQL
 {
     /**

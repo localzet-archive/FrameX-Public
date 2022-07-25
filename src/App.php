@@ -2,8 +2,8 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX
- * @link        https://framex.localzet.ru
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
  * 
@@ -190,7 +190,7 @@ class App
     {
         // when route, controller and action not found, try to use Route::fallback
         return Route::getFallback() ?: function () {
-            return new Response(404, [], \file_get_contents(static::$_publicPath . '/404.html'));
+            return new Response(404, config('server.http.headers'), \file_get_contents(static::$_publicPath . '/404.html'));
         };
     }
 
@@ -257,7 +257,7 @@ class App
                     return static::exceptionResponse($e, $request);
                 }
                 if (\is_scalar($response) || null === $response) {
-                    $response = new Response(200, [], $response);
+                    $response = new Response(200, config('server.http.headers'), $response);
                 }
                 return $response;
             });
@@ -376,7 +376,7 @@ class App
                 $callback = static::getFallback();
                 return $callback($request);
             }
-            return (new Response())->file($file);
+            return (new Response())->withHeaders(config('server.http.headers'))->file($file);
         }, null, false), '', '', '', null];
         [$callback, $request->app, $request->controller, $request->action, $request->route] = static::$_callbacks[$key];
         static::send($connection, $callback($request), $request);

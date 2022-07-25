@@ -2,8 +2,8 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX
- * @link        https://framex.localzet.ru
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
  * 
@@ -72,18 +72,18 @@ class ExceptionHandler implements ExceptionHandlerInterface
      */
     public function render(Request $request, Throwable $exception): Response
     {
-        $code = $exception->getCode();
-        if ($request->expectsJson()) {
-            $json = ['code' => $code ? $code : 500, 'msg' => $exception->getMessage()];
+        $status = $exception->getCode();
+        // if ($request->expectsJson()) {
+            $json = ['debug' => $this->_debug, 'status' => $status ? $status : 500, 'error' => $exception->getMessage()];
             $this->_debug && $json['traces'] = (string)$exception;
             return new Response(
                 200,
-                ['Content-Type' => 'application/json'],
-                json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+                ['Content-Type' => 'application/json'] + config('server.http.headers'),
+                json_encode($json, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
             );
-        }
-        $error = $this->_debug ? nl2br((string)$exception) : 'Server internal error';
-        return new Response(500, [], $error);
+        // }
+        $error = $this->_debug ? nl2br((string)$exception) : $exception->getMessage();
+        return new Response(500, config('server.http.headers'), $error);
     }
 
     /**

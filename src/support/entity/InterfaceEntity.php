@@ -2,7 +2,7 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX (FX) Engine
+ * @package     T-University Project
  * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
@@ -13,4 +13,13 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
+namespace support\entity;
+
+interface InterfaceEntity
+{
+    /**
+     * @param array $raw
+     * @return void
+     */
+    public function __construct(array $raw);
+}

@@ -2,8 +2,8 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX
- * @link        https://framex.localzet.ru
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
  * 
@@ -11,6 +11,8 @@
  * @copyright   Copyright (c) 2020-2022 NONA Team
  * 
  * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * 
+ * @see         https://github.com/ThingEngineer/PHP-MySQLi-Database-Class
  */
 
 namespace support;
@@ -971,7 +973,7 @@ class MySQL
             $cond = '';
         }
 
-        $this->_where[] = array($cond, $whereProp, $operator, $whereValue);
+        $this->_where[] = array($cond, $whereProp, strtoupper($operator), $whereValue);
         return $this;
     }
 

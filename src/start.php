@@ -3,8 +3,8 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX
- * @link        https://framex.localzet.ru
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
  * 

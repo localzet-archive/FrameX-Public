@@ -2,8 +2,8 @@
 
 /**
  * @version     1.0.0-dev
- * @package     FrameX
- * @link        https://framex.localzet.ru
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io
  * 
  * @author      localzet <creator@localzet.ru>
  * 
@@ -15,7 +15,6 @@
 
 use support\MySQL;
 use support\PgSQL;
-use support\JWT;
 use support\Request;
 use support\Response;
 use support\Container;
@@ -100,9 +99,9 @@ function runtime_path()
  */
 function response($body = '', $status = 200, $headers = array(), $http_status = false)
 {
-    $headers = ['Content-Type' => 'application/json'] + $headers;
+    $headers = ['Content-Type' => 'application/json'] + config('server.http.headers') + $headers;
 
-    $body = json_encode(['status' => $status, 'data' => $body], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    $body = json_encode(['debug' => config('app.debug'), 'status' => $status, 'data' => $body], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
 
     if ($http_status == true) {
         return new Response($status, $headers, $body);
@@ -118,7 +117,7 @@ function response($body = '', $status = 200, $headers = array(), $http_status = 
  */
 function json($data, $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
-    return new Response(200, ['Content-Type' => 'application/json'], json_encode($data, $options));
+    return new Response(200, ['Content-Type' => 'application/json'] + config('server.http.headers'), json_encode($data, $options));
 }
 
 /**
@@ -130,7 +129,7 @@ function xml($xml)
     if ($xml instanceof SimpleXMLElement) {
         $xml = $xml->asXML();
     }
-    return new Response(200, ['Content-Type' => 'text/xml'], $xml);
+    return new Response(200, ['Content-Type' => 'text/xml'] + config('server.http.headers'), $xml);
 }
 
 /**
@@ -143,7 +142,7 @@ function jsonp($data, $callback_name = 'callback')
     if (!is_scalar($data) && null !== $data) {
         $data = json_encode($data);
     }
-    return new Response(200, [], "$callback_name($data)");
+    return new Response(200, config('server.http.headers'), "$callback_name($data)");
 }
 
 /**
@@ -154,7 +153,7 @@ function jsonp($data, $callback_name = 'callback')
  */
 function redirect($location, $status = 302, $headers = [])
 {
-    $response = new Response($status, ['Location' => $location]);
+    $response = new Response($status, ['Location' => $location] + config('server.http.headers'));
     if (!empty($headers)) {
         $response->withHeaders($headers);
     }
@@ -173,7 +172,7 @@ function view($template, $vars = [], $app = null)
     if (null === $handler) {
         $handler = config('view.handler');
     }
-    return new Response(200, [], $handler::render($template, $vars, $app));
+    return new Response(200, config('server.http.headers'), $handler::render($template, $vars, $app));
 }
 
 /**
@@ -184,7 +183,7 @@ function view($template, $vars = [], $app = null)
  */
 function raw_view($template, $vars = [], $app = null)
 {
-    return new Response(200, [], Raw::render($template, $vars, $app));
+    return new Response(200, config('server.http.headers'), Raw::render($template, $vars, $app));
 }
 
 /**
@@ -195,7 +194,7 @@ function raw_view($template, $vars = [], $app = null)
  */
 function blade_view($template, $vars = [], $app = null)
 {
-    return new Response(200, [], Blade::render($template, $vars, $app));
+    return new Response(200, config('server.http.headers'), Blade::render($template, $vars, $app));
 }
 
 /**
@@ -206,7 +205,7 @@ function blade_view($template, $vars = [], $app = null)
  */
 function think_view($template, $vars = [], $app = null)
 {
-    return new Response(200, [], ThinkPHP::render($template, $vars, $app));
+    return new Response(200, config('server.http.headers'), ThinkPHP::render($template, $vars, $app));
 }
 
 /**
@@ -217,7 +216,7 @@ function think_view($template, $vars = [], $app = null)
  */
 function twig_view($template, $vars = [], $app = null)
 {
-    return new Response(200, [], Twig::render($template, $vars, $app));
+    return new Response(200, config('server.http.headers'), Twig::render($template, $vars, $app));
 }
 
 /**
@@ -297,7 +296,7 @@ function session($key = null, $default = null)
  */
 function not_found()
 {
-    return new Response(404, [], file_get_contents(public_path() . '/404.html'));
+    return new Response(404, config('server.http.headers'), file_get_contents(public_path() . '/404.html'));
 }
 
 /**
@@ -464,6 +463,9 @@ function cpu_count()
     return $count > 0 ? $count : 4;
 }
 
+/**
+ * @return \support\MySQL
+ */
 function db($type = 'MySQL')
 {
     if ($type == 'MySQL') {
@@ -476,11 +478,6 @@ function db($type = 'MySQL')
 function tgBot()
 {
     return new Telegram(config('bot'));
-}
-
-function jwt()
-{
-    return new JWT(config('jwt'));
 }
 
 /**
