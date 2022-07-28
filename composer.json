@@ -1,25 +1,28 @@
 {
     "name": "localzet/framex",
-    "description": "PHP WebFramework",
+    "description": "FrameX (FX) Engine",
     "type": "library",
     "keywords": [
         "localzet"
     ],
     "license": "GPL-3.0-only",
-    "authors": [
-        {
-            "name": "localzet",
-            "email": "creator@localzet.ru",
-            "homepage": "https://www.localzet.ru",
-            "role": "Developer"
-        }
-    ],
+    "authors": [{
+        "name": "localzet",
+        "email": "creator@localzet.ru",
+        "homepage": "https://www.localzet.ru",
+        "role": "Developer"
+    }],
     "support": {
-        "email": "creator@localzet.ru"
+        "email": "support@localzet.ru",
+        "docs": "https://localzet.gitbook.io"
     },
+    "funding": [{
+        "type": "other",
+        "url": "https://www.tinkoff.ru/cf/Ad5MBNhodod"
+    }],
     "require": {
         "php": ">=7.4",
-        "localzet/core": ">=v1.0.0",
+        "localzet/core": ">=1.0.0",
         "nikic/fast-route": "^1.3",
         "psr/container": ">=1.0",
         "monolog/monolog": "^2.0",
@@ -27,20 +30,16 @@
         "topthink/think-template": "^2.0.8",
         "twig/twig": "^3.3.10",
         "irazasyed/telegram-bot-sdk": ">=3.6",
-        "firebase/php-jwt": ">=6.2.0",
-        "norkunas/onesignal-php-api": "^2.8"
-    },
-    "suggest": {
-        "ext-event": "For better performance. "
+        "firebase/php-jwt": ">=6.2.0"
     },
     "autoload": {
         "psr-4": {
-            "localzet\\FrameX\\": "./src",
-            "support\\": "./src/support",
-            "Support\\": "./src/support",
-            "Support\\Bootstrap\\": "./src/support/bootstrap",
-            "Support\\Exception\\": "./src/support/exception",
-            "Support\\View\\": "./src/support/view"
+            "localzet\\FrameX\\": "./src/",
+            "support\\": "./src/support/",
+            "Support\\": "./src/support/",
+            "Support\\Bootstrap\\": "./src/support/bootstrap/",
+            "Support\\Exception\\": "./src/support/exception/",
+            "Support\\View\\": "./src/support/view/"
         }
     }
 }
