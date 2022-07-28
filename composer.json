@@ -34,12 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "localzet\\FrameX\\": "./src/",
-            "support\\": "./src/support/",
-            "Support\\": "./src/support/",
-            "Support\\Bootstrap\\": "./src/support/bootstrap/",
-            "Support\\Exception\\": "./src/support/exception/",
-            "Support\\View\\": "./src/support/view/"
+            "localzet\\FrameX\\": "src/",
+            "support\\": "src/support/",
+            "Support\\": "src/support/",
+            "Support\\Bootstrap\\": "src/support/bootstrap/",
+            "Support\\Exception\\": "src/support/exception/",
+            "Support\\View\\": "src/support/view/"
         }
     }
 }
