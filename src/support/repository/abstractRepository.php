@@ -14,21 +14,26 @@
 
 namespace support\repository;
 
+use support\entity\InterfaceEntity;
+
 /**
  * Abstract Repository
  */
 abstract class abstractRepository
 {
-    public static ?string $entity = '\app\entity\Entity';
+    public static ?string $entity = '\support\entity\abstractEntity';
     public static ?string $table;
+
+    /**
+     * Get (получение)
+     */
 
     /**
      * Экземпляр сущности из репозитория
      * 
      * @param string|array $where
      * @param mixed $value
-     * @param ?string $table
-     * @return static::$entity
+     * @return InterfaceEntity
      */
     public static function getOne($where, $value = null)
     {
@@ -48,8 +53,7 @@ abstract class abstractRepository
      * 
      * @param string $where
      * @param mixed $value
-     * @param ?string $table
-     * @return static::$entity[]
+     * @return InterfaceEntity[]
      */
     public static function get($where = null, $value = null)
     {
@@ -59,45 +63,114 @@ abstract class abstractRepository
             $raw = db()->where($where, $value)->get(static::$table);
         }
 
-        $entities = static::getEntities($raw);
-
-        // $lastGet = [
-        //     'raw' => $raw,
-        //     'entities' => $entities
-        // ];
-
-        // return empty($full) ? $entities : $lastGet;
-
-        return $entities;
-    }
-
-    /**
-     * Массив сущностей из массива
-     * 
-     * @param array $raw
-     * @param ?class $entity
-     * @return $entity[]
-     */
-    public static function getEntities($raw, $entity = null)
-    {
-        $entity = !empty($entity) ? $entity : static::$entity;
-
-        $entities = array();
-        foreach ($raw as $one) {
-            $entities[] = new $entity($one);
-        }
-
-        return $entities;
+        return static::getEntities($raw);
     }
 
     /**
      * Сущность по ID
      * 
      * @param string|int $id
-     * @return static::$entity
+     * @return InterfaceEntity
      */
     public static function getById($id)
     {
+        if (empty($id)) {
+            throw new exceptionRepository('Пустой id', 400);
+        }
         return static::getOne('id', $id);
+    }
+
+    /**
+     * Update (обновление)
+     */
+
+    /**
+     * Обновить
+     * 
+     * @param array $data
+     * @return bool
+     */
+    public static function update(array $data)
+    {
+        if (empty($data)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        return (bool) db()->where('id', $data['id'])->update(static::$table, $data);
+    }
+
+    /**
+     * Create (создание)
+     */
+
+    /**
+     * Создать
+     * 
+     * @param array $data
+     * @return bool
+     */
+    public static function create(array $data)
+    {
+        if (empty($data)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        return (bool) db()->insert(static::$table, $data);
+    }
+
+    /**
+     * Delete (удаление)
+     */
+
+    /**
+     * Удалить
+     * 
+     * @param string|int $id
+     * @return bool
+     */
+    public static function delete($id)
+    {
+        if (empty($id)) {
+            throw new exceptionRepository('Пустой id', 400);
+        }
+        return (bool) db()->where('id', $id)->delete(static::$table);
+    }
+
+    /**
+     * Entity (сущности)
+     */
+
+    /**
+     * Сущность из массива
+     * 
+     * @param array $data
+     * @return InterfaceEntity
+     */
+    public static function getEntity(array $data)
+    {
+        if (empty($data)) {
+            throw new exceptionRepository('Пустые данные', 400);
+        }
+        return new static::$entity($data);
+    }
+
+    /**
+     * Массив сущностей из массива
+     * 
+     * @param array[] $data
+     * @return InterfaceEntity[]
+     */
+    public static function getEntities(array $data)
+    {
+        if (empty($data)) {
+            throw new exceptionRepository('Пустые данные', 400);
+        }
+
+        $entities = array();
+        foreach ($data as $one) {
+            $entities[] = static::getEntity($one);
+        }
+
+        return $entities;
     }
 }

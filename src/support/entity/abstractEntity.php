@@ -14,8 +14,6 @@
 
 namespace support\entity;
 
-use Exception;
-
 /**
  * Abstract Entity
  */
@@ -28,7 +26,7 @@ abstract class abstractEntity
     public function __construct(array $raw)
     {
         if (empty($raw)) {
-            throw new Exception("Пустая сущность", 500);
+            throw new exceptionEntity("Пустая сущность", 500);
         }
 
         foreach ($raw as $key => $value) {

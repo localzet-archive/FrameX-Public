@@ -14,6 +14,7 @@
 
 use support\MySQL;
 use support\PgSQL;
+use support\JWT;
 use support\Request;
 use support\Response;
 use support\Container;
@@ -100,7 +101,11 @@ function response($body = '', $status = 200, $headers = array(), $http_status = 
 {
     $headers = ['Content-Type' => 'application/json'] + config('server.http.headers') + $headers;
 
-    $body = json_encode(['debug' => config('app.debug'), 'status' => $status, 'data' => $body], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    $body = json_encode([
+        'debug' => config('app.debug'),
+        'status' => $status,
+        'data' => $body
+    ], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
 
     if ($http_status == true) {
         return new Response($status, $headers, $body);
