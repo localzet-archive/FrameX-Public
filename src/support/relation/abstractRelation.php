@@ -54,7 +54,7 @@ abstract class abstractRelation
      */
     public static function get(array $where)
     {
-        if (empty($where) || empty($value)) {
+        if (empty($where)) {
             return db()->get(static::$table) ?? false;
         } else {
             $return = db();
@@ -82,7 +82,7 @@ abstract class abstractRelation
         if (empty($data)) {
             throw new exceptionRelation('Невозможно создать пустую запись', 400);
         } else {
-            return (bool) db()->insert(static::$table, $data);
+            return (bool) db()->insert(static::$table, $data) ?? false;
         }
     }
 
@@ -98,7 +98,7 @@ abstract class abstractRelation
      */
     public static function delete(array $where)
     {
-        if (empty($where) || empty($value)) {
+        if (empty($where)) {
             throw new exceptionRelation('Невозможно удалить пустую запись', 400);
         } else {
             if (!empty(static::get($where))) return true;

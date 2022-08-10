@@ -23,22 +23,24 @@ interface InterfaceRepository
      */
 
     /**
-     * Получить экземпляр сущности из репозитория
+     * Получить один
      * 
-     * @param string|array $where
-     * @param mixed $value
-     * @return InterfaceEntity
+     * @param array $where
+     * @param string $operator
+     * @param string $cond OR, AND
+     * @return InterfaceEntity|false
      */
-    public static function getOne($where, $value = null);
+    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false);
 
     /**
-     * Получить массив сущностей из репозитория
+     * Получить
      * 
-     * @param string $where
-     * @param mixed $value
-     * @return InterfaceEntity[]
+     * @param array $where
+     * @param string $operator
+     * @param string $cond OR, AND
+     * @return InterfaceEntity[]|false
      */
-    public static function get($where = null, $value = null);
+    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false);
 
     /**
      * Получить сущность по ID
@@ -55,10 +57,11 @@ interface InterfaceRepository
     /**
      * Обновить
      * 
+     * @param array $where
      * @param array $data
      * @return bool
      */
-    public static function update(array $data);
+    public static function update(array $where, array $data);
 
     /**
      * Create (создание)
@@ -79,10 +82,10 @@ interface InterfaceRepository
     /**
      * Удалить
      * 
-     * @param string|int $id
+     * @param array $where
      * @return bool
      */
-    public static function delete($id);
+    public static function delete(array $where);
 
     /**
      * Entity (сущности)
@@ -92,15 +95,17 @@ interface InterfaceRepository
      * Сущность из массива
      * 
      * @param array $data
-     * @return InterfaceEntity
+     * @param array $params
+     * @return InterfaceEntity|false
      */
-    public static function getEntity(array $data);
+    public static function getEntity(array $data, array $params = false);
 
     /**
      * Массив сущностей из массива
      * 
      * @param array[] $data
-     * @return InterfaceEntity[]
+     * @param array $params
+     * @return InterfaceEntity[]|false
      */
-    public static function getEntities(array $data);
+    public static function getEntities(array $data, array $params = false);
 }
