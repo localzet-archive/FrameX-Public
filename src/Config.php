@@ -45,7 +45,7 @@ class Config
         $dir_iterator = new \RecursiveDirectoryIterator($config_path, \FilesystemIterator::FOLLOW_SYMLINKS);
         $iterator = new \RecursiveIteratorIterator($dir_iterator);
         foreach ($iterator as $file) {
-            /** var SplFileInfo $file */
+            /** @var \SplFileInfo $file */
             if (is_dir($file) || $file->getExtension() != 'php' || \in_array($file->getBaseName('.php'), $exclude_file)) {
                 continue;
             }
@@ -169,5 +169,13 @@ class Config
     {
         static::$_config = [];
         static::load($config_path, $exclude_file);
+    }
+
+    /**
+     * @param array $config
+     */
+    public static function set($config)
+    {
+        static::$_config = array_replace_recursive(static::$_config, $config);
     }
 }
