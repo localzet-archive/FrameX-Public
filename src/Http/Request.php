@@ -239,7 +239,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
      */
     public function expectsJson()
     {
-        return ($this->isAjax() && !$this->isPjax()) || $this->acceptJson();
+        return ($this->isAjax() && !$this->isPjax()) || $this->acceptJson() || strtoupper($this->method()) != 'GET';
     }
 
     /**
