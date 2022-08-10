@@ -27,7 +27,6 @@ use support\view\ThinkPHP;
 use support\view\Twig;
 
 use localzet\Core\Server;
-use localzet\Storage\Client as Storage;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -519,7 +518,9 @@ function cpu_count()
 
 function storage()
 {
-    return new Storage();
+    if (class_exists(\localzet\Storage\Client::class)) {
+        return new \localzet\Storage\Client();
+    }
 }
 
 /**
