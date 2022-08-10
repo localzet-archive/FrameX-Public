@@ -18,10 +18,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 use localzet\Core\Server;
 use localzet\Core\Protocols\Http;
 use localzet\Core\Connection\TcpConnection;
+
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 use localzet\FrameX\Middleware;
+
 use support\Request;
 use support\Log;
 use support\Container;
@@ -82,6 +84,9 @@ if (property_exists(Server::class, 'statusFile')) {
 if ($config['listen']) {
     // Запуск
     $server = new Server($config['listen'], $config['context']);
+    if ($config['storage']['enable'] === true && class_exists(\localzet\Storage\Server::class)) {
+        $storage = new \localzet\Storage\Server($config['storage']['ip'], $config['storage']['port']);
+    }
 
     // Назначение конфигурации
     $property_map = [
@@ -92,14 +97,22 @@ if ($config['listen']) {
         'reusePort',
         'transport',
     ];
+
     foreach ($property_map as $property) {
         if (isset($config[$property])) {
             $server->$property = $config[$property];
         }
     }
 
-    // Запуск приложения
+    // Запуск приложения при старте сервера
     $server->onServerStart = function ($server) {
+        $http = new localzet\HTTP\Client();
+
+        $http->get('https://api.github.com/repos/localzet/Core/releases/latest', function ($response) {
+            $data = json_decode($response->getBody(), true);
+            Config::set(['app' => ['version' => $data['name']]]);
+        });
+
         require_once base_path() . '/support/bootstrap.php';
         $app = new App($server, Container::instance(), Log::channel('default'), app_path(), public_path());
         Http::requestClass(config('app.request_class', config('server.request_class', Request::class)));
