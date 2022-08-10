@@ -106,12 +106,14 @@ if ($config['listen']) {
 
     // Запуск приложения при старте сервера
     $server->onServerStart = function ($server) {
-        $http = new localzet\HTTP\Client();
+        if (class_exists(\localzet\HTTP\Client::class)) {
+            $http = new localzet\HTTP\Client();
 
-        $http->get('https://api.github.com/repos/localzet/Core/releases/latest', function ($response) {
-            $data = json_decode($response->getBody(), true);
-            Config::set(['app' => ['version' => $data['name']]]);
-        });
+            $http->get('https://api.github.com/repos/localzet/Core/releases/latest', function ($response) {
+                $data = json_decode($response->getBody(), true);
+                Config::set(['app' => ['version' => $data['name']]]);
+            });
+        }
 
         require_once base_path() . '/support/bootstrap.php';
         $app = new App($server, Container::instance(), Log::channel('default'), app_path(), public_path());
