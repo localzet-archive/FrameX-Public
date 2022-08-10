@@ -468,23 +468,6 @@ function cpu_count()
 }
 
 /**
- * @return \support\MySQL
- */
-function db($type = 'MySQL')
-{
-    if ($type == 'MySQL') {
-        return new MySQL(config('database.mysql'));
-    } elseif ($type == 'PgSQL') {
-        return new PgSQL(config('database.pgsql'));
-    }
-}
-
-function tgBot()
-{
-    return new Telegram(config('bot'));
-}
-
-/**
  * Получение IP-адреса
  *
  * @return string IP-адрес
