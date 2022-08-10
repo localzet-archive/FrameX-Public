@@ -18,12 +18,16 @@ use support\JWT;
 use support\Request;
 use support\Response;
 use support\Container;
+
 use support\bot\Telegram;
+
 use support\view\Raw;
 use support\view\Blade;
 use support\view\ThinkPHP;
 use support\view\Twig;
+
 use localzet\Core\Server;
+use localzet\Storage\Client as Storage;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -97,31 +101,77 @@ function runtime_path()
  * @param string $body
  * @return Response
  */
-function response($body = '', $status = 200, $headers = array(), $http_status = false)
+function response($body = '', $status = 200, $headers = array(), $http_status = false, $onlyJson = false)
 {
-    $headers = ['Content-Type' => 'application/json'] + config('server.http.headers') + $headers;
-
-    $body = json_encode([
+    $headers = config('server.http.headers') + $headers;
+    $body = [
         'debug' => config('app.debug'),
         'status' => $status,
         'data' => $body
-    ], JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    ];
+    $status = ($http_status === true) ? $status : 200;
 
-    if ($http_status == true) {
-        return new Response($status, $headers, $body);
+    if (request()->expectsJson() || $onlyJson) {
+        return responseJson($body, $status, $headers);
     } else {
-        return new Response(200, $headers, $body);
+        return responseView($body, $status, $headers);
     }
 }
 
 /**
+ * @param string $blob
+ * @return Response
+ */
+function responseBlob($blob, $type = 'image/png')
+{
+    return new Response(
+        200,
+        [
+            'Content-Type' => $type,
+            'Content-Length' => strlen($blob)
+        ],
+        $blob
+    );
+}
+
+/**
  * @param $data
+ * @param int $status
+ * @param array $headers
  * @param int $options
  * @return Response
  */
-function json($data, $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
+function responseJson($data, $status = 200, $headers = array(), $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
-    return new Response(200, ['Content-Type' => 'application/json'] + config('server.http.headers'), json_encode($data, $options));
+    $headers = ['Content-Type' => 'application/json'] + config('server.http.headers') + $headers;
+    $body = json($data, $options);
+
+    return new Response($status, $headers, $body);
+}
+
+/**
+ * @param $data
+ * @param int $status
+ * @param array $headers
+ * @return Response
+ */
+function responseView($data, $status = 200, $headers = array())
+{
+    $headers = config('server.http.headers') + $headers;
+    $template = ($data['status'] == 200) ? 'response/success' : 'response/error';
+    $status = ($status != 200) ? $status : $data['status'];
+
+    return new Response($status, $headers, Raw::render($template, $data, ""));
+}
+
+/**
+ * @param mixed $value
+ * @param int $flags
+ * @return string|false
+ */
+function json($value, $flags = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
+{
+    return json_encode($value, $flags);
 }
 
 /**
@@ -170,13 +220,13 @@ function redirect($location, $status = 302, $headers = [])
  * @param null $app
  * @return Response
  */
-function view($template, $vars = [], $app = null)
+function view($template, $vars = [], $app = null, $http_code = 200)
 {
     static $handler;
     if (null === $handler) {
         $handler = config('view.handler');
     }
-    return new Response(200, config('server.http.headers'), $handler::render($template, $vars, $app));
+    return new Response($http_code, config('server.http.headers'), $handler::render($template, $vars, $app));
 }
 
 /**
@@ -467,17 +517,26 @@ function cpu_count()
     return $count > 0 ? $count : 4;
 }
 
+function storage()
+{
+    return new Storage();
+}
+
 /**
  * Получение IP-адреса
  *
  * @return string IP-адрес
  */
-function getRequestIp(Request $request)
+function getRequestIp()
 {
-    if (!empty($request->header('x-real-ip')) && validate_ip($request->header('x-real-ip'))) {
-        $ip = $request->header('x-real-ip');
-    } elseif (!empty($request->header('x-forwarded-for')) && validate_ip($request->header('x-forwarded-for'))) {
-        $ip = $request->header('x-forwarded-for');
+    if (!empty(request()->header('x-real-ip')) && validate_ip(request()->header('x-real-ip'))) {
+        $ip = request()->header('x-real-ip');
+    } elseif (!empty(request()->header('x-forwarded-for')) && validate_ip(request()->header('x-forwarded-for'))) {
+        $ip = request()->header('x-forwarded-for');
+    } elseif (!empty(request()->header('client-ip')) && validate_ip(request()->header('client-ip'))) {
+        $ip = request()->header('client-ip');
+    } elseif (!empty(request()->header('remote-addr')) && validate_ip(request()->header('remote-addr'))) {
+        $ip = request()->header('remote-addr');
     } else {
         $ip = null;
     }
@@ -529,9 +588,9 @@ function validate_ip(string $ip)
  *      'platform'
  *  )
  */
-function getBrowser(Request $request)
+function getBrowser()
 {
-    $u_agent = $request->header('user-agent');
+    $u_agent = request()->header('user-agent');
     // echo $u_agent;
     $bname = 'Неизвестно';
     $ub = "Неизвестно";
@@ -601,6 +660,8 @@ function getBrowser(Request $request)
         'platform'  => $platform
     );
 }
+
+// class Methods
 
 /**
  * Генерация ID
