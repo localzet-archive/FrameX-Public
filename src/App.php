@@ -189,7 +189,7 @@ class App
     {
         // when route, controller and action not found, try to use Route::fallback
         return Route::getFallback() ?: function () {
-            return new Response(404, config('server.http.headers'), \file_get_contents(static::$_publicPath . '/404.html'));
+            return new Response(404, [], \file_get_contents(static::$_publicPath . '/404.html'));
         };
     }
 
@@ -256,7 +256,7 @@ class App
                     return static::exceptionResponse($e, $request);
                 }
                 if (\is_scalar($response) || null === $response) {
-                    $response = new Response(200, config('server.http.headers'), $response);
+                    $response = new Response(200, [], $response);
                 }
                 return $response;
             });
@@ -375,7 +375,7 @@ class App
                 $callback = static::getFallback();
                 return $callback($request);
             }
-            return (new Response())->withHeaders(config('server.http.headers'))->file($file);
+            return (new Response())->withHeaders([])->file($file);
         }, null, false), '', '', '', null];
         [$callback, $request->app, $request->controller, $request->action, $request->route] = static::$_callbacks[$key];
         static::send($connection, $callback($request), $request);

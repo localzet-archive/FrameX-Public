@@ -22,6 +22,16 @@ use localzet\FrameX\App;
  */
 class Response extends \localzet\Core\Protocols\Http\Response
 {
+    function __construct(
+        $status = 200,
+        $headers = array(),
+        $body = ''
+    ) {
+        if (config('plugin.framex.cors.enable', false) === true) {
+            $headers = $headers + config('plugin.framex.cors.headers', []);
+        }
+        parent::__construct($status, $headers, $body);
+    }
     /**
      * @param string $file
      * @return $this

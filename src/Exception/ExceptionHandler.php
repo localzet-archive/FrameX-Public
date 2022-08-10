@@ -77,12 +77,12 @@ class ExceptionHandler implements ExceptionHandlerInterface
             $this->_debug && $json['traces'] = (string)$exception;
             return new Response(
                 200,
-                ['Content-Type' => 'application/json'] + config('server.http.headers'),
+                ['Content-Type' => 'application/json'],
                 json_encode($json, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
             );
         // }
         $error = $this->_debug ? nl2br((string)$exception) : $exception->getMessage();
-        return new Response(500, config('server.http.headers'), $error);
+        return new Response(500, [], $error);
     }
 
     /**
