@@ -12,14 +12,9 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-use support\MySQL;
-use support\PgSQL;
-use support\JWT;
 use support\Request;
 use support\Response;
 use support\Container;
-
-use support\bot\Telegram;
 
 use support\view\Raw;
 use support\view\Blade;
@@ -27,6 +22,7 @@ use support\view\ThinkPHP;
 use support\view\Twig;
 
 use localzet\Core\Server;
+
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
@@ -38,6 +34,20 @@ if (is_phar()) {
     define('BASE_PATH', realpath(__DIR__ . '/../'));
 }
 define('FRAMEX_VERSION', '1.3.0');
+
+/**
+ * @return \FrameX\MySQL
+ */
+function db()
+{
+    if (class_exists(\FrameX\MySQL::class)) {
+        return new \FrameX\MySQL();
+    } else if (class_exists(\FrameX\JSONDB::class)) {
+        return new \FrameX\JSONDB();
+    } else if (class_exists(\FrameX\PgSQL::class)) {
+        return new \FrameX\PgSQL();
+    }
+}
 
 /**
  * @param $return_phar
@@ -94,6 +104,7 @@ function runtime_path()
     }
     return $path;
 }
+
 /**
  * @param int $status
  * @param array $headers
@@ -102,7 +113,7 @@ function runtime_path()
  */
 function response($body = '', $status = 200, $headers = array(), $http_status = false, $onlyJson = false)
 {
-    $headers = config('server.http.headers') + $headers;
+    $headers = $headers;
     $body = [
         'debug' => config('app.debug'),
         'status' => $status,
@@ -142,7 +153,7 @@ function responseBlob($blob, $type = 'image/png')
  */
 function responseJson($data, $status = 200, $headers = array(), $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
-    $headers = ['Content-Type' => 'application/json'] + config('server.http.headers') + $headers;
+    $headers = ['Content-Type' => 'application/json'] + $headers;
     $body = json($data, $options);
 
     return new Response($status, $headers, $body);
@@ -156,7 +167,6 @@ function responseJson($data, $status = 200, $headers = array(), $options = JSON_
  */
 function responseView($data, $status = 200, $headers = array())
 {
-    $headers = config('server.http.headers') + $headers;
     $template = ($data['status'] == 200) ? 'response/success' : 'response/error';
     $status = ($status != 200) ? $status : $data['status'];
 
@@ -182,7 +192,7 @@ function xml($xml)
     if ($xml instanceof SimpleXMLElement) {
         $xml = $xml->asXML();
     }
-    return new Response(200, ['Content-Type' => 'text/xml'] + config('server.http.headers'), $xml);
+    return new Response(200, ['Content-Type' => 'text/xml'], $xml);
 }
 
 /**
@@ -195,7 +205,7 @@ function jsonp($data, $callback_name = 'callback')
     if (!is_scalar($data) && null !== $data) {
         $data = json_encode($data);
     }
-    return new Response(200, config('server.http.headers'), "$callback_name($data)");
+    return new Response(200, [], "$callback_name($data)");
 }
 
 /**
@@ -206,7 +216,7 @@ function jsonp($data, $callback_name = 'callback')
  */
 function redirect($location, $status = 302, $headers = [])
 {
-    $response = new Response($status, ['Location' => $location] + config('server.http.headers'));
+    $response = new Response($status, ['Location' => $location]);
     if (!empty($headers)) {
         $response->withHeaders($headers);
     }
@@ -225,7 +235,7 @@ function view($template, $vars = [], $app = null, $http_code = 200)
     if (null === $handler) {
         $handler = config('view.handler');
     }
-    return new Response($http_code, config('server.http.headers'), $handler::render($template, $vars, $app));
+    return new Response($http_code, [], $handler::render($template, $vars, $app));
 }
 
 /**
@@ -236,7 +246,7 @@ function view($template, $vars = [], $app = null, $http_code = 200)
  */
 function raw_view($template, $vars = [], $app = null)
 {
-    return new Response(200, config('server.http.headers'), Raw::render($template, $vars, $app));
+    return new Response(200, [], Raw::render($template, $vars, $app));
 }
 
 /**
@@ -247,7 +257,7 @@ function raw_view($template, $vars = [], $app = null)
  */
 function blade_view($template, $vars = [], $app = null)
 {
-    return new Response(200, config('server.http.headers'), Blade::render($template, $vars, $app));
+    return new Response(200, [], Blade::render($template, $vars, $app));
 }
 
 /**
@@ -258,7 +268,7 @@ function blade_view($template, $vars = [], $app = null)
  */
 function think_view($template, $vars = [], $app = null)
 {
-    return new Response(200, config('server.http.headers'), ThinkPHP::render($template, $vars, $app));
+    return new Response(200, [], ThinkPHP::render($template, $vars, $app));
 }
 
 /**
@@ -269,7 +279,7 @@ function think_view($template, $vars = [], $app = null)
  */
 function twig_view($template, $vars = [], $app = null)
 {
-    return new Response(200, config('server.http.headers'), Twig::render($template, $vars, $app));
+    return new Response(200, [], Twig::render($template, $vars, $app));
 }
 
 /**
@@ -349,7 +359,7 @@ function session($key = null, $default = null)
  */
 function not_found()
 {
-    return new Response(404, config('server.http.headers'), file_get_contents(public_path() . '/404.html'));
+    return new Response(404, [], file_get_contents(public_path() . '/404.html'));
 }
 
 /**
