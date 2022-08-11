@@ -36,7 +36,7 @@ if (is_phar()) {
 define('FRAMEX_VERSION', '1.3.0');
 
 /**
- * @return \FrameX\MySQL
+ * @return \FrameX\MySQL\Main
  */
 function db()
 {
@@ -46,6 +46,13 @@ function db()
         return new \FrameX\JSONDB\Main();
     } else if (class_exists(\FrameX\PgSQL\Main::class)) {
         return new \FrameX\PgSQL\Main();
+    }
+}
+
+function storage()
+{
+    if (class_exists(\localzet\Storage\Client::class)) {
+        return new \localzet\Storage\Client();
     }
 }
 
@@ -524,13 +531,6 @@ function cpu_count()
         }
     }
     return $count > 0 ? $count : 4;
-}
-
-function storage()
-{
-    if (class_exists(\localzet\Storage\Client::class)) {
-        return new \localzet\Storage\Client();
-    }
 }
 
 /**
