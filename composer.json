@@ -28,9 +28,7 @@
         "monolog/monolog": "^2.0",
         "jenssegers/blade": "^1.4.0",
         "topthink/think-template": "^2.0.8",
-        "twig/twig": "^3.3.10",
-        "irazasyed/telegram-bot-sdk": ">=3.6",
-        "firebase/php-jwt": ">=6.2.0"
+        "twig/twig": "^3.3.10"
     },
     "autoload": {
         "psr-4": {
