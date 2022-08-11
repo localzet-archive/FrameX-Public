@@ -40,12 +40,12 @@ define('FRAMEX_VERSION', '1.3.0');
  */
 function db()
 {
-    if (class_exists(\FrameX\MySQL::class)) {
-        return new \FrameX\MySQL();
-    } else if (class_exists(\FrameX\JSONDB::class)) {
-        return new \FrameX\JSONDB();
-    } else if (class_exists(\FrameX\PgSQL::class)) {
-        return new \FrameX\PgSQL();
+    if (class_exists(\FrameX\MySQL\Main::class)) {
+        return new \FrameX\MySQL\Main();
+    } else if (class_exists(\FrameX\JSONDB\Main::class)) {
+        return new \FrameX\JSONDB\Main();
+    } else if (class_exists(\FrameX\PgSQL\Main::class)) {
+        return new \FrameX\PgSQL\Main();
     }
 }
 
