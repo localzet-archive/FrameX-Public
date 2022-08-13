@@ -49,7 +49,7 @@ abstract class abstractEntity
      * Получение значений
      * @param string $keys
      */
-    public function get(...$keys = null)
+    public function get(...$keys)
     {
         if (empty($keys)) {
             return (array) clone $this;
