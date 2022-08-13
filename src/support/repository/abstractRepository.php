@@ -43,7 +43,7 @@ abstract class abstractRepository
         if (empty($where)) {
             throw new exceptionRepository('Невозможно получить пустую запись', 400);
         } else {
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value, $operator, $cond);
@@ -75,7 +75,7 @@ abstract class abstractRepository
      */
     public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null)
     {
-        $return = db();
+        $return = db()::getInstance();
 
         if (!empty($where)) {
             foreach ($where as $key => $value) {
@@ -116,7 +116,7 @@ abstract class abstractRepository
                 $data = $data->get();
             }
 
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value);
@@ -164,7 +164,7 @@ abstract class abstractRepository
             throw new exceptionRepository('Пустой id', 400);
         } else {
             if (!empty(static::get($where))) return true;
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value);

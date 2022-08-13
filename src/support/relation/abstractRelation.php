@@ -36,7 +36,7 @@ abstract class abstractRelation
         if (empty($where)) {
             throw new exceptionRelation('Невозможно получить пустую запись', 400);
         } else {
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value);
@@ -57,7 +57,7 @@ abstract class abstractRelation
         if (empty($where)) {
             return db()->get(static::$table) ?? false;
         } else {
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value);
@@ -102,7 +102,7 @@ abstract class abstractRelation
             throw new exceptionRelation('Невозможно удалить пустую запись', 400);
         } else {
             if (!empty(static::get($where))) return true;
-            $return = db();
+            $return = db()::getInstance();
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value);
