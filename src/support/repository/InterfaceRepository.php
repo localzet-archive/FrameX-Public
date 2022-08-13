@@ -43,14 +43,6 @@ interface InterfaceRepository
     public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false);
 
     /**
-     * Получить сущность по ID
-     * 
-     * @param string|int $id
-     * @return InterfaceEntity
-     */
-    public static function getById($id);
-
-    /**
      * Update (обновление)
      */
 
@@ -58,10 +50,10 @@ interface InterfaceRepository
      * Обновить
      * 
      * @param array $where
-     * @param array $data
+     * @param array|InterfaceEntity $data
      * @return bool
      */
-    public static function update(array $where, array $data);
+    public static function update(array $where, array|InterfaceEntity $data);
 
     /**
      * Create (создание)
@@ -70,10 +62,10 @@ interface InterfaceRepository
     /**
      * Создать
      * 
-     * @param array $data
+     * @param array|InterfaceEntity $data
      * @return bool
      */
-    public static function create(array $data);
+    public static function create(array|InterfaceEntity $data);
 
     /**
      * Delete (удаление)

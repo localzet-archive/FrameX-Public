@@ -82,14 +82,18 @@ abstract class abstractRepository
      * Обновить
      * 
      * @param array $where
-     * @param array $data
+     * @param array|InterfaceEntity $data
      * @return bool
      */
-    public static function update(array $where, array $data)
+    public static function update(array $where, array|InterfaceEntity $data)
     {
         if (empty($data) || empty($where)) {
             throw new exceptionRepository('Невозможно обновить пустую запись', 400);
         } else {
+            if ($data instanceof InterfaceEntity) {
+                $data = $data->get();
+            }
+
             $return = db();
 
             foreach ($where as $key => $value) {
@@ -106,14 +110,18 @@ abstract class abstractRepository
     /**
      * Создать
      * 
-     * @param array $data
+     * @param array|InterfaceEntity $data
      * @return bool
      */
-    public static function create(array $data)
+    public static function create(array|InterfaceEntity $data)
     {
         if (empty($data)) {
             throw new exceptionRepository('Невозможно создать пустую запись', 400);
         } else {
+            if ($data instanceof InterfaceEntity) {
+                $data = $data->get();
+            }
+
             return (bool) db()->insert(static::$table, $data) ?? false;
         }
     }
@@ -184,7 +192,7 @@ abstract class abstractRepository
         if (empty($data)) {
             throw new exceptionRepository('Пустые данные', 400);
         } else {
-            $entities = array();
+            $entities = [];
 
             foreach ($data as $one) {
                 $entities[] = static::getEntity($one, $params);

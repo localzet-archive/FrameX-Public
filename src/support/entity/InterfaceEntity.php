@@ -21,4 +21,41 @@ interface InterfaceEntity
      * @return void
      */
     public function __construct(array $raw);
+
+    /**
+     * Установка значений
+     * @param array $data
+     */
+    public function set($data);
+
+    /**
+     * Получение значений
+     * @param string $keys
+     */
+    public function get(...$keys = null);
+
+    /**
+     * Установка значения
+     * @param string $key
+     * @param mixed $value
+     */
+    public function __set($key, $value);
+
+    /**
+     * Проверка данных
+     * @param string $key
+     */
+    public function __isset($key);
+
+    /**
+     * Удаление данных
+     * @param string $key
+     */
+    public function __unset($key);
+
+    /**
+     * Получение данных
+     * @param string $key
+     */
+    public function __get($key);
 }
