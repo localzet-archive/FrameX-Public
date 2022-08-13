@@ -75,27 +75,25 @@ abstract class abstractRepository
      */
     public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
     {
-        if (empty($where)) {
-            return static::getEntities(db()->get(static::$table)) ?? false;
-        } else {
-            $return = db();
+        $return = db();
 
+        if (!empty($where)) {
             foreach ($where as $key => $value) {
                 $return->where($key, $value, $operator, $cond);
             }
+        }
 
-            if (!empty($func)) {
-                foreach ($func as $method => $args) {
-                    if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
-                        call_user_func_array([$return::class, $method], $args);
-                    } else {
-                        throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
-                    }
+        if (!empty($func)) {
+            foreach ($func as $method => $args) {
+                if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
+                    call_user_func_array([$return::class, $method], $args);
+                } else {
+                    throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
                 }
             }
-
-            return static::getEntities($return->get(static::$table), $params) ?? false;
         }
+
+        return static::getEntities($return->get(static::$table), $params) ?? false;
     }
 
     /**
