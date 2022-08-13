@@ -32,7 +32,7 @@ interface InterfaceRepository
      * @param array $func
      * @return InterfaceEntity|false
      */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null);
+    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null);
 
     /**
      * Получить
@@ -44,7 +44,7 @@ interface InterfaceRepository
      * @param array $func
      * @return InterfaceEntity[]|false
      */
-    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null);
+    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null);
 
     /**
      * Update (обновление)
@@ -94,7 +94,7 @@ interface InterfaceRepository
      * @param array $params
      * @return InterfaceEntity|false
      */
-    public static function getEntity(array $data, array $params = false);
+    public static function getEntity(array $data, array $params = []);
 
     /**
      * Массив сущностей из массива
@@ -103,7 +103,7 @@ interface InterfaceRepository
      * @param array $params
      * @return InterfaceEntity[]|false
      */
-    public static function getEntities(array $data, array $params = false);
+    public static function getEntities(array $data, array $params = []);
 
     /**
      * Arrays (массивы)
@@ -116,7 +116,7 @@ interface InterfaceRepository
      * @param array $params
      * @return array|false
      */
-    public static function getArray(InterfaceEntity $entity, array $params = false);
+    public static function getArray(InterfaceEntity $entity, array $params = []);
 
     /**
      * Массив массивов из массива сущностей
@@ -125,5 +125,5 @@ interface InterfaceRepository
      * @param array $params
      * @return array[]|false
      */
-    public static function getArrays(InterfaceEntity $entities, array $params = false);
+    public static function getArrays(InterfaceEntity $entities, array $params = []);
 }

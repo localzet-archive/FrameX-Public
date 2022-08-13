@@ -38,7 +38,7 @@ abstract class abstractRepository
      * @param array $func
      * @return InterfaceEntity|false
      */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
+    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null)
     {
         if (empty($where)) {
             throw new exceptionRepository('Невозможно получить пустую запись', 400);
@@ -73,7 +73,7 @@ abstract class abstractRepository
      * @param array $func
      * @return InterfaceEntity[]|false
      */
-    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
+    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null)
     {
         $return = db();
 
@@ -186,7 +186,7 @@ abstract class abstractRepository
      * @param array $params Дополнительные свойства к сущности
      * @return InterfaceEntity|false
      */
-    public static function getEntity(array $data, array $params = false)
+    public static function getEntity(array $data, array $params = [])
     {
         if (empty($data)) {
             throw new exceptionRepository('Пустые данные', 400);
@@ -210,7 +210,7 @@ abstract class abstractRepository
      * @param array $params Дополнительные свойства к сущности
      * @return InterfaceEntity[]|false
      */
-    public static function getEntities(array $data, array $params = false)
+    public static function getEntities(array $data, array $params = [])
     {
         if (empty($data)) {
             throw new exceptionRepository('Пустые данные', 400);
@@ -236,7 +236,7 @@ abstract class abstractRepository
      * @param array $params Дополнительные свойства к массиву
      * @return array|false
      */
-    public static function getArray(InterfaceEntity $entity, array $params = false)
+    public static function getArray(InterfaceEntity $entity, array $params = [])
     {
         if (empty($entity)) {
             throw new exceptionRepository('Пустые данные', 400);
@@ -260,7 +260,7 @@ abstract class abstractRepository
      * @param array $params Дополнительные свойства к массиву
      * @return array[]|false
      */
-    public static function getArrays(InterfaceEntity $entities, array $params = false)
+    public static function getArrays(InterfaceEntity $entities, array $params = [])
     {
         if (empty($entities)) {
             throw new exceptionRepository('Пустые данные', 400);
