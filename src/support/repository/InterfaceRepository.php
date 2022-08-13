@@ -28,9 +28,11 @@ interface InterfaceRepository
      * @param array $where
      * @param string $operator
      * @param string $cond OR, AND
+     * @param array $params Дополнительные свойства к сущности
+     * @param array $func
      * @return InterfaceEntity|false
      */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false);
+    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null);
 
     /**
      * Получить
@@ -38,9 +40,11 @@ interface InterfaceRepository
      * @param array $where
      * @param string $operator
      * @param string $cond OR, AND
+     * @param array $params Дополнительные свойства к сущности
+     * @param array $func
      * @return InterfaceEntity[]|false
      */
-    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false);
+    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null);
 
     /**
      * Update (обновление)

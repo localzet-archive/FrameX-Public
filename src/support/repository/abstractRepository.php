@@ -34,9 +34,11 @@ abstract class abstractRepository
      * @param array $where
      * @param string $operator
      * @param string $cond OR, AND
+     * @param array $params Дополнительные свойства к сущности
+     * @param array $func
      * @return InterfaceEntity|false
      */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false)
+    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
     {
         if (empty($where)) {
             throw new exceptionRepository('Невозможно получить пустую запись', 400);
@@ -45,6 +47,16 @@ abstract class abstractRepository
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value, $operator, $cond);
+            }
+
+            if (!empty($func)) {
+                foreach ($func as $method => $args) {
+                    if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
+                        call_user_func_array([$return::class, $method], $args);
+                    } else {
+                        throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
+                    }
+                }
             }
 
             return static::getEntity($return->getOne(static::$table), $params) ?? false;
@@ -57,9 +69,11 @@ abstract class abstractRepository
      * @param array $where
      * @param string $operator
      * @param string $cond OR, AND
+     * @param array $params Дополнительные свойства к сущности
+     * @param array $func
      * @return InterfaceEntity[]|false
      */
-    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false)
+    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
     {
         if (empty($where)) {
             return static::getEntities(db()->get(static::$table)) ?? false;
@@ -68,6 +82,16 @@ abstract class abstractRepository
 
             foreach ($where as $key => $value) {
                 $return->where($key, $value, $operator, $cond);
+            }
+
+            if (!empty($func)) {
+                foreach ($func as $method => $args) {
+                    if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
+                        call_user_func_array([$return::class, $method], $args);
+                    } else {
+                        throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
+                    }
+                }
             }
 
             return static::getEntities($return->get(static::$table), $params) ?? false;
@@ -161,6 +185,7 @@ abstract class abstractRepository
      * 
      * @param array $data
      * @param array $params
+     * @param array $params Дополнительные свойства к сущности
      * @return InterfaceEntity|false
      */
     public static function getEntity(array $data, array $params = false)
@@ -184,7 +209,7 @@ abstract class abstractRepository
      * Массив сущностей из массива
      * 
      * @param array[] $data
-     * @param array $params
+     * @param array $params Дополнительные свойства к сущности
      * @return InterfaceEntity[]|false
      */
     public static function getEntities(array $data, array $params = false)
@@ -210,7 +235,7 @@ abstract class abstractRepository
      * Массив из сущности
      * 
      * @param InterfaceEntity $entity
-     * @param array $params
+     * @param array $params Дополнительные свойства к массиву
      * @return array|false
      */
     public static function getArray(InterfaceEntity $entity, array $params = false)
@@ -234,7 +259,7 @@ abstract class abstractRepository
      * Массив массивов из массива сущностей
      * 
      * @param InterfaceEntity[] $entities
-     * @param array $params
+     * @param array $params Дополнительные свойства к массиву
      * @return array[]|false
      */
     public static function getArrays(InterfaceEntity $entities, array $params = false)
