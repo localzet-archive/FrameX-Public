@@ -37,7 +37,7 @@ interface InterfaceRelation
      * @param array $where
      * @return array[]|false
      */
-    public static function get(array $where);
+    public static function get(array $where = null);
 
     /**
      * Create (создание)

@@ -52,7 +52,7 @@ abstract class abstractRelation
      * @param array $where
      * @return array[]|false
      */
-    public static function get(array $where)
+    public static function get(array $where = null)
     {
         if (empty($where)) {
             return db()->get(static::$table) ?? false;

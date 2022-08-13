@@ -73,7 +73,7 @@ abstract class abstractRepository
      * @param array $func
      * @return InterfaceEntity[]|false
      */
-    public static function get(array $where, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
+    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = false, array $func = null)
     {
         $return = db();
 
