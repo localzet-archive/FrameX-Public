@@ -201,4 +201,54 @@ abstract class abstractRepository
             return $entities;
         }
     }
+
+    /**
+     * Arrays (массивы)
+     */
+
+    /**
+     * Массив из сущности
+     * 
+     * @param InterfaceEntity $entity
+     * @param array $params
+     * @return array|false
+     */
+    public static function getArray(InterfaceEntity $entity, array $params = false)
+    {
+        if (empty($entity)) {
+            throw new exceptionRepository('Пустые данные', 400);
+        } else {
+            $result = $entity->get();
+
+            if ($params && !empty($params)) {
+                foreach ($params as $key => $value) {
+                    $result[$key] = $value;
+                }
+            }
+
+            return $result;
+        }
+    }
+
+    /**
+     * Массив массивов из массива сущностей
+     * 
+     * @param InterfaceEntity[] $entities
+     * @param array $params
+     * @return array[]|false
+     */
+    public static function getArrays(InterfaceEntity $entities, array $params = false)
+    {
+        if (empty($entities)) {
+            throw new exceptionRepository('Пустые данные', 400);
+        } else {
+            $result = [];
+
+            foreach ($entities as $entity) {
+                $result[] = static::getArray($entity, $params);
+            }
+
+            return $result;
+        }
+    }
 }
