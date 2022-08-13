@@ -51,8 +51,8 @@ abstract class abstractRepository
 
             if (!empty($func)) {
                 foreach ($func as $method => $args) {
-                    if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
-                        call_user_func_array([$return::class, $method], $args);
+                    if (is_string($method) && is_array($args) && method_exists($return, $method)) {
+                        call_user_func_array([$return, $method], $args);
                     } else {
                         throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
                     }
@@ -85,8 +85,8 @@ abstract class abstractRepository
 
         if (!empty($func)) {
             foreach ($func as $method => $args) {
-                if (is_string($method) && is_array($args) && method_exists($return::class, $method)) {
-                    call_user_func_array([$return::class, $method], $args);
+                if (is_string($method) && is_array($args) && method_exists($return, $method)) {
+                    call_user_func_array([$return, $method], $args);
                 } else {
                     throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
                 }
