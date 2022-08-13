@@ -27,8 +27,8 @@ class Response extends \localzet\Core\Protocols\Http\Response
         $headers = array(),
         $body = ''
     ) {
-        if (config('plugin.framex.cors.enable', false) === true) {
-            $headers = $headers + config('plugin.framex.cors.headers', []);
+        if (config('plugin.framex.cors.app.enable', false) === true) {
+            $headers = $headers + config('plugin.framex.cors.app.headers', []);
         }
         parent::__construct($status, $headers, $body);
     }
