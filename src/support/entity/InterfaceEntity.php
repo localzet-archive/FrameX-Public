@@ -32,7 +32,7 @@ interface InterfaceEntity
      * Получение значений
      * @param string $keys
      */
-    public function get(...$keys = null);
+    public function get(...$keys);
 
     /**
      * Установка значения
