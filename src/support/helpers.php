@@ -26,6 +26,7 @@ use localzet\Core\Server;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
+use support\database\MySQL;
 
 // Phar support.
 if (\is_phar()) {
@@ -41,6 +42,13 @@ define('WEBMAN_FRAMEWORK_VERSION', '1.4.4');
 define('WEBCORE_VERSION', '1.1.2');
 define('FRAMEX_VERSION', '1.1.0');
 define('FRAMEX_FRAMEWORK_VERSION', '1.1.0');
+
+
+function db(string $connection = 'default')
+{
+    $db = new MySQL();
+    return $db->connection($connection);
+}
 
 /**
  * @param bool $return_phar

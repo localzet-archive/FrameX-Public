@@ -57,7 +57,7 @@ class Raw implements View
         // Try to include php file.
         try {
             include $view_path;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             static::$_vars = [];
             \ob_end_clean();
             throw $e;

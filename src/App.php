@@ -312,7 +312,7 @@ class App
 
     /**
      * @param string $plugin
-     * @return ContainerInterface
+     * @return ContainerInterface|object
      */
     public static function container(string $plugin = '')
     {
