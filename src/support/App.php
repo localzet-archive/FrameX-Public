@@ -19,7 +19,6 @@ class App
     public static function run()
     {
         ini_set('display_errors', 'on');
-        error_reporting(E_ALL);
 
         if (class_exists(Dotenv::class) && file_exists(base_path() . '/.env')) {
             if (method_exists(Dotenv::class, 'createUnsafeImmutable')) {
@@ -31,7 +30,7 @@ class App
 
         static::loadAllConfig(['route', 'container']);
 
-        $error_reporting = config('app.error_reporting');
+        $error_reporting = config('app.error_reporting', E_ALL);
         if (isset($error_reporting)) {
             error_reporting($error_reporting);
         }

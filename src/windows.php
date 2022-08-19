@@ -10,7 +10,6 @@ use Dotenv\Dotenv;
 use localzet\Core\Server;
 
 ini_set('display_errors', 'on');
-error_reporting(E_ALL);
 
 if (class_exists('Dotenv\Dotenv') && file_exists(base_path() . '/.env')) {
     if (method_exists('Dotenv\Dotenv', 'createUnsafeImmutable')) {
@@ -22,7 +21,7 @@ if (class_exists('Dotenv\Dotenv') && file_exists(base_path() . '/.env')) {
 
 App::loadAllConfig(['route']);
 
-$error_reporting = config('app.error_reporting');
+$error_reporting = config('app.error_reporting', E_ALL);
 if (isset($error_reporting)) {
     error_reporting($error_reporting);
 }

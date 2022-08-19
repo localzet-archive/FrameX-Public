@@ -15,6 +15,7 @@
 use support\Request;
 use support\Response;
 use support\Container;
+use support\database\MySQL;
 
 use support\view\Raw;
 use support\view\Blade;
@@ -26,7 +27,6 @@ use localzet\Core\Server;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
-use support\database\MySQL;
 
 // Phar support.
 if (\is_phar()) {
