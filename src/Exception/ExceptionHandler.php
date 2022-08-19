@@ -14,14 +14,13 @@
 
 namespace localzet\FrameX\Exception;
 
-use Throwable;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use localzet\FrameX\Http\Request;
 use localzet\FrameX\Http\Response;
 
 /**
  * Class Handler
- * @package support\exception
  */
 class ExceptionHandler implements ExceptionHandlerInterface
 {
@@ -61,7 +60,11 @@ class ExceptionHandler implements ExceptionHandlerInterface
             return;
         }
 
-        $this->_logger->error($exception->getMessage(), ['exception' => (string)$exception]);
+        $logs = '';
+        if ($request = \request()) {
+            $logs = $request->getRealIp() . ' ' . $request->method() . ' ' . \trim($request->fullUrl(), '/');
+        }
+        $this->_logger->error($logs . PHP_EOL . $exception);
     }
 
     /**
@@ -73,15 +76,19 @@ class ExceptionHandler implements ExceptionHandlerInterface
     {
         $status = $exception->getCode();
         // if ($request->expectsJson()) {
-            $json = ['debug' => $this->_debug, 'status' => $status ? $status : 500, 'error' => $exception->getMessage()];
-            $this->_debug && $json['traces'] = (string)$exception;
-            return new Response(
-                200,
-                ['Content-Type' => 'application/json'],
-                json_encode($json, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
-            );
+        $json = [
+            'debug' => $this->_debug,
+            'status' => $status ? $status : 500,
+            'error' => $this->_debug ? $exception->getMessage() : 'Ошибка сервера'
+        ];
+        $this->_debug && $json['traces'] = (string)$exception;
+        return new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            \json_encode($json, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
+        );
         // }
-        $error = $this->_debug ? nl2br((string)$exception) : $exception->getMessage();
+        $error = $this->_debug ? \nl2br((string)$exception) : ($this->_debug ? $exception->getMessage() : 'Ошибка сервера');
         return new Response(500, [], $error);
     }
 

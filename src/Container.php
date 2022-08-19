@@ -19,7 +19,6 @@ use localzet\FrameX\Exception\NotFoundException;
 
 /**
  * Class Container
- * @package localzet\FrameX
  */
 class Container implements ContainerInterface
 {
@@ -34,10 +33,10 @@ class Container implements ContainerInterface
      * @return mixed
      * @throws NotFoundException
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (!isset($this->_instances[$name])) {
-            if (!class_exists($name)) {
+            if (!\class_exists($name)) {
                 throw new NotFoundException("Класс '$name' не найден");
             }
             $this->_instances[$name] = new $name();
@@ -49,20 +48,20 @@ class Container implements ContainerInterface
      * @param string $name
      * @return bool
      */
-    public function has($name): bool
+    public function has(string $name): bool
     {
         return \array_key_exists($name, $this->_instances);
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $constructor
      * @return mixed
      * @throws NotFoundException
      */
-    public function make($name, array $constructor = [])
+    public function make(string $name, array $constructor = [])
     {
-        if (!class_exists($name)) {
+        if (!\class_exists($name)) {
             throw new NotFoundException("Класс '$name' не найден");
         }
         return new $name(...array_values($constructor));

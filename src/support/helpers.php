@@ -28,43 +28,29 @@ use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 
 // Phar support.
-if (is_phar()) {
-    define('BASE_PATH', dirname(__DIR__));
+if (\is_phar()) {
+    \define('BASE_PATH', dirname(__DIR__));
 } else {
-    define('BASE_PATH', realpath(__DIR__ . '/../'));
+    \define('BASE_PATH', realpath(__DIR__ . '/../'));
 }
-define('FRAMEX_VERSION', '1.3.0');
+
+// Совместимость версий
+define('WEBMAN_VERSION', '1.4.1');
+define('WEBMAN_FRAMEWORK_VERSION', '1.4.4');
+
+define('WEBCORE_VERSION', '1.1.2');
+define('FRAMEX_VERSION', '1.1.0');
+define('FRAMEX_FRAMEWORK_VERSION', '1.1.0');
 
 /**
- * @return \FrameX\MySQL\Main
- */
-function db()
-{
-    if (class_exists(\FrameX\MySQL\Main::class)) {
-        return new \FrameX\MySQL\Main();
-    } else if (class_exists(\FrameX\JSONDB\Main::class)) {
-        return new \FrameX\JSONDB\Main();
-    } else if (class_exists(\FrameX\PgSQL\Main::class)) {
-        return new \FrameX\PgSQL\Main();
-    }
-}
-
-function storage()
-{
-    if (class_exists(\localzet\Storage\Client::class)) {
-        return new \localzet\Storage\Client();
-    }
-}
-
-/**
- * @param $return_phar
+ * @param bool $return_phar
  * @return false|string
  */
-function base_path($return_phar = true)
+function base_path(bool $return_phar = true)
 {
     static $real_path = '';
     if (!$real_path) {
-        $real_path = is_phar() ? dirname(Phar::running(false)) : BASE_PATH;
+        $real_path = \is_phar() ? \dirname(Phar::running(false)) : BASE_PATH;
     }
     return $return_phar ? BASE_PATH : $real_path;
 }
@@ -84,7 +70,7 @@ function public_path()
 {
     static $path = '';
     if (!$path) {
-        $path = get_realpath(config('app.public_path', BASE_PATH . DIRECTORY_SEPARATOR . 'public'));
+        $path = config('app.public_path', BASE_PATH . DIRECTORY_SEPARATOR . 'public');
     }
     return $path;
 }
@@ -107,7 +93,7 @@ function runtime_path()
 {
     static $path = '';
     if (!$path) {
-        $path = get_realpath(config('app.runtime_path', BASE_PATH . DIRECTORY_SEPARATOR . 'runtime'));
+        $path = config('app.runtime_path', BASE_PATH . DIRECTORY_SEPARATOR . 'runtime');
     }
     return $path;
 }
@@ -118,7 +104,7 @@ function runtime_path()
  * @param string $body
  * @return Response
  */
-function response($body = '', $status = 200, $headers = array(), $http_status = false, $onlyJson = false)
+function response($body = '', $status = 200, $headers = [], $http_status = false, $onlyJson = false)
 {
     $headers = $headers;
     $body = [
@@ -158,7 +144,7 @@ function responseBlob($blob, $type = 'image/png')
  * @param int $options
  * @return Response
  */
-function responseJson($data, $status = 200, $headers = array(), $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
+function responseJson($data, $status = 200, $headers = [], $options = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
     $headers = ['Content-Type' => 'application/json'] + $headers;
     $body = json($data, $options);
@@ -172,7 +158,7 @@ function responseJson($data, $status = 200, $headers = array(), $options = JSON_
  * @param array $headers
  * @return Response
  */
-function responseView($data, $status = 200, $headers = array())
+function responseView($data, $status = 200, $headers = [])
 {
     $template = ($data['status'] == 200) ? 'response/success' : 'response/error';
     $status = ($status != 200) ? $status : $data['status'];
@@ -216,12 +202,12 @@ function jsonp($data, $callback_name = 'callback')
 }
 
 /**
- * @param $location
+ * @param string $location
  * @param int $status
  * @param array $headers
  * @return Response
  */
-function redirect($location, $status = 302, $headers = [])
+function redirect(string $location, int $status = 302, array $headers = [])
 {
     $response = new Response($status, ['Location' => $location]);
     if (!empty($headers)) {
@@ -231,66 +217,67 @@ function redirect($location, $status = 302, $headers = [])
 }
 
 /**
- * @param $template
+ * @param string $template
  * @param array $vars
- * @param null $app
+ * @param string $app
+ * @param int $http_code
  * @return Response
  */
-function view($template, $vars = [], $app = null, $http_code = 200)
+function view(string $template, array $vars = [], string $app = null, int $http_code = 200)
 {
-    static $handler;
-    if (null === $handler) {
-        $handler = config('view.handler');
-    }
+    $request = \request();
+    $plugin =  $request->plugin ?? '';
+    $handler = \config($plugin ? "plugin.$plugin.view.handler" : 'view.handler');
     return new Response($http_code, [], $handler::render($template, $vars, $app));
 }
 
 /**
- * @param $template
+ * @param string $template
  * @param array $vars
- * @param null $app
+ * @param string|null $app
  * @return Response
+ * @throws Throwable
  */
-function raw_view($template, $vars = [], $app = null)
+function raw_view(string $template, array $vars = [], string $app = null)
 {
     return new Response(200, [], Raw::render($template, $vars, $app));
 }
 
 /**
- * @param $template
+ * @param string $template
  * @param array $vars
- * @param null $app
+ * @param string|null $app
  * @return Response
  */
-function blade_view($template, $vars = [], $app = null)
+function blade_view(string $template, array $vars = [], string $app = null)
 {
     return new Response(200, [], Blade::render($template, $vars, $app));
 }
 
 /**
- * @param $template
+ * @param string $template
  * @param array $vars
- * @param null $app
+ * @param string|null $app
  * @return Response
  */
-function think_view($template, $vars = [], $app = null)
+function think_view(string $template, array $vars = [], string $app = null)
 {
     return new Response(200, [], ThinkPHP::render($template, $vars, $app));
 }
 
 /**
- * @param $template
+ * @param string $template
  * @param array $vars
- * @param null $app
+ * @param string|null $app
  * @return Response
  */
-function twig_view($template, $vars = [], $app = null)
+function twig_view(string $template, array $vars = [], string $app = null)
 {
     return new Response(200, [], Twig::render($template, $vars, $app));
 }
 
 /**
- * @return Request
+ * @return \localzet\FrameX\Http\Request|null
  */
 function request()
 {
@@ -298,21 +285,21 @@ function request()
 }
 
 /**
- * @param $key
- * @param null $default
- * @return mixed
+ * @param string|null $key
+ * @param $default
+ * @return array|mixed|null
  */
-function config($key = null, $default = null)
+function config(string $key = null, $default = null)
 {
     return Config::get($key, $default);
 }
 
 /**
- * @param $name
+ * @param string $name
  * @param ...$parameters
  * @return string
  */
-function route($name, ...$parameters)
+function route(string $name, ...$parameters)
 {
     $route = Route::getByName($name);
     if (!$route) {
@@ -371,12 +358,13 @@ function not_found()
 
 /**
  * Copy dir.
- * @param $source
- * @param $dest
+ *
+ * @param string $source
+ * @param string $dest
  * @param bool $overwrite
  * @return void
  */
-function copy_dir($source, $dest, $overwrite = false)
+function copy_dir(string $source, string $dest, bool $overwrite = false)
 {
     if (is_dir($source)) {
         if (!is_dir($dest)) {
@@ -395,10 +383,11 @@ function copy_dir($source, $dest, $overwrite = false)
 
 /**
  * Remove dir.
- * @param $dir
+ *
+ * @param string $dir
  * @return bool
  */
-function remove_dir($dir)
+function remove_dir(string $dir)
 {
     if (is_link($dir) || is_file($dir)) {
         return unlink($dir);

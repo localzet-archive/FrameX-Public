@@ -14,28 +14,24 @@
 
 namespace localzet\FrameX;
 
-use Psr\Container\ContainerInterface;
-use localzet\FrameX\App;
-
-
-
 class Middleware
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected static $_container = null;
-
     /**
      * @var array
      */
     protected static $_instances = [];
 
     /**
-     * @param $all_middlewares
+     * @param array $all_middlewares
+     * @param string $plugin
+     * @return void
      */
-    public static function load($all_middlewares)
+    public static function load($all_middlewares, string $plugin = '')
     {
+        if (!\is_array($all_middlewares)) {
+            return;
+        }
+
         // $all_middlewares = [
         //     'app1' => [
         //         'Class1',
@@ -55,7 +51,7 @@ class Middleware
             }
             foreach ($middlewares as $class_name) {
                 if (\method_exists($class_name, 'process')) {
-                    static::$_instances[$app_name][] = [static::container()->get($class_name), 'process'];
+                    static::$_instances[$plugin][$app_name][] = [$class_name, 'process'];
                 } else {
                     // @todo Log
                     echo "Промежуточный $class_name::process не существует\n";
@@ -65,19 +61,20 @@ class Middleware
     }
 
     /**
-     * @param $app_name
+     * @param string $plugin
+     * @param string $app_name
      * @param bool $with_global_middleware
-     * @return array
+     * @return array|mixed
      */
-    public static function getMiddleware($app_name, $with_global_middleware = true)
+    public static function getMiddleware(string $plugin, string $app_name, bool $with_global_middleware = true)
     {
         // Глобальная midleware
-        $global_middleware = $with_global_middleware && isset(static::$_instances['']) ? static::$_instances[''] : [];
+        $global_middleware = $with_global_middleware && isset(static::$_instances[$plugin]['']) ? static::$_instances[$plugin][''] : [];
         if ($app_name === '') {
             return \array_reverse($global_middleware);
         }
         // midleware приложения
-        $app_middleware = static::$_instances[$app_name] ?? [];
+        $app_middleware = static::$_instances[$plugin][$app_name] ?? [];
         return \array_reverse(\array_merge($global_middleware, $app_middleware));
     }
 
@@ -91,17 +88,10 @@ class Middleware
     }
 
     /**
-     * @param $container
-     * @return ContainerInterface
+     * @deprecated
+     * @return void
      */
-    public static function container($container = null)
+    public static function container($_)
     {
-        if ($container) {
-            static::$_container = $container;
-        }
-        if (!static::$_container) {
-            static::$_container = App::container();
-        }
-        return static::$_container;
     }
 }

@@ -23,9 +23,10 @@ class Install
      */
     protected static $pathRelation = [
         'start.php' => 'start.php',
+        'windows.php' => 'windows.php',
         'support/helpers.php' => 'support/helpers.php',
         'support/bootstrap.php' => 'support/bootstrap.php',
-        'support/Plugin.php' => 'support/Plugin.php',
+        // 'support/Plugin.php' => 'support/Plugin.php',
     ];
 
     /**
@@ -36,7 +37,7 @@ class Install
     {
         // $support_dir = __DIR__ . '/../../../../support';
         // if (is_dir($support_dir)) {
-        //remove_dir($support_dir);
+        //     remove_dir($support_dir);
         // }
         static::installByRelation();
     }
@@ -63,8 +64,7 @@ class Install
                 }
             }
             copy_dir(__DIR__ . "/$source", base_path() . "/$dest", true);
-            echo "Создан $dest
-";
+            echo "Создан $dest\r\n";
         }
     }
 }

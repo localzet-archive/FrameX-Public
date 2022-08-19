@@ -18,7 +18,6 @@ use Exception;
 
 /**
  * Class BusinessException
- * @package support\exception
  */
 class BusinessException extends Exception
 {

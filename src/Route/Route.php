@@ -20,7 +20,6 @@ use localzet\FrameX\Route as Router;
 
 /**
  * Class Route
- * @package localzet\FrameX
  */
 class Route
 {
@@ -50,13 +49,20 @@ class Route
     protected $_middlewares = [];
 
     /**
-     * Route constructor.
-     * @param $methods
-     * @param $path
+     * @var array
      */
-    public function __construct($methods, $path, $callback)
+    protected $_params = [];
+
+    /**
+     * Route constructor.
+     *
+     * @param array $methods
+     * @param string $path
+     * @param callable $callback
+     */
+    public function __construct($methods, string $path, $callback)
     {
-        $this->_methods = (array) $methods;
+        $this->_methods = (array)$methods;
         $this->_path = $path;
         $this->_callback = $callback;
     }
@@ -70,10 +76,10 @@ class Route
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return $this
      */
-    public function name($name)
+    public function name(string $name)
     {
         $this->_name = $name;
         Router::setByName($name, $this);
@@ -81,7 +87,7 @@ class Route
     }
 
     /**
-     * @param null $middleware
+     * @param mixed $middleware
      * @return $this|array
      */
     public function middleware($middleware = null)
@@ -89,7 +95,7 @@ class Route
         if ($middleware === null) {
             return $this->_middlewares;
         }
-        $this->_middlewares = array_merge($this->_middlewares, (array)$middleware);
+        $this->_middlewares = \array_merge($this->_middlewares, (array)$middleware);
         return $this;
     }
 
@@ -126,6 +132,29 @@ class Route
     }
 
     /**
+     * @param string|null $name
+     * @param $default
+     * @return array|mixed|null
+     */
+    public function param(string $name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->_params;
+        }
+        return $this->_params[$name] ?? $default;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function setParams(array $params)
+    {
+        $this->_params = \array_merge($this->_params, $params);
+        return $this;
+    }
+
+    /**
      * @param $parameters
      * @return string
      */
@@ -134,8 +163,8 @@ class Route
         if (empty($parameters)) {
             return $this->_path;
         }
-        $path = str_replace(['[', ']'], '', $this->_path);
-        return preg_replace_callback('/\{(.*?)(?:\:[^\}]*?)*?\}/', function ($matches) use (&$parameters) {
+        $path = \str_replace(['[', ']'], '', $this->_path);
+        $path = \preg_replace_callback('/\{(.*?)(?:\:[^\}]*?)*?\}/', function ($matches) use (&$parameters) {
             if (!$parameters) {
                 return $matches[0];
             }
@@ -152,5 +181,6 @@ class Route
             }
             return $matches[0];
         }, $path);
+        return \count($parameters) > 0 ? $path . '?' . http_build_query($parameters) : $path;
     }
 }

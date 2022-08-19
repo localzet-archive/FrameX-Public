@@ -14,14 +14,13 @@
 
 namespace localzet\FrameX;
 
-use FastRoute\Dispatcher\GroupCountBased;
-use FastRoute\RouteCollector;
-use localzet\Core\Protocols\Http\Session\FileSessionHandler as SessionHandler;
 
 /**
- * Class FileSessionHandler
- * @package localzet\FrameX
+ * Устаревший класс, будет удален в будущем.
+ * Замени на localzet\FrameX\Session\FileSessionHandler
+ * @deprecated
  */
-class FileSessionHandler extends SessionHandler
+class FileSessionHandler extends Session\FileSessionHandler
 {
+
 }

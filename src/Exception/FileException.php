@@ -14,10 +14,11 @@
 
 namespace localzet\FrameX\Exception;
 
+use RuntimeException;
+
 /**
  * Class FileException
- * @package localzet\FrameX\Exception
  */
-class FileException extends \RuntimeException
+class FileException extends RuntimeException
 {
 }

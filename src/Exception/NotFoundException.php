@@ -18,7 +18,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class NotFoundException
- * @package localzet\FrameX\Exception
  */
 class NotFoundException extends \Exception implements NotFoundExceptionInterface
 {

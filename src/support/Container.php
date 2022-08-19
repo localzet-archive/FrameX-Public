@@ -16,9 +16,11 @@ namespace support;
 
 use Psr\Container\ContainerInterface;
 
+use localzet\FrameX\App;
+use localzet\FrameX\Config;
+
 /**
  * Class Container
- * @package support
  * @method static mixed get($name)
  * @method static mixed make($name, array $parameters)
  * @method static bool has($name)
@@ -26,28 +28,21 @@ use Psr\Container\ContainerInterface;
 class Container
 {
     /**
-     * @var ContainerInterface
-     */
-    protected static $_instance = null;
-
-    /**
      * @return ContainerInterface
      */
-    public static function instance()
+    public static function instance(string $plugin = '')
     {
-        if (!static::$_instance) {
-            static::$_instance = include config_path() . '/container.php';
-        }
-        return static::$_instance;
+        return Config::get($plugin ? "plugin.$plugin.container" : 'container');
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      * @return mixed
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic(string $name, array $arguments)
     {
-        return static::instance()->{$name}(...$arguments);
+        $plugin = App::getPluginByClass($name);
+        return static::instance($plugin)->{$name}(...$arguments);
     }
 }

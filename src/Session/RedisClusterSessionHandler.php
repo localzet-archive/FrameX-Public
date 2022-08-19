@@ -12,11 +12,10 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-namespace support;
+namespace localzet\FrameX\Session;
 
-/**
- * Class Request
- */
-class Request extends \localzet\FrameX\Http\Request
+use localzet\Core\Protocols\Http\Session\RedisClusterSessionHandler as RedisClusterHandler;
+
+class RedisClusterSessionHandler extends RedisClusterHandler
 {
 }

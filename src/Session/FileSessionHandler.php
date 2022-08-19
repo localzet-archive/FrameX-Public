@@ -12,11 +12,16 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-namespace support;
+namespace localzet\FrameX\Session;
+
+use FastRoute\Dispatcher\GroupCountBased;
+use FastRoute\RouteCollector;
+use localzet\Core\Protocols\Http\Session\FileSessionHandler as FileHandler;
 
 /**
- * Class Request
+ * Class FileSessionHandler
  */
-class Request extends \localzet\FrameX\Http\Request
+class FileSessionHandler extends FileHandler
 {
+
 }

@@ -12,4 +12,15 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
+namespace localzet\FrameX\Session;
+
+use FastRoute\Dispatcher\GroupCountBased;
+use FastRoute\RouteCollector;
+use localzet\Core\Protocols\Http\Session\RedisSessionHandler as RedisHandler;
+
+/**
+ * Class FileSessionHandler
+ */
+class RedisSessionHandler extends RedisHandler
+{
+}

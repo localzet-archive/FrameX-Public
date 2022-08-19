@@ -18,7 +18,6 @@ use localzet\FrameX\File;
 
 /**
  * Class UploadFile
- * @package localzet\FrameX\Http
  */
 class UploadFile extends File
 {
@@ -39,12 +38,13 @@ class UploadFile extends File
 
     /**
      * UploadFile constructor.
-     * @param $file_name tmp_name
-     * @param $upload_name name
-     * @param $upload_mime_type type
-     * @param $upload_error_code error
+     *
+     * @param string $file_name
+     * @param string $upload_name
+     * @param string $upload_mime_type
+     * @param int $upload_error_code
      */
-    public function __construct($file_name, $upload_name, $upload_mime_type, $upload_error_code)
+    public function __construct(string $file_name, string $upload_name, string $upload_mime_type, int $upload_error_code)
     {
         $this->_uploadName = $upload_name;
         $this->_uploadMimeType = $upload_mime_type;
@@ -73,7 +73,7 @@ class UploadFile extends File
      */
     public function getUploadExtension()
     {
-        return pathinfo($this->_uploadName, PATHINFO_EXTENSION);
+        return \pathinfo($this->_uploadName, PATHINFO_EXTENSION);
     }
 
     /**

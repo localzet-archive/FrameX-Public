@@ -16,7 +16,6 @@ namespace support;
 
 /**
  * Class Response
- * @package support
  */
 class Response extends \localzet\FrameX\Http\Response
 {

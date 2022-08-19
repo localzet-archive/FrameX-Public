@@ -14,14 +14,13 @@
 
 namespace support\exception;
 
-use localzet\FrameX\Http\Request;
-use localzet\FrameX\Http\Response;
 use Throwable;
 use localzet\FrameX\Exception\ExceptionHandler;
+use localzet\FrameX\Http\Request;
+use localzet\FrameX\Http\Response;
 
 /**
  * Class Handler
- * @package support\exception
  */
 class Handler extends ExceptionHandler
 {
