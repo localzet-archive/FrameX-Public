@@ -493,11 +493,26 @@ class App
      */
     protected static function guessControllerAction($path_explode, $action, $suffix, $class_prefix)
     {
-        $map[] = "$class_prefix\\app\\controller\\" . \implode('\\', $path_explode);
+        // Обновление v1.1.3: Превращение поддоменов в приложения
+        $domain = '';
+        if (
+            config('server.subdomains.enable') == true &&
+            static::$_request->host(true) != config('server.subdomains.domain') &&
+            strpos(static::$_request->host(true), '.' . config('server.subdomains.domain'))
+        ) {
+            $domain = str_replace("." . config('server.subdomains.domain'), "", static::$_request->host(true));
+            // 1. \\app\\$domain\\controller\\*path*
+            $map[] = "$class_prefix\\app\\$domain\\controller\\" . \implode('\\', $path_explode);
+        } else {
+            // 1. \\app\\controller\\*path*
+            $map[] = "$class_prefix\\app\\controller\\" . \implode('\\', $path_explode);
+        }
+
+        // 2. \\app\\*path*\\controller\\index
         foreach ($path_explode as $index => $section) {
             $tmp = $path_explode;
             \array_splice($tmp, $index, 1, [$section, 'controller']);
-            $map[] = "$class_prefix\\" . \implode('\\', \array_merge(['app'], $tmp));
+            $map[] = "$class_prefix\\" . \implode('\\', \array_merge(['app'] + (!empty($domain) ? [$domain] : []), $tmp));
         }
         $last_index = \count($map) - 1;
         $map[$last_index] = \trim($map[$last_index], '\\') . '\\index';
