@@ -20,60 +20,74 @@ namespace support\relation;
 interface InterfaceRelation
 {
     /**
-     * Get (получение)
-     */
-
-    /**
-     * Получить один
+     * Создать
      * 
-     * @param array $where
-     * @return array|false
+     * @param array $data Данные в виде массива
+     * @return bool
      */
-    public static function getOne(array $where);
+    public static function create(array $data): bool;
 
     /**
      * Получить
      * 
-     * @param array $where
-     * @return array[]|false
+     * @param array $where Массив условий ['field' => 'value']
+     * @param array $params Дополнительные свойства
+     * @param bool $multi true = get(), false = getOne()
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @param int|null $numRows Лимит [$offset, $count] или $count
+     * @param string $columns Выборка столбцов
+     * @return array
      */
-    public static function get(array $where = null);
+    public static function get(
+        array $where = [],
+        array $params = [],
+        bool $multi = true,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+
+        // get/getOne
+        int|null $numRows = null, // Лимит ($offset, $count)
+        string $columns = '*',
+    );
 
     /**
-     * Create (создание)
-     */
-
-    /**
-     * Создать
+     * Обновить
      * 
-     * @param array $data
+     * @param array $input Массив массивов условий и данных ['where' => ['field' => 'value'], 'data' => [key => value, ...]]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
      * @return bool
      */
-    public static function create(array $data);
+    public static function update(
+        array $input,
 
-    /**
-     * Delete (удаление)
-     */
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool;
 
     /**
      * Удалить
      * 
-     * @param array $where
+     * @param array $input Массив массивов условий [['field' => 'value']]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
      * @return bool
      */
-    public static function delete(array $where);
+    public static function delete(
+        array $input,
 
-    /**
-     * Создать связь
-     * 
-     * @return bool
-     */
-    public static function addRelation($id1, $id2);
-
-    /**
-     * Удалить связь
-     * 
-     * @return bool
-     */
-    public static function delRelation($id1, $id2);
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool;
 }

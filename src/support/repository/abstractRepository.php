@@ -19,164 +19,422 @@ use support\entity\InterfaceEntity;
 /**
  * Abstract Repository
  */
-abstract class abstractRepository
+abstract class abstractRepository implements InterfaceRepository
 {
     public static ?string $entity = '\support\entity\abstractEntity';
-    public static ?string $table;
+    public static ?string $table = 'Entities';
+
+    /** @var array<string|InterfaceRelation> $relations  */
+    public static ?array $relations = [
+        'test' => '\support\relation\abstractRelation'
+    ];
 
     /**
-     * Get (получение)
-     */
-
-    /**
-     * Получить один
+     * Создать реляцию
      * 
-     * @param array $where
-     * @param string $operator
-     * @param string $cond OR, AND
-     * @param array $params Дополнительные свойства к сущности
-     * @param array $func
-     * @return InterfaceEntity|false
+     * @param string $type Ключ класса реляции из static::$relations
+     * @param array $data Данные в виде массива
+     * @return bool
      */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null)
+    public static function createRelation(string $type, array $data)
     {
-        if (empty($where)) {
-            throw new exceptionRepository('Невозможно получить пустую запись', 400);
+        if (empty($type) || empty($data)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        if (!in_array($type, static::$relations) || !class_exists(static::$relations[$type])) {
+            throw new exceptionRepository('Неизвестный класс реляции', 400);
+        }
+
+        /** @var InterfaceRelation $relation  */
+        $relation = static::$relations[$type];
+
+        return $relation::create($data);
+    }
+
+    /**
+     * Получить реляцию
+     * 
+     * @param string $type Ключ класса реляции из static::$relations
+     * @param array $where Массив условий ['field' => 'value']
+     * @param array $params Дополнительные свойства
+     * @param bool $multi true = get(), false = getOne()
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @param int|null $numRows Лимит [$offset, $count] или $count
+     * @param string $columns Выборка столбцов
+     * @return bool
+     */
+    public static function getRelation(
+        string $type,
+        array $where = [],
+        array $params = [],
+        bool $multi = true,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+
+        // get/getOne
+        int|null $numRows = null, // Лимит ($offset, $count)
+        string $columns = '*',
+    ) {
+        if (empty($type)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        if (!in_array($type, static::$relations) || !class_exists(static::$relations[$type])) {
+            throw new exceptionRepository('Неизвестный класс реляции', 400);
+        }
+
+        /** @var InterfaceRelation $relation  */
+        $relation = static::$relations[$type];
+
+        return $relation::get(
+            $where,
+            $params,
+            $multi,
+            $func,
+            $operator,
+            $cond,
+            $numRows,
+            $columns
+        );
+    }
+
+    /**
+     * Обновить реляцию
+     * 
+     * @param string $type Ключ класса реляции из static::$relations
+     * @param array $input Массив массивов условий и данных ['where' => ['field' => 'value'], 'data' => [key => value, ...]]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @return bool
+     */
+    public static function updateRelation(
+        string $type,
+        array $input,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ) {
+        if (empty($type) || empty($input)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        if (!in_array($type, static::$relations) || !class_exists(static::$relations[$type])) {
+            throw new exceptionRepository('Неизвестный класс реляции', 400);
+        }
+
+        /** @var InterfaceRelation $relation  */
+        $relation = static::$relations[$type];
+
+        return $relation::update(
+            $input,
+            $func,
+            $operator,
+            $cond,
+        );
+    }
+
+        /**
+     * Обновить реляцию
+     * 
+     * @param string $type Ключ класса реляции из static::$relations
+     * @param array $input Массив массивов условий [['field' => 'value']]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @return bool
+     */
+    public static function deleteRelation(
+        string $type,
+        array $input,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ) {
+        if (empty($type) || empty($input)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
+        }
+
+        if (!in_array($type, static::$relations) || !class_exists(static::$relations[$type])) {
+            throw new exceptionRepository('Неизвестный класс реляции', 400);
+        }
+
+        /** @var InterfaceRelation $relation  */
+        $relation = static::$relations[$type];
+
+        return $relation::delete(
+            $input,
+            $func,
+            $operator,
+            $cond,
+        );
+    }
+
+    /**
+     * Сущности
+     */
+
+    /**
+     * Создать
+     * 
+     * @param array|InterfaceEntity $data Данные в виде массива или сущности
+     * @return bool
+     */
+    public static function createEntity(
+        array|InterfaceEntity $data,
+    ): bool {
+        if (empty($data)) {
+            throw new exceptionRepository('Невозможно создать пустую запись', 400);
         } else {
-            $return = db()::getInstance();
-
-            foreach ($where as $key => $value) {
-                $return->where($key, $value, $operator, $cond);
+            // Перевод в массив
+            if ($data instanceof InterfaceEntity) {
+                $data = $data->get();
             }
 
-            if (!empty($func)) {
-                foreach ($func as $method => $args) {
-                    if (is_string($method) && is_array($args) && method_exists($return, $method)) {
-                        call_user_func_array([$return, $method], $args);
-                    } else {
-                        throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
-                    }
-                }
-            }
-
-            return static::getEntity($return->getOne(static::$table), $params) ?? false;
+            return (bool) db()->insert(static::$table, $data);
         }
     }
 
     /**
      * Получить
      * 
-     * @param array $where
-     * @param string $operator
-     * @param string $cond OR, AND
+     * @param array $where Массив условий ['field' => 'value']
      * @param array $params Дополнительные свойства к сущности
-     * @param array $func
-     * @return InterfaceEntity[]|false
+     * @param bool $entity Упаковывать в сущности?
+     * @param bool $multi true = get(), false = getOne()
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @param int|null $numRows Лимит [$offset, $count] или $count
+     * @param string $columns Выборка столбцов
+     * @return InterfaceEntity|array|false
      */
-    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null)
-    {
-        $return = db()::getInstance();
+    public static function getEntity(
+        array $where = [],
+        array $params = [],
+        bool $entity = true,
+        bool $multi = true,
 
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+
+        // get/getOne
+        int|null $numRows = null, // Лимит ($offset, $count)
+        string $columns = '*',
+    ) {
+        if ($multi == false && empty($where)) throw new exceptionRepository("Недостаточно данных", 400);
+
+        // Используем один экземпляр БД
+        $db = db()::getInstance();
+
+        // Проверка условий
         if (!empty($where)) {
             foreach ($where as $key => $value) {
-                $return->where($key, $value, $operator, $cond);
+                $db->where($key, $value, $operator, $cond);
             }
         }
 
+        // Дополнительные функции (сортировка и т.п.)
         if (!empty($func)) {
             foreach ($func as $method => $args) {
-                if (is_string($method) && is_array($args) && method_exists($return, $method)) {
-                    call_user_func_array([$return, $method], $args);
+                if (is_string($method) && is_array($args) && method_exists($db, $method)) {
+                    call_user_func_array([$db, $method], $args);
                 } else {
-                    throw new exceptionRepository("Метод $method не существует в " . $return::class, 400);
+                    throw new exceptionRepository("Метод $method не существует в " . $db::class, 400);
                 }
             }
         }
 
-        return static::getEntities($return->get(static::$table), $params) ?? false;
-    }
+        if ($multi == true) {
+            $result = $db->get(static::$table, $numRows, $columns);
+        } else {
+            $result = $db->getOne(static::$table, $columns);
+        }
 
-    /**
-     * Update (обновление)
-     */
+        if ($entity == true) {
+            return static::ArrayToEntity($result, $params);
+        } else {
+            if ($params && !empty($params)) {
+                $results = [];
+
+                if ($multi == false) {
+                    $result = [$result];
+                }
+
+                // [
+                //     'field' => 'value',
+                //     'field' => [
+                //         // Функция без вывода (обработчик существующего параметра)
+                //         'type' => 'procedure',
+                //         'handler' => 'sort',
+                //     ],
+                //     'field' => [
+                //         // Функция с выводом (обработчик value)
+                //         'type' => 'wrapper',
+                //         'handler' => 'md5',
+                //         'value' => 'value'
+                //     ],
+                //     'field' => [
+                //         // Произвольная функция обработки
+                //         'type' => 'handler',
+                //         'handler' => function (&$item, &$key, &$value) {
+                //             $item[$key] = $value['value'];
+                //         },
+                //         'value' => 'value'
+                //     ],
+                //     'field' => [
+                //         // Исключить значение из массива
+                //         'type' => 'unset',
+                //     ],
+                // ];
+
+                foreach ($result as $item) {
+                    foreach ($params as $key => $value) {
+                        if (is_array($value)) {
+                            if (isset($value['type']) && isset($value['handler']) && (is_callable($value['handler']) || function_exists($value['handler']))) {
+                                if ($value['type'] == 'procedure') {
+                                    $value['handler']($item[$key]);
+                                } else if ($value['type'] == 'wrapper') {
+                                    $item[$key] = $value['handler']($value['value']);
+                                } else if ($value['type'] == 'handler') {
+                                    $value['handler']($item, $key, $value);
+                                }
+                            } else if (isset($value['type']) && $value['type'] == 'unset') {
+                                unset($item[$key]);
+                            } else {
+                                throw new \Exception("Функция " . $value['name'] . "() не существует");
+                            }
+                        } else {
+                            $item[$key] = $value;
+                        }
+                    }
+                    $results[] = $item;
+                }
+
+                return $results;
+            }
+
+            return $result;
+        }
+    }
 
     /**
      * Обновить
      * 
-     * @param array $where
-     * @param array|InterfaceEntity $data
+     * @param array $input Массив массивов условий и данных ['where' => ['field' => 'value'], 'data' => [key => value, ...]]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
      * @return bool
      */
-    public static function update(array $where, array|InterfaceEntity $data)
-    {
-        if (empty($data) || empty($where)) {
+    public static function updateEntity(
+        array $input,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool {
+        if (empty($input)) {
             throw new exceptionRepository('Невозможно обновить пустую запись', 400);
         } else {
-            if ($data instanceof InterfaceEntity) {
-                $data = $data->get();
+            $return = true;
+            foreach ($input as $one) {
+                if ($one['data'] instanceof InterfaceEntity) {
+                    $one['data'] = $one['data']->get();
+                }
+
+                $db = db()::getInstance();
+
+                // Проверка условий
+                foreach ($one['where'] as $key => $value) {
+                    $db->where($key, $value, $operator, $cond);
+                }
+
+                // Дополнительные функции (сортировка и т.п.)
+                if (!empty($func)) {
+                    foreach ($func as $method => $args) {
+                        if (is_string($method) && is_array($args) && method_exists($db, $method)) {
+                            call_user_func_array([$db, $method], $args);
+                        } else {
+                            throw new exceptionRepository("Метод $method не существует в " . $db::class, 400);
+                        }
+                    }
+                }
+
+                $return = (bool) $db->update(static::$table, $one['data']);
+
+                if ($return == false) return $return;
             }
 
-            $return = db()::getInstance();
-
-            foreach ($where as $key => $value) {
-                $return->where($key, $value);
-            }
-            return (bool) $return->update(static::$table, $data) ?? false;
+            return true;
         }
     }
-
-    /**
-     * Create (создание)
-     */
-
-    /**
-     * Создать
-     * 
-     * @param array|InterfaceEntity $data
-     * @return bool
-     */
-    public static function create(array|InterfaceEntity $data)
-    {
-        if (empty($data)) {
-            throw new exceptionRepository('Невозможно создать пустую запись', 400);
-        } else {
-            if ($data instanceof InterfaceEntity) {
-                $data = $data->get();
-            }
-
-            return (bool) db()->insert(static::$table, $data) ?? false;
-        }
-    }
-
-    /**
-     * Delete (удаление)
-     */
 
     /**
      * Удалить
      * 
-     * @param array $where
+     * @param array $input Массив массивов условий [['field' => 'value']]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
      * @return bool
      */
-    public static function delete(array $where)
-    {
-        if (empty($where)) {
-            throw new exceptionRepository('Пустой id', 400);
-        } else {
-            if (!empty(static::get($where))) return true;
-            $return = db()::getInstance();
+    public static function deleteEntity(
+        array $input,
 
-            foreach ($where as $key => $value) {
-                $return->where($key, $value);
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool {
+        if (empty($input)) {
+            throw new exceptionRepository('Невозможно удалить пустую запись', 400);
+        } else {
+            $return = true;
+            foreach ($input as $where) {
+
+                if (empty(static::getEntity($where, entity: false))) return true;
+                $db = db()::getInstance();
+
+                // Проверка условий
+                foreach ($where as $key => $value) {
+                    $db->where($key, $value, $operator, $cond);
+                }
+
+                // Дополнительные функции (сортировка и т.п.)
+                if (!empty($func)) {
+                    foreach ($func as $method => $args) {
+                        if (is_string($method) && is_array($args) && method_exists($db, $method)) {
+                            call_user_func_array([$db, $method], $args);
+                        } else {
+                            throw new exceptionRepository("Метод $method не существует в " . $db::class, 400);
+                        }
+                    }
+                }
+
+                $return = (bool) $db->delete(static::$table);
+
+                if ($return == false) return $return;
             }
 
-            return (bool) $return->delete(static::$table) ?? false;
+            return true;
         }
     }
 
-    /**
-     * Entity (сущности)
-     */
+
 
     /**
      * Сущность из массива
@@ -184,94 +442,80 @@ abstract class abstractRepository
      * @param array $data
      * @param array $params
      * @param array $params Дополнительные свойства к сущности
-     * @return InterfaceEntity|false
+     * @return InterfaceEntity[]|InterfaceEntity|false
      */
-    public static function getEntity(array $data, array $params = [])
+    public static function ArrayToEntity(array $data, array $params = [])
     {
         if (empty($data)) {
             throw new exceptionRepository('Пустые данные', 400);
         } else {
-            $result = new static::$entity($data);
-
-            if ($params && !empty($params)) {
-                foreach ($params as $key => $value) {
-                    $result->{$key} = $value;
+            // Одна или несколько сущностей?
+            $multi = false;
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    $multi = true;
+                    break;
                 }
             }
 
-            return $result;
-        }
-    }
+            if ($multi == false) $data = [$data];
 
-    /**
-     * Массив сущностей из массива
-     * 
-     * @param array[] $data
-     * @param array $params Дополнительные свойства к сущности
-     * @return InterfaceEntity[]|false
-     */
-    public static function getEntities(array $data, array $params = [])
-    {
-        if (empty($data)) {
-            throw new exceptionRepository('Пустые данные', 400);
-        } else {
+            // Обработка
             $entities = [];
-
             foreach ($data as $one) {
-                $entities[] = static::getEntity($one, $params);
+
+                $entity = new static::$entity($one);
+
+                if ($params && !empty($params)) {
+                    foreach ($params as $key => $value) {
+                        $entity->{$key} = $value;
+                    }
+                }
+
+                $entities[] = $entity;
             }
+
+            if ($multi == false) $entities = $entities[0];
 
             return $entities;
         }
     }
 
     /**
-     * Arrays (массивы)
-     */
-
-    /**
      * Массив из сущности
      * 
-     * @param InterfaceEntity $entity
+     * @param InterfaceEntity|array $entity
      * @param array $params Дополнительные свойства к массиву
      * @return array|false
      */
-    public static function getArray(InterfaceEntity $entity, array $params = [])
+    public static function EntityToArray(InterfaceEntity|array $data, array $params = [])
     {
-        if (empty($entity)) {
+        if (empty($data)) {
             throw new exceptionRepository('Пустые данные', 400);
         } else {
-            $result = $entity->get();
+            // Одна или несколько сущностей?
+            $multi = is_array($data);
 
-            if ($params && !empty($params)) {
-                foreach ($params as $key => $value) {
-                    $result[$key] = $value;
+            if ($multi == false) $data = [$data];
+
+            // Обработка
+            $arrays = [];
+            foreach ($data as $one) {
+
+                $array = $one->get();
+
+                if ($params && !empty($params)) {
+                    foreach ($params as $key => $value) {
+                        $array[$key] = $value;
+                    }
                 }
+
+                $arrays[] = $array;
             }
 
-            return $result;
-        }
-    }
+            if ($multi == false) $arrays = $arrays[0];
 
-    /**
-     * Массив массивов из массива сущностей
-     * 
-     * @param InterfaceEntity[] $entities
-     * @param array $params Дополнительные свойства к массиву
-     * @return array[]|false
-     */
-    public static function getArrays(InterfaceEntity $entities, array $params = [])
-    {
-        if (empty($entities)) {
-            throw new exceptionRepository('Пустые данные', 400);
-        } else {
-            $result = [];
-
-            foreach ($entities as $entity) {
-                $result[] = static::getArray($entity, $params);
-            }
-
-            return $result;
+            return $arrays;
         }
     }
 }

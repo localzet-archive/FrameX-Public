@@ -14,16 +14,20 @@
 
 namespace support\entity;
 
+use support\repository\InterfaceRepository;
+
 /**
  * Abstract Entity
  */
-abstract class abstractEntity
+abstract class abstractEntity implements InterfaceEntity
 {
+    static string $repository = '\support\repository\abstractRepository';
+
     /**
      * @param array $raw
      * @return void
      */
-    public function __construct(array $raw)
+    public function __construct(array $raw): void
     {
         if (empty($raw)) {
             throw new exceptionEntity("Пустая сущность", 500);
@@ -33,10 +37,65 @@ abstract class abstractEntity
     }
 
     /**
-     * Установка значений
-     * @param array $data
+     * Сущность
      */
-    public function set($data)
+
+    /**
+     * Обновление сущности
+     * @localzet updateEntity
+     * @param string|array $where key | [key => value]
+     * @param array $data [key => value]
+     * @return bool
+     */
+    public function update(string|array $where = 'id', array $data = []): bool
+    {
+        $this->set($data);
+        $data = $this->get();
+
+        if (is_string($where)) $where = [$where => $this->{$where}];
+
+        // [
+        //     'where' => [key => value], 
+        //     'data' => [key => value, ...]
+        // ]
+
+        /** @var InterfaceRepository $repository */
+        $repository = static::$repository;
+
+        return $repository::updateEntity([['where' => $where, 'data' => $data]]);
+    }
+
+    /**
+     * Удаление сущности
+     * @localzet deleteEntity
+     * @param string|array $where key | [key => value]
+     * @return bool
+     */
+    public function delete(string|array $where = 'id'): bool
+    {
+        if (is_string($where)) $where = [$where => $this->{$where}];
+
+        // [
+        //     [key => value]
+        // ]
+
+        /** @var InterfaceRepository $repository */
+        $repository = static::$repository;
+
+        return $repository::deleteEntity([$where]);
+    }
+
+    /**
+     * Свойства
+     */
+
+    /**
+     * Установка значений
+     * @localzet setProperty(s)
+     * @param array $data [key => value]
+     * @return void
+     */
+    public function set(array $data): void
     {
         if (!empty($data)) {
             foreach ($data as $key => $value) {
@@ -47,9 +106,11 @@ abstract class abstractEntity
 
     /**
      * Получение значений
-     * @param string $keys
+     * @localzet getProperty(s)
+     * @param string $keys key1, key2, key3
+     * @return array [key1 => value1, key2 => value2, key3 => value3]
      */
-    public function get(...$keys)
+    public function get(string ...$keys): array
     {
         if (empty($keys)) {
             return (array) clone $this;
@@ -58,11 +119,45 @@ abstract class abstractEntity
         $array = [];
 
         foreach ($keys as $key) {
-            $array[] = $this->{$key};
+            $array[$key] = $this->{$key};
         }
 
         return (array) clone $array;
     }
+
+    /**
+     * Изменение значений
+     * @localzet editProperty(s)
+     * @param array $data [key => value]
+     * @return bool
+     */
+    public function edit(array $data): bool
+    {
+        $this->set($data);
+
+        foreach ($data as $key => $value) {
+            if ($this->{$key} !== $value) return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Удаление значений
+     * @localzet removeProperty(s)
+     * @param string $keys key1, key2, key3
+     * @return void
+     */
+    public function remove(string ...$keys): void
+    {
+        foreach ($keys as $key) {
+            unset($this->{$key});
+        }
+    }
+
+    /**
+     * Магические методы
+     */
 
     /**
      * Установка значения
@@ -71,7 +166,16 @@ abstract class abstractEntity
      */
     public function __set($key, $value)
     {
-        return $this->{$key} = $value;
+        $this->set([$key => $value]);
+    }
+
+    /**
+     * Получение данных
+     * @param string $key
+     */
+    public function __get($key)
+    {
+        return $this->get($key);
     }
 
     /**
@@ -89,15 +193,6 @@ abstract class abstractEntity
      */
     public function __unset($key)
     {
-        return $this->{$key} = null;
-    }
-
-    /**
-     * Получение данных
-     * @param string $key
-     */
-    public function __get($key)
-    {
-        return $this->{$key};
+        $this->remove($key);
     }
 }

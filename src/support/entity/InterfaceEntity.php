@@ -20,42 +20,58 @@ interface InterfaceEntity
      * @param array $raw
      * @return void
      */
-    public function __construct(array $raw);
+    public function __construct(array $raw): void;
+
+
+
+    /**
+     * Обновление сущности
+     * @localzet updateEntity
+     * @param string|array $by key | [key => value]
+     * @param array $data [key => value]
+     * @return bool
+     */
+    public function update(string|array $by = 'id', array $data = []): bool;
+
+    /**
+     * Удаление сущности
+     * @localzet deleteEntity
+     * @param string|array $by key | [key => value]
+     * @return bool
+     */
+    public function delete(string|array $by = 'id'): bool;
+
+
 
     /**
      * Установка значений
-     * @param array $data
+     * @localzet setProperty(s)
+     * @param array $data [key => value]
+     * @return void
      */
-    public function set($data);
+    public function set(array $data): void;
 
     /**
      * Получение значений
-     * @param string $keys
+     * @localzet getProperty(s)
+     * @param string $keys key1, key2, key3
+     * @return array [key1 => value1, key2 => value2, key3 => value3]
      */
-    public function get(...$keys);
+    public function get(string ...$keys): array;
 
     /**
-     * Установка значения
-     * @param string $key
-     * @param mixed $value
+     * Изменение значений
+     * @localzet editProperty(s)
+     * @param array $data [key => value]
+     * @return bool
      */
-    public function __set($key, $value);
+    public function edit(array $data): bool;
 
     /**
-     * Проверка данных
-     * @param string $key
+     * Удаление значений
+     * @localzet removeProperty(s)
+     * @param string $keys key1, key2, key3
+     * @return void
      */
-    public function __isset($key);
-
-    /**
-     * Удаление данных
-     * @param string $key
-     */
-    public function __unset($key);
-
-    /**
-     * Получение данных
-     * @param string $key
-     */
-    public function __get($key);
+    public function remove(string ...$keys): void;
 }

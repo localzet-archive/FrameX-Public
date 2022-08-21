@@ -19,111 +19,81 @@ use support\entity\InterfaceEntity;
 interface InterfaceRepository
 {
     /**
-     * Get (получение)
-     */
-
-    /**
-     * Получить один
-     * 
-     * @param array $where
-     * @param string $operator
-     * @param string $cond OR, AND
-     * @param array $params Дополнительные свойства к сущности
-     * @param array $func
-     * @return InterfaceEntity|false
-     */
-    public static function getOne(array $where, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null);
-
-    /**
-     * Получить
-     * 
-     * @param array $where
-     * @param string $operator
-     * @param string $cond OR, AND
-     * @param array $params Дополнительные свойства к сущности
-     * @param array $func
-     * @return InterfaceEntity[]|false
-     */
-    public static function get(array $where = null, string $operator = '=', string $cond = 'AND', array $params = [], array $func = null);
-
-    /**
-     * Update (обновление)
-     */
-
-    /**
-     * Обновить
-     * 
-     * @param array $where
-     * @param array|InterfaceEntity $data
-     * @return bool
-     */
-    public static function update(array $where, array|InterfaceEntity $data);
-
-    /**
-     * Create (создание)
+     * Сущности
      */
 
     /**
      * Создать
      * 
-     * @param array|InterfaceEntity $data
+     * @param array|InterfaceEntity $data Данные в виде массива или сущности
      * @return bool
      */
-    public static function create(array|InterfaceEntity $data);
+    public static function createEntity(array|InterfaceEntity $data): bool;
+
 
     /**
-     * Delete (удаление)
+     * Получить
+     * 
+     * @param array $where Массив условий ['field' => 'value']
+     * @param array $params Дополнительные свойства к сущности
+     * @param bool $entity Упаковывать в сущности?
+     * @param bool $multi true = get(), false = getOne()
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @param int|null $numRows Лимит [$offset, $count] или $count
+     * @param string $columns Выборка столбцов
+     * @return InterfaceEntity|array
      */
+    public static function getEntity(
+        array $where = [],
+        array $params = [],
+        bool $entity = true,
+        bool $multi = true,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+
+        // get/getOne
+        int|null $numRows = null, // Лимит ($offset, $count)
+        string $columns = '*',
+    );
+
+    /**
+     * Обновить
+     * 
+     * @param array $input Массив массивов условий и данных ['where' => ['field' => 'value'], 'data' => [key => value, ...]]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
+     * @return bool
+     */
+    public static function updateEntity(
+        array $input,
+
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool;
 
     /**
      * Удалить
      * 
-     * @param array $where
+     * @param array $input Массив массивов условий [['field' => 'value']]
+     * @param array $func Дополнительная обработка функцией из \support\database\MySQL
+     * @param string $operator Оператор условий ('=', 'LIKE')
+     * @param string $cond Для нескольких условий (OR, AND)
      * @return bool
      */
-    public static function delete(array $where);
+    public static function deleteEntity(
+        array $input,
 
-    /**
-     * Entity (сущности)
-     */
-
-    /**
-     * Сущность из массива
-     * 
-     * @param array $data
-     * @param array $params
-     * @return InterfaceEntity|false
-     */
-    public static function getEntity(array $data, array $params = []);
-
-    /**
-     * Массив сущностей из массива
-     * 
-     * @param array[] $data
-     * @param array $params
-     * @return InterfaceEntity[]|false
-     */
-    public static function getEntities(array $data, array $params = []);
-
-    /**
-     * Arrays (массивы)
-     */
-
-    /**
-     * Массив из сущности
-     * 
-     * @param InterfaceEntity $entity
-     * @param array $params
-     * @return array|false
-     */
-    public static function getArray(InterfaceEntity $entity, array $params = []);
-
-    /**
-     * Массив массивов из массива сущностей
-     * 
-     * @param InterfaceEntity[] $entities
-     * @param array $params
-     * @return array[]|false
-     */
-    public static function getArrays(InterfaceEntity $entities, array $params = []);
+        // where
+        array $func = [],
+        string $operator = '=',
+        string $cond = 'AND',
+    ): bool;
 }
