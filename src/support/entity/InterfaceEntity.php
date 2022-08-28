@@ -20,7 +20,7 @@ interface InterfaceEntity
      * @param array $raw
      * @return void
      */
-    public function __construct(array $raw): void;
+    public function __construct(array $raw);
 
 
 

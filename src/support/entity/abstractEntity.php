@@ -27,7 +27,7 @@ abstract class abstractEntity implements InterfaceEntity
      * @param array $raw
      * @return void
      */
-    public function __construct(array $raw): void
+    public function __construct(array $raw)
     {
         if (empty($raw)) {
             throw new exceptionEntity("Пустая сущность", 500);

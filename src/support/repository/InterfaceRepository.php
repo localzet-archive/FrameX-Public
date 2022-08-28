@@ -72,6 +72,7 @@ interface InterfaceRepository
      */
     public static function updateEntity(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -90,6 +91,7 @@ interface InterfaceRepository
      */
     public static function deleteEntity(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],

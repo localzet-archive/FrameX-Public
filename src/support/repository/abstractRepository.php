@@ -142,7 +142,7 @@ abstract class abstractRepository implements InterfaceRepository
         );
     }
 
-        /**
+    /**
      * Обновить реляцию
      * 
      * @param string $type Ключ класса реляции из static::$relations
@@ -334,6 +334,7 @@ abstract class abstractRepository implements InterfaceRepository
      * Обновить
      * 
      * @param array $input Массив массивов условий и данных ['where' => ['field' => 'value'], 'data' => [key => value, ...]]
+     * @param bool $multi true = несколько, false = один
      * @param array $func Дополнительная обработка функцией из \support\database\MySQL
      * @param string $operator Оператор условий ('=', 'LIKE')
      * @param string $cond Для нескольких условий (OR, AND)
@@ -341,6 +342,7 @@ abstract class abstractRepository implements InterfaceRepository
      */
     public static function updateEntity(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -350,6 +352,9 @@ abstract class abstractRepository implements InterfaceRepository
         if (empty($input)) {
             throw new exceptionRepository('Невозможно обновить пустую запись', 400);
         } else {
+            if ($multi == false) {
+                $input = [$input];
+            }
             $return = true;
             foreach ($input as $one) {
                 if ($one['data'] instanceof InterfaceEntity) {
@@ -394,6 +399,7 @@ abstract class abstractRepository implements InterfaceRepository
      */
     public static function deleteEntity(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -403,6 +409,9 @@ abstract class abstractRepository implements InterfaceRepository
         if (empty($input)) {
             throw new exceptionRepository('Невозможно удалить пустую запись', 400);
         } else {
+            if ($multi == false) {
+                $input = [$input];
+            }
             $return = true;
             foreach ($input as $where) {
 
@@ -444,10 +453,11 @@ abstract class abstractRepository implements InterfaceRepository
      * @param array $params Дополнительные свойства к сущности
      * @return InterfaceEntity[]|InterfaceEntity|false
      */
-    public static function ArrayToEntity(array $data, array $params = [])
+    public static function ArrayToEntity($data = null, array $params = [])
     {
         if (empty($data)) {
-            throw new exceptionRepository('Пустые данные', 400);
+            return null;
+            // throw new exceptionRepository('Пустые данные', 400);
         } else {
             // Одна или несколько сущностей?
             $multi = false;
