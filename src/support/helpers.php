@@ -29,11 +29,11 @@ use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 
 // Phar support.
-if (\is_phar()) {
-    \define('BASE_PATH', dirname(__DIR__));
-} else {
-    \define('BASE_PATH', realpath(__DIR__ . '/../'));
-}
+// if (\is_phar()) {
+//     \define('BASE_PATH', dirname(__DIR__));
+// } else {
+//     \define('BASE_PATH', realpath(__DIR__ . '/../'));
+// }
 
 // Совместимость версий
 define('WEBMAN_VERSION', '1.4.1');
