@@ -62,7 +62,7 @@ abstract class abstractEntity implements InterfaceEntity
         /** @var InterfaceRepository $repository */
         $repository = static::$repository;
 
-        return $repository::updateEntity([['where' => $where, 'data' => $data]]);
+        return $repository::updateEntity(['where' => $where, 'data' => $data]);
     }
 
     /**

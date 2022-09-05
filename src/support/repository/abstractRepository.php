@@ -320,7 +320,11 @@ abstract class abstractRepository implements InterfaceRepository
                             $item[$key] = $value;
                         }
                     }
-                    $results[] = $item;
+                    if ($multi == false) {
+                        $results = $item;
+                    } else {
+                        $results[] = $item;
+                    }
                 }
 
                 return $results;
