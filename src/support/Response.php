@@ -12,11 +12,11 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-// namespace support;
+namespace support;
 
-// /**
-//  * Class Response
-//  */
-// class Response extends \localzet\FrameX\Http\Response
-// {
-// }
+/**
+ * Class Response
+ */
+class Response extends \localzet\FrameX\Http\Response
+{
+}

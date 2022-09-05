@@ -12,11 +12,11 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-// namespace support;
+namespace support;
 
-// /**
-//  * Class Request
-//  */
-// class Request extends \localzet\FrameX\Http\Request
-// {
-// }
+/**
+ * Class Request
+ */
+class Request extends \localzet\FrameX\Http\Request
+{
+}
