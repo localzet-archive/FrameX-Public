@@ -166,6 +166,7 @@ abstract class abstractRelation implements InterfaceRelation
      */
     public static function update(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -175,6 +176,9 @@ abstract class abstractRelation implements InterfaceRelation
         if (empty($input)) {
             throw new exceptionRelation('Невозможно обновить пустую запись', 400);
         } else {
+            if ($multi == false) {
+                $input = [$input];
+            }
             $return = true;
             foreach ($input as $one) {
                 $db = db()::getInstance();
@@ -215,6 +219,7 @@ abstract class abstractRelation implements InterfaceRelation
      */
     public static function delete(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -224,6 +229,9 @@ abstract class abstractRelation implements InterfaceRelation
         if (empty($input)) {
             throw new exceptionRelation('Невозможно удалить пустую запись', 400);
         } else {
+            if ($multi == false) {
+                $input = [$input];
+            }
             $return = true;
             foreach ($input as $where) {
 

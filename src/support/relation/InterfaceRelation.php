@@ -66,6 +66,7 @@ interface InterfaceRelation
      */
     public static function update(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
@@ -84,6 +85,7 @@ interface InterfaceRelation
      */
     public static function delete(
         array $input,
+        bool $multi = false,
 
         // where
         array $func = [],
