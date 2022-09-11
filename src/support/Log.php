@@ -48,8 +48,8 @@ class Log
         if (!isset(static::$_instance[$name])) {
             $preconfig = [];
             foreach (config('plugin', []) as $firm => $projects) {
-                foreach ($projects as $name => $project) {
-                    if (!is_array($project) || $name === 'static') {
+                foreach ($projects as $namep => $project) {
+                    if (!is_array($project) || $namep === 'static') {
                         continue;
                     }
                     $preconfig += $project['log'] ?? [];
