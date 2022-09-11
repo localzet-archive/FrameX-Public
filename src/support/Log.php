@@ -46,7 +46,17 @@ class Log
     public static function channel(string $name = 'default')
     {
         if (!isset(static::$_instance[$name])) {
-            $config = \config('log', [])[$name];
+            $preconfig = [];
+            foreach (config('plugin', []) as $firm => $projects) {
+                foreach ($projects as $name => $project) {
+                    if (!is_array($project) || $name === 'static') {
+                        continue;
+                    }
+                    $preconfig += $project['log'] ?? [];
+                }
+            }
+            $preconfig += \config('log', []);
+            $config = $preconfig[$name];
             $handlers = self::handlers($config);
             $processors = self::processors($config);
             static::$_instance[$name] = new Logger($name, $handlers, $processors);
@@ -120,7 +130,7 @@ class Log
 
         return $result;
     }
-    
+
     /**
      * @param string $name
      * @param array $arguments
