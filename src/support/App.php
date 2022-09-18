@@ -3,7 +3,7 @@
 namespace support;
 
 use Dotenv\Dotenv;
-
+use FrameX\HttpClient\Curl;
 use localzet\FrameX\Config;
 use localzet\FrameX\Util;
 
@@ -19,14 +19,6 @@ class App
     public static function run()
     {
         ini_set('display_errors', 'on');
-
-        if (class_exists(Dotenv::class) && file_exists(base_path() . '/.env')) {
-            if (method_exists(Dotenv::class, 'createUnsafeImmutable')) {
-                Dotenv::createUnsafeImmutable(base_path())->load();
-            } else {
-                Dotenv::createMutable(base_path())->load();
-            }
-        }
 
         static::loadAllConfig(['route', 'container']);
 
@@ -95,10 +87,50 @@ class App
             }
 
             $server->onServerStart = function ($server) {
+                if ($connected = @fsockopen("www.example.com", 80)) {
+                    $is_conn = true;
+                    fclose($connected);
+                } else {
+                    $is_conn = false;
+                    Config::set(['app' => ['core_version' => WEBCORE_VERSION, 'version' => FRAMEX_VERSION]]);
+                }
+
+                if (class_exists(Curl::class) && $is_conn) {
+                    $http = new Curl();
+                    $core_version = $http->request('https://repo.packagist.org/p2/localzet/core.json', 'GET');
+                    $core_version = json_decode($core_version, true);
+
+                    $version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    $version = json_decode($version, true);
+
+                    Config::set(['app' => ['core_version' => $core_version['packages']['localzet/core'][0]['version'], 'version' => $version['packages']['localzet/framex'][0]['version']]]);
+                }
+
                 require_once \base_path() . '/support/bootstrap.php';
                 $app = new \localzet\FrameX\App(config('app.request_class', Request::class), Log::channel('default'), app_path(), public_path());
                 $server->onMessage = [$app, 'onMessage'];
                 \call_user_func([$app, 'onServerStart'], $server);
+            };
+
+            $server->onServerReload = function ($server) {
+                if ($connected = @fsockopen("www.example.com", 80)) {
+                    $is_conn = true;
+                    fclose($connected);
+                } else {
+                    $is_conn = false;
+                    Config::set(['app' => ['core_version' => WEBCORE_VERSION, 'version' => FRAMEX_VERSION]]);
+                }
+
+                if (class_exists(Curl::class) && $is_conn) {
+                    $http = new Curl();
+                    $core_version = $http->request('https://repo.packagist.org/p2/localzet/core.json', 'GET');
+                    $core_version = json_decode($core_version, true);
+
+                    $version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    $version = json_decode($version, true);
+
+                    Config::set(['app' => ['core_version' => $core_version['packages']['localzet/core'][0]['version'], 'version' => $version['packages']['localzet/framex'][0]['version']]]);
+                }
             };
         }
 
