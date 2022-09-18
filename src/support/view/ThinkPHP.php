@@ -36,6 +36,10 @@ class ThinkPHP implements View
         static::$_vars = \array_merge(static::$_vars, \is_array($name) ? $name : [$name => $value]);
     }
 
+    public static function vars() {
+        return static::$_vars;
+    }
+
     /**
      * @param string $template
      * @param array $vars
