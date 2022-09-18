@@ -116,7 +116,7 @@ class App
 
                     Config::set(['app' => [
                         'core_version' => $core_version['packages']['localzet/core'][0]['version'],
-                        'engine_version' => $core_version['packages']['localzet/framex'][0]['version'],
+                        'engine_version' => $engine_version['packages']['localzet/framex'][0]['version'],
                         'version' => $version['packages']['localzet/webkit'][0]['version'],
                     ]]);
                 }
@@ -157,7 +157,7 @@ class App
 
                     Config::set(['app' => [
                         'core_version' => $core_version['packages']['localzet/core'][0]['version'],
-                        'engine_version' => $core_version['packages']['localzet/framex'][0]['version'],
+                        'engine_version' => $engine_version['packages']['localzet/framex'][0]['version'],
                         'version' => $version['packages']['localzet/webkit'][0]['version'],
                     ]]);
                 }
