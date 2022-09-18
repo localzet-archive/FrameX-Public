@@ -36,12 +36,13 @@ if (\is_phar()) {
 }
 
 // Совместимость версий
+define('WORKERMAN_VERSION', '4.1.0');
+define('WEBMAN_FRAMEWORK_VERSION', '1.4.5');
 define('WEBMAN_VERSION', '1.4.1');
-define('WEBMAN_FRAMEWORK_VERSION', '1.4.4');
 
-define('WEBCORE_VERSION', '1.1.2');
-define('FRAMEX_VERSION', '1.1.0');
-define('FRAMEX_FRAMEWORK_VERSION', '1.1.0');
+define('WEBCORE_VERSION', '1.1.4');
+define('FRAMEX_FRAMEWORK_VERSION', '1.1.5');
+define('FRAMEX_VERSION', '1.2.2');
 
 
 function db(string $connection = 'default')

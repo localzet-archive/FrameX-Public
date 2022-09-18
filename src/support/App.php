@@ -92,18 +92,33 @@ class App
                     fclose($connected);
                 } else {
                     $is_conn = false;
-                    Config::set(['app' => ['core_version' => WEBCORE_VERSION, 'version' => FRAMEX_VERSION]]);
+                    Config::set(['app' => [
+                        'core_version' => WEBCORE_VERSION,
+                        'engine_version' => FRAMEX_FRAMEWORK_VERSION,
+                        'version' => FRAMEX_VERSION,
+                    ]]);
                 }
 
                 if (class_exists(Curl::class) && $is_conn) {
                     $http = new Curl();
+
+                    // Ядро (WebCore) - Сервер
                     $core_version = $http->request('https://repo.packagist.org/p2/localzet/core.json', 'GET');
                     $core_version = json_decode($core_version, true);
 
-                    $version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    // Механика (FrameX (FX) Engine) - Фреймворк
+                    $engine_version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    $engine_version = json_decode($engine_version, true);
+
+                    // Окружение (WebKit) - Приложение
+                    $version = $http->request('https://repo.packagist.org/p2/localzet/webkit.json', 'GET');
                     $version = json_decode($version, true);
 
-                    Config::set(['app' => ['core_version' => $core_version['packages']['localzet/core'][0]['version'], 'version' => $version['packages']['localzet/framex'][0]['version']]]);
+                    Config::set(['app' => [
+                        'core_version' => $core_version['packages']['localzet/core'][0]['version'],
+                        'engine_version' => $core_version['packages']['localzet/framex'][0]['version'],
+                        'version' => $version['packages']['localzet/webkit'][0]['version'],
+                    ]]);
                 }
 
                 require_once \base_path() . '/support/bootstrap.php';
@@ -118,18 +133,33 @@ class App
                     fclose($connected);
                 } else {
                     $is_conn = false;
-                    Config::set(['app' => ['core_version' => WEBCORE_VERSION, 'version' => FRAMEX_VERSION]]);
+                    Config::set(['app' => [
+                        'core_version' => WEBCORE_VERSION,
+                        'engine_version' => FRAMEX_FRAMEWORK_VERSION,
+                        'version' => FRAMEX_VERSION,
+                    ]]);
                 }
 
                 if (class_exists(Curl::class) && $is_conn) {
                     $http = new Curl();
+
+                    // Ядро (WebCore) - Сервер
                     $core_version = $http->request('https://repo.packagist.org/p2/localzet/core.json', 'GET');
                     $core_version = json_decode($core_version, true);
 
-                    $version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    // Механика (FrameX (FX) Engine) - Фреймворк
+                    $engine_version = $http->request('https://repo.packagist.org/p2/localzet/framex.json', 'GET');
+                    $engine_version = json_decode($engine_version, true);
+
+                    // Окружение (WebKit) - Приложение
+                    $version = $http->request('https://repo.packagist.org/p2/localzet/webkit.json', 'GET');
                     $version = json_decode($version, true);
 
-                    Config::set(['app' => ['core_version' => $core_version['packages']['localzet/core'][0]['version'], 'version' => $version['packages']['localzet/framex'][0]['version']]]);
+                    Config::set(['app' => [
+                        'core_version' => $core_version['packages']['localzet/core'][0]['version'],
+                        'engine_version' => $core_version['packages']['localzet/framex'][0]['version'],
+                        'version' => $version['packages']['localzet/webkit'][0]['version'],
+                    ]]);
                 }
             };
         }
