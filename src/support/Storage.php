@@ -41,7 +41,7 @@ class Storage
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (session()->exist($this->storeNamespace) && isset(session()->get($this->storeNamespace)[$key])) {
+        if (session()->has($this->storeNamespace) && isset(session()->get($this->storeNamespace)[$key])) {
             $value = session()->get($this->storeNamespace)[$key];
 
             if (is_array($value) && array_key_exists('lateObject', $value)) {
@@ -88,7 +88,7 @@ class Storage
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (session()->exist($this->storeNamespace) && isset(session()->get($this->storeNamespace)[$key])) {
+        if (session()->has($this->storeNamespace) && isset(session()->get($this->storeNamespace)[$key])) {
             $tmp = session()->get($this->storeNamespace);
 
             unset($tmp[$key]);
@@ -105,7 +105,7 @@ class Storage
     {
         $key = $this->keyPrefix . strtolower($key);
 
-        if (session()->exist($this->storeNamespace) && count(session()->get($this->storeNamespace))) {
+        if (session()->has($this->storeNamespace) && count(session()->get($this->storeNamespace))) {
             $tmp = session()->get($this->storeNamespace);
 
             foreach ($tmp as $k => $v) {
