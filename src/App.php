@@ -218,9 +218,10 @@ class App
      */
     protected static function exceptionResponse(Throwable $e, $request)
     {
+        $app = $request->app ?: '';
+        $plugin = $request->plugin ?: '';
+
         try {
-            $app = $request->app ?: '';
-            $plugin = $request->plugin ?: '';
             $exception_config = static::config($plugin, 'exception');
             $default_exception = $exception_config[''] ?? ExceptionHandler::class;
             $exception_handler_class = $exception_config[$app] ?? $default_exception;
