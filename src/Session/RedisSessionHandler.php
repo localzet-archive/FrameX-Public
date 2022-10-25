@@ -12,7 +12,7 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-namespace Webman\Session;
+namespace localzet\FrameX\Session;
 
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
@@ -20,7 +20,7 @@ use localzet\Core\Protocols\Http\Session\RedisSessionHandler as RedisHandler;
 
 /**
  * Class FileSessionHandler
- * @package Webman
+ * @package localzet\FrameX
  */
 class RedisSessionHandler extends RedisHandler
 {

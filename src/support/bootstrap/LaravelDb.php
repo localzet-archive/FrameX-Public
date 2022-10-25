@@ -32,11 +32,11 @@ use localzet\Core\Server;
 class LaravelDb implements Bootstrap
 {
     /**
-     * @param Server $worker
+     * @param Server $server
      *
      * @return void
      */
-    public static function start($worker)
+    public static function start($server)
     {
         if (!class_exists(Capsule::class)) {
             return;
@@ -74,7 +74,7 @@ class LaravelDb implements Bootstrap
         $capsule->bootEloquent();
 
         // Heartbeat
-        if ($worker) {
+        if ($server) {
             Timer::add(55, function () use ($default, $connections, $capsule) {
                 foreach ($capsule->getDatabaseManager()->getConnections() as $connection) {
                     /* @var \Illuminate\Database\MySqlConnection $connection **/

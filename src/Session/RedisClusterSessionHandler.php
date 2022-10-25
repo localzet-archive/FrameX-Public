@@ -12,7 +12,7 @@
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
-namespace Webman\Session;
+namespace localzet\FrameX\Session;
 
 use localzet\Core\Protocols\Http\Session\RedisClusterSessionHandler as RedisClusterHandler;
 
