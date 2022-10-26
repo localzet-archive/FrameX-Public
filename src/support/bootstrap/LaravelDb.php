@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package     FrameX (FX) Engine
  * @link        https://localzet.gitbook.io
@@ -81,7 +82,8 @@ class LaravelDb implements Bootstrap
                     if ($connection->getConfig('driver') == 'mysql') {
                         try {
                             $connection->select('select 1');
-                        } catch (Throwable $e) {}
+                        } catch (Throwable $e) {
+                        }
                     }
                 }
             });
@@ -90,7 +92,13 @@ class LaravelDb implements Bootstrap
         // Paginator
         if (class_exists(Paginator::class)) {
             Paginator::queryStringResolver(function () {
-                return request()->queryString();
+                // return request()->queryString();
+                if (method_exists(Paginator::class, 'queryStringResolver')) {
+                    Paginator::queryStringResolver(function () {
+                        $request = request();
+                        return $request ? $request->queryString() : null;
+                    });
+                }
             });
             Paginator::currentPathResolver(function () {
                 return request()->path();
