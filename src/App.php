@@ -207,7 +207,7 @@ class App
     {
         // when route, controller and action not found, try to use Route::fallback
         return Route::getFallback() ?: function () {
-            return new Response(404, [], \file_get_contents(static::$_publicPath . '/404.html'));
+            return not_found();
         };
     }
 

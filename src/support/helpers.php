@@ -362,7 +362,7 @@ function session($key = null, $default = null)
  */
 function not_found()
 {
-    return new Response(404, [], file_get_contents(public_path() . '/404.html'));
+    return response('Ничего не найдено', 404);
 }
 
 /**
