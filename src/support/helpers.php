@@ -45,8 +45,24 @@ define('FRAMEX_FRAMEWORK_VERSION', '1.1.5');
 define('FRAMEX_VERSION', '1.2.3');
 
 
-function db(string $connection = 'default')
+/** 
+ * @deprecated 
+ * @see MySQL()
+ */
+function db(string $connection = NULL) {
+    return MySQL($connection);
+}
+
+function MySQL(string $connection = NULL)
 {
+    if (empty($connection)) {
+        $connection = config('database.default', 'default');
+    }
+
+    if (!in_array($connection, array_keys(config('database.connections'))) || config("database.connections.$connection.driver") == 'mysql') {
+        throw new Exception("MySQL соединения не существует в конфигурации");
+    }
+
     $db = new MySQL();
     return $db->connection($connection);
 }

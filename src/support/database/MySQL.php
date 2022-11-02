@@ -17,7 +17,7 @@
 namespace support\database;
 
 /**
- * Class Db
+ * Class MySQL
  * @package support
  * @method static array select(string $query, $bindings = [], $useReadPdo = true)
  * @method static int insert(string $query, $bindings = [])
@@ -269,7 +269,6 @@ class MySQL
 
     public function __construct()
     {
-        if (config('database.type', false) !== 'mysql') return;
         $isSubQuery = false;
 
         if (config('database.connections', false) && is_array(config('database.connections', false))) {
@@ -384,7 +383,7 @@ class MySQL
     public function addConnection($name, array $params)
     {
         $this->connectionsSettings[$name] = array();
-        foreach (array('host', 'username', 'password', 'db', 'port', 'socket', 'charset') as $k) {
+        foreach (array('host', 'username', 'password', 'database', 'port', 'socket', 'charset') as $k) {
             $prm = isset($params[$k]) ? $params[$k] : null;
 
             if ($k == 'host') {
@@ -418,7 +417,7 @@ class MySQL
      * instantiated object from within another class.
      * Inheriting this class would require reloading connection info.
      *
-     * @uses $db = MySqliDb::getInstance();
+     * @uses $db = MySQL::getInstance();
      *
      * @return MysqliDb Returns the current instance.
      */
@@ -651,7 +650,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) options for SQL queries.
      *
-     * @uses $MySqliDb->setQueryOption('name');
+     * @uses $MySQL->setQueryOption('name');
      *
      * @param string|array $options The options name of the query.
      *
@@ -951,7 +950,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) AND WHERE statements for SQL queries.
      *
-     * @uses $MySqliDb->where('id', 7)->where('title', 'MyTitle');
+     * @uses $MySQL->where('id', 7)->where('title', 'MyTitle');
      *
      * @param string $whereProp  The name of the database field.
      * @param mixed  $whereValue The value of the database field.
@@ -989,7 +988,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) OR WHERE statements for SQL queries.
      *
-     * @uses $MySqliDb->orWhere('id', 7)->orWhere('title', 'MyTitle');
+     * @uses $MySQL->orWhere('id', 7)->orWhere('title', 'MyTitle');
      *
      * @param string $whereProp  The name of the database field.
      * @param mixed  $whereValue The value of the database field.
@@ -1005,7 +1004,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) AND HAVING statements for SQL queries.
      *
-     * @uses $MySqliDb->having('SUM(tags) > 10')
+     * @uses $MySQL->having('SUM(tags) > 10')
      *
      * @param string $havingProp  The name of the database field.
      * @param mixed  $havingValue The value of the database field.
@@ -1035,7 +1034,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) OR HAVING statements for SQL queries.
      *
-     * @uses $MySqliDb->orHaving('SUM(tags) > 10')
+     * @uses $MySQL->orHaving('SUM(tags) > 10')
      *
      * @param string $havingProp  The name of the database field.
      * @param mixed  $havingValue The value of the database field.
@@ -1051,7 +1050,7 @@ class MySQL
     /**
      * This method allows you to concatenate joins for the final SQL statement.
      *
-     * @uses $MySqliDb->join('table1', 'field1 <> field2', 'LEFT')
+     * @uses $MySQL->join('table1', 'field1 <> field2', 'LEFT')
      *
      * @param string $joinTable     The name of the table.
      * @param string $joinCondition the condition.
@@ -1212,7 +1211,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) ORDER BY statements for SQL queries.
      *
-     * @uses $MySqliDb->orderBy('id', 'desc')->orderBy('name', 'desc', '^[a-z]')->orderBy('name', 'desc');
+     * @uses $MySQL->orderBy('id', 'desc')->orderBy('name', 'desc', '^[a-z]')->orderBy('name', 'desc');
      *
      * @param string $orderByField         The name of the database field.
      * @param string $orderbyDirection
@@ -1255,7 +1254,7 @@ class MySQL
     /**
      * This method allows you to specify multiple (method chaining optional) GROUP BY statements for SQL queries.
      *
-     * @uses $MySqliDb->groupBy('name');
+     * @uses $MySQL->groupBy('name');
      *
      * @param string $groupByField The name of the database field.
      *
@@ -2362,8 +2361,8 @@ class MySQL
 
         foreach ($tables as $i => $value)
             $tables[$i] = self::$prefix . $value;
-        $db = isset($this->connectionsSettings[$this->defConnectionName]) ? $this->connectionsSettings[$this->defConnectionName]['db'] : null;
-        $this->where('table_schema', $db);
+        $database = isset($this->connectionsSettings[$this->defConnectionName]) ? $this->connectionsSettings[$this->defConnectionName]['database'] : null;
+        $this->where('table_schema', $database);
         $this->where('table_name', $tables, 'in');
         $this->get('information_schema.tables', $count);
         return $this->count == $count;
