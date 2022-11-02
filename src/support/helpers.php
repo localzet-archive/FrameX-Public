@@ -36,13 +36,13 @@ if (\is_phar()) {
 }
 
 // Совместимость версий
-define('WORKERMAN_VERSION', '4.1.0');
-define('WEBMAN_FRAMEWORK_VERSION', '1.4.5');
-define('WEBMAN_VERSION', '1.4.1');
+define('WORKERMAN_VERSION', '5.0.0');
+define('WEBMAN_FRAMEWORK_VERSION', '1.4.9');
+define('WEBMAN_VERSION', '1.4.5');
 
-define('WEBCORE_VERSION', '1.1.4');
-define('FRAMEX_FRAMEWORK_VERSION', '1.1.5');
-define('FRAMEX_VERSION', '1.2.3');
+define('WEBCORE_VERSION', '1.1.9');
+define('WEBKIT_VERSION', '1.1.9');
+define('FRAMEX_VERSION', '1.2.9');
 
 
 /** 

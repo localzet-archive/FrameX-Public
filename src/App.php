@@ -235,7 +235,8 @@ class App
             $response = $exception_handler->render($request, $e);
             return $response;
         } catch (Throwable $e) {
-            $response = new Response(500, [], static::config($plugin ?? '', 'app.debug') ? (string)$e : $e->getMessage());            $response->exception($e);
+            $response = new Response(500, [], static::config($plugin ?? '', 'app.debug') ? (string)$e : $e->getMessage());
+            $response->exception($e);
             return $response;
         }
     }
@@ -558,24 +559,25 @@ class App
         $base_path = $explodes[0] === 'plugin' ? BASE_PATH . '/plugin' : static::$_appPath;
         unset($explodes[0]);
         $file_name = \array_pop($explodes) . '.php';
-        $finded = true;
+        $found = true;
 
         foreach ($explodes as $path_section) {
-            if (!$finded) {
+            if (!$found) {
                 break;
             }
             $dirs = Util::scanDir($base_path, false);
-            $finded = false;
+            $found = false;
             foreach ($dirs as $name) {
-                if (\strtolower($name) === $path_section) {
-                    $base_path = "$base_path/$name";
-                    $finded = true;
+                $path = "$base_path/$name";
+                if (\is_dir($path) && \strtolower($name) === $path_section) {
+                    $base_path = $path;
+                    $found = true;
                     break;
                 }
             }
         }
 
-        if (!$finded) {
+        if (!$found) {
             return false;
         }
 
