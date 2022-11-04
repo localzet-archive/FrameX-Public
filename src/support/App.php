@@ -94,7 +94,7 @@ class App
                     $is_conn = false;
                     Config::set(['app' => [
                         'core_version' => WEBCORE_VERSION,
-                        'engine_version' => FRAMEX_FRAMEWORK_VERSION,
+                        'engine_version' => WEBKIT_VERSION,
                         'version' => FRAMEX_VERSION,
                     ]]);
                 }
@@ -135,7 +135,7 @@ class App
                     $is_conn = false;
                     Config::set(['app' => [
                         'core_version' => WEBCORE_VERSION,
-                        'engine_version' => FRAMEX_FRAMEWORK_VERSION,
+                        'engine_version' => WEBKIT_VERSION,
                         'version' => FRAMEX_VERSION,
                     ]]);
                 }
@@ -184,7 +184,9 @@ class App
             }
         }
 
-        Server::runAll();
+        if (!defined('GLOBAL_START')) {
+            Server::runAll();
+        }
     }
 
     /**
