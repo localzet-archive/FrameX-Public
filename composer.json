@@ -1,16 +1,20 @@
 {
     "name": "localzet/framex",
-    "description": "FrameX (FX) Engine",
+    "description": "FrameX (FX) Engine - Ядро фреймворка нового поколения. Является частью проекта Localzet Developmet Kit",
     "type": "library",
-    "keywords": [
-        "localzet"
-    ],
+    "keywords": ["localzet", "library", "core", "framex"],
     "license": "GPL-3.0-only",
     "authors": [
         {
-            "name": "localzet",
+            "name": "Ivan Zorin",
             "email": "creator@localzet.ru",
-            "homepage": "https://www.localzet.ru",
+            "homepage": "https://vk.com/localzet",
+            "role": "Developer"
+        },
+        {
+            "name": "Alina Yurtsevich",
+            "email": "lina@localzet.ru",
+            "homepage": "https://vk.com/id141514179",
             "role": "Developer"
         }
     ],
