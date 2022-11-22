@@ -32,7 +32,8 @@ class Raw implements View
         static::$_vars = \array_merge(static::$_vars, \is_array($name) ? $name : [$name => $value]);
     }
 
-    public static function vars() {
+    public static function vars()
+    {
         return static::$_vars;
     }
 
@@ -48,8 +49,8 @@ class Raw implements View
         $plugin = $request->plugin ?? '';
         $config_prefix = $plugin ? "plugin.$plugin." : '';
         $view_suffix = \config("{$config_prefix}view.options.view_suffix", 'html');
-        $view_head = \config("{$config_prefix}view.options.view_head");
-        $view_footer = \config("{$config_prefix}view.options.view_footer");
+        $view_head = \config("{$config_prefix}view.options.view_head", "base");
+        $view_footer = \config("{$config_prefix}view.options.view_footer", "footer");
         $app = $app === null ? $request->app : $app;
         $base_view_path = $plugin ? \base_path() . "/plugin/$plugin/app" : \app_path();
         $__template_head__ = $app === '' ? "$base_view_path/view/$view_head.$view_suffix" : "$base_view_path/$app/view/$view_head.$view_suffix";
@@ -61,9 +62,9 @@ class Raw implements View
         \ob_start();
 
         try {
-            include $__template_head__;
+            if (file_exists($__template_head__)) include $__template_head__;
             include $__template_body__;
-            include $__template_foot__;
+            if (file_exists($__template_foot__)) include $__template_foot__;
         } catch (\Throwable $e) {
             static::$_vars = [];
             \ob_end_clean();
