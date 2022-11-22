@@ -1,23 +1,21 @@
 <?php
+
 /**
- * Start file for windows
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io/framex
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @copyright   Copyright (c) 2018-2022 RootX Group
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use process\Monitor;
 use support\App;
-use Dotenv\Dotenv;
 use localzet\Core\Server;
 
 ini_set('display_errors', 'on');
-
-if (class_exists('Dotenv\Dotenv') && file_exists(base_path() . '/.env')) {
-    if (method_exists('Dotenv\Dotenv', 'createUnsafeImmutable')) {
-        Dotenv::createUnsafeImmutable(base_path())->load();
-    } else {
-        Dotenv::createMutable(base_path())->load();
-    }
-}
 
 App::loadAllConfig(['route']);
 

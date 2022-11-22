@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * @package     FrameX (FX) Engine
+ * @link        https://localzet.gitbook.io/framex
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @copyright   Copyright (c) 2018-2022 RootX Group
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace support;
 
-use Dotenv\Dotenv;
 use FrameX\HttpClient\Curl;
 use localzet\FrameX\Config;
 use localzet\FrameX\Util;
@@ -11,6 +19,9 @@ use localzet\Core\Connection\TcpConnection;
 use localzet\Core\Protocols\Http;
 use localzet\Core\Server;
 
+/**
+ * @package FrameX App Manager
+ */
 class App
 {
     /**

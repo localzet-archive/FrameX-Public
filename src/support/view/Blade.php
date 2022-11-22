@@ -2,13 +2,10 @@
 
 /**
  * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io
+ * @link        https://localzet.gitbook.io/framex
  * 
- * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
- * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @copyright   Copyright (c) 2018-2022 RootX Group
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
@@ -18,8 +15,7 @@ use Jenssegers\Blade\Blade as BladeView;
 use localzet\FrameX\View;
 
 /**
- * Class Blade
- * composer require jenssegers/blade
+ * @package FrameX Blade: Templating adapter (jenssegers/blade)
  */
 class Blade implements View
 {

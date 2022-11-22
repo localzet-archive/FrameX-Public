@@ -40,7 +40,8 @@
         "illuminate/database": "*",
         "illuminate/pagination": "*",
         "illuminate/events": "*",
-        "symfony/var-dumper": "^6.1"
+        "symfony/var-dumper": "^6.1",
+        "framex/http": "^1.0"
     },
     "autoload": {
         "psr-4": {
