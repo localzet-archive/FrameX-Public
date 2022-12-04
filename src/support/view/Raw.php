@@ -48,14 +48,15 @@ class Raw implements View
         $request = \request();
         $plugin = $request->plugin ?? '';
         $config_prefix = $plugin ? "plugin.$plugin." : '';
+        $view_global = \config("{$config_prefix}view.options.view_global", false);
         $view_suffix = \config("{$config_prefix}view.options.view_suffix", 'html');
         $view_head = \config("{$config_prefix}view.options.view_head", "base");
         $view_footer = \config("{$config_prefix}view.options.view_footer", "footer");
         $app = $app === null ? $request->app : $app;
         $base_view_path = $plugin ? \base_path() . "/plugin/$plugin/app" : \app_path();
-        $__template_head__ = $app === '' ? "$base_view_path/view/$view_head.$view_suffix" : "$base_view_path/$app/view/$view_head.$view_suffix";
-        $__template_body__ = $app === '' ? "$base_view_path/view/$template.$view_suffix" : "$base_view_path/$app/view/$template.$view_suffix";
-        $__template_foot__ = $app === '' ? "$base_view_path/view/$view_footer.$view_suffix" : "$base_view_path/$app/view/$view_footer.$view_suffix";
+        $__template_head__ = $app === '' || $view_global ? "$base_view_path/view/$view_head.$view_suffix" : "$base_view_path/$app/view/$view_head.$view_suffix";
+        $__template_body__ = $app === '' || $view_global ? "$base_view_path/view/$template.$view_suffix" : "$base_view_path/$app/view/$template.$view_suffix";
+        $__template_foot__ = $app === '' || $view_global ? "$base_view_path/view/$view_footer.$view_suffix" : "$base_view_path/$app/view/$view_footer.$view_suffix";
 
         \extract(static::$_vars);
         \extract($vars);
