@@ -58,6 +58,55 @@ class Raw implements View
         $__template_head__ = ($view_global == true ? \app_path() : $base_view_path) . ($app === '' ? "/view/$view_head.$view_suffix" : "/$app/view/$view_head.$view_suffix");
         $__template_foot__ = ($view_global == true ? \app_path() : $base_view_path) . ($app === '' ? "/view/$view_footer.$view_suffix" : "/$app/view/$view_footer.$view_suffix");
 
+        $name = config('app.info.name', 'FrameX App');
+        $description = config('app.info.description', 'Simple web application on WebCore Server and FrameX Engine');
+        $keywords = config('app.info.keywords', 'FrameX, WebCore, RootX, localzet, Rust, PHP');
+        $viewport = config('app.info.viewport', 'width=device-width, initial-scale=1');
+
+        $domain = config('app.domain', 'https://' . $request->host(true));
+        $canonical = config('app.canonical', $request->url());
+        $src = config('app.src', 'https://src.localzet.com');
+        $fonts = config('app.fonts', 'https://src.localzet.com/fonts');
+
+        $logo = config('app.info.logo', 'https://src.localzet.com/localzet.svg');
+        $og_image = config('app.info.og_image', 'https://src.localzet.com/localzet.svg');
+
+        $owner = config('app.info.owner', 'Ivan Zorin (localzet) <creator@localzet.ru>');
+        $designer = config('app.info.designer', 'Ivan Zorin (localzet) <creator@localzet.ru>');
+        $author = config('app.info.author', 'Ivan Zorin (localzet) <creator@localzet.ru>');
+        $copyright = config('app.info.copyright', 'Localzet Group');
+        $reply_to = config('app.info.reply_to', 'support@localzet.com');
+        
+        $_SRC = 'https://src.rootx.ru';
+        $_ROOTX = 'https://www.rootx.ru';
+        $_LOCALZET = 'https://www.localzet.com';
+
+        $custom = [];
+        $assets = [];
+        $user = [];
+        $page = '';
+        
+        $AppInfo = [
+            'name' => $name,
+            'description' => $description,
+            'keywords' => $keywords,
+            'viewport' => $viewport,
+
+            'logo' => $logo,
+            'og_image' => $og_image,
+
+            'owner' => $owner,
+            'designer' => $designer,
+            'author' => $author,
+            'copyright' => $copyright,
+            'reply_to' => $reply_to,
+
+            'domain' => $domain,
+            'canonical' => $canonical,
+            'src' => $src,
+            'fonts' => $fonts,
+        ];
+
         \extract(static::$_vars);
         \extract($vars);
         \ob_start();
