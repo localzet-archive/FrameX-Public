@@ -65,11 +65,11 @@ class Raw implements View
 
         $domain = config('app.domain', 'https://' . $request->host(true));
         $canonical = config('app.canonical', $request->url());
-        $src = config('app.src', 'https://src.localzet.com');
-        $fonts = config('app.fonts', 'https://src.localzet.com/fonts');
+        $src = config('app.src', 'https://src.rootx.ru');
+        $fonts = config('app.fonts', 'https://src.rootx.ru/fonts');
 
-        $logo = config('app.info.logo', 'https://src.localzet.com/localzet.svg');
-        $og_image = config('app.info.og_image', 'https://src.localzet.com/localzet.svg');
+        $logo = config('app.info.logo', 'https://src.rootx.ru/localzet.svg');
+        $og_image = config('app.info.og_image', 'https://src.rootx.ru/localzet.svg');
 
         $owner = config('app.info.owner', 'Ivan Zorin (localzet) <creator@localzet.ru>');
         $designer = config('app.info.designer', 'Ivan Zorin (localzet) <creator@localzet.ru>');
