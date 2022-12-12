@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support\view;
@@ -16,7 +16,7 @@ use Twig\Environment;
 use localzet\FrameX\View;
 
 /**
- * @package FrameX Twig: Templating adapter (twig/twig)
+ * FrameX Twig: Templating adapter (twig/twig)
  */
 class Twig implements View
 {

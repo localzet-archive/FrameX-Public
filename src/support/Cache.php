@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support;
@@ -16,7 +16,6 @@ use Symfony\Component\Cache\Psr16Cache;
 
 /**
  * Class Cache
- * @package support\bootstrap
  *
  * Strings methods
  * @method static mixed get($key, $default = null)

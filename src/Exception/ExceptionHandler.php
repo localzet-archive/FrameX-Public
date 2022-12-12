@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX\Exception;
@@ -71,22 +71,24 @@ class ExceptionHandler implements ExceptionHandlerInterface
      */
     public function render(Request $request, Throwable $exception): Response
     {
-        $status = $exception->getCode();
-        // if ($request->expectsJson()) {
         $json = [
             'debug' => $this->_debug,
-            'status' => $status ? $status : 500,
-            'error' => $this->_debug ? $exception->getMessage() : 'Ошибка сервера'
+            'status' => $exception->getCode() ?? 500,
+            'error' => $exception->getMessage(),
+            'data' => $this->_debug ? \nl2br((string)$exception) : $exception->getMessage(),
         ];
         $this->_debug && $json['traces'] = (string)$exception;
-        return new Response(
-            200,
-            ['Content-Type' => 'application/json'],
-            \json_encode($json, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
-        );
-        // }
-        $error = $this->_debug ? \nl2br((string)$exception) : ($this->_debug ? $exception->getMessage() : 'Ошибка сервера');
-        return new Response(500, [], $error);
+
+        // Ответ JSON
+        if ($request->expectsJson()) return responseJson($json);
+
+        // DeAuthException - специализированный тип ошибок для деавторизации
+        if ($exception instanceof DeAuthException && class_exists(\plugin\auth\app\middleware\Authentication::class) && config('plugin.auth.app.enabled', false) === true) {
+            $error = empty($exception->getMessage()) ? null : $exception->getMessage();
+            return \plugin\auth\app\middleware\Authentication::deauthorization($error);
+        }
+
+        return responseView('error', $json);
     }
 
     /**

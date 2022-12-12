@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 use support\Request;
@@ -25,12 +25,7 @@ use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 
-// Phar support.
-if (\is_phar()) {
-    \define('BASE_PATH', dirname(__DIR__));
-} else {
-    \define('BASE_PATH', realpath(__DIR__ . '/../'));
-}
+\define('BASE_PATH', dirname(__DIR__));
 
 // Совместимость версий
 define('WORKERMAN_VERSION', '5.0.0');
@@ -46,7 +41,8 @@ define('FRAMEX_VERSION', '1.2.9');
  * @deprecated 
  * @see MySQL()
  */
-function db(string $connection = NULL) {
+function db(string $connection = NULL)
+{
     return MySQL($connection);
 }
 
@@ -65,59 +61,84 @@ function MySQL(string $connection = NULL)
 }
 
 /**
- * @param bool $return_phar
- * @return false|string
+ * return the program execute directory
+ * @param string $path
+ * @return string
  */
-function base_path(bool $return_phar = true)
+function run_path(string $path = ''): string
 {
-    static $real_path = '';
-    if (!$real_path) {
-        $real_path = \is_phar() ? \dirname(Phar::running(false)) : BASE_PATH;
+    static $run_path = '';
+    if (!$run_path) {
+        $run_path = \is_phar() ? \dirname(\Phar::running(false)) : BASE_PATH;
     }
-    return $return_phar ? BASE_PATH : $real_path;
+    return \path_combine($run_path, $path);
 }
 
 /**
+ * @param string|false $path
  * @return string
  */
-function app_path()
+function base_path($path = ''): string
 {
-    return BASE_PATH . DIRECTORY_SEPARATOR . 'app';
-}
-
-/**
- * @return string
- */
-function public_path()
-{
-    static $path = '';
-    if (!$path) {
-        $path = config('app.public_path', BASE_PATH . DIRECTORY_SEPARATOR . 'public');
+    if (false === $path) {
+        return \run_path();
     }
-    return $path;
+    return \path_combine(BASE_PATH, $path);
 }
 
 /**
+ * @param string $path
  * @return string
  */
-function config_path()
+function app_path(string $path = ''): string
 {
-    return BASE_PATH . DIRECTORY_SEPARATOR . 'config';
+    return \path_combine(BASE_PATH . DIRECTORY_SEPARATOR . 'app', $path);
 }
 
 /**
- * Phar support.
- * Compatible with the 'realpath' function in the phar file.
- *
+ * @param string $path
  * @return string
  */
-function runtime_path()
+function public_path(string $path = ''): string
 {
-    static $path = '';
-    if (!$path) {
-        $path = config('app.runtime_path', BASE_PATH . DIRECTORY_SEPARATOR . 'runtime');
+    static $public_path = '';
+    if (!$public_path) {
+        $public_path = \config('app.public_path') ?: \run_path('public');
     }
-    return $path;
+    return \path_combine($public_path, $path);
+}
+
+/**
+ * @param string $path
+ * @return string
+ */
+function config_path(string $path = ''): string
+{
+    return \path_combine(BASE_PATH . DIRECTORY_SEPARATOR . 'config', $path);
+}
+
+/**
+ * @param string $path
+ * @return string
+ */
+function runtime_path(string $path = ''): string
+{
+    static $runtime_path = '';
+    if (!$runtime_path) {
+        $runtime_path = \config('app.runtime_path') ?: \run_path('runtime');
+    }
+    return \path_combine($runtime_path, $path);
+}
+
+/**
+ * Generate paths based on given information
+ * @param string $front
+ * @param string $back
+ * @return string
+ */
+function path_combine(string $front, string $back): string
+{
+    return $front . ($back ? (DIRECTORY_SEPARATOR . ltrim($back, DIRECTORY_SEPARATOR)) : $back);
 }
 
 /**
@@ -126,7 +147,7 @@ function runtime_path()
  * @param string $body
  * @return Response
  */
-function response($body = '', $status = 200, $headers = [], $http_status = false, $onlyJson = false)
+function response(string $body = '', int $status = 200, array $headers = [], $http_status = false, $onlyJson = false): Response
 {
     $headers = $headers;
     $body = [
@@ -180,20 +201,20 @@ function responseJson($data, $status = 200, $headers = [], $options = JSON_NUMER
  * @param array $headers
  * @return Response
  */
-function responseView($data, $status = 200, $headers = [])
+function responseView($data, $status = null, $headers = [])
 {
-    $template = ($data['status'] == 200) ? 'response/success' : 'response/error';
-    $status = ($status != 200) ? $status : $data['status'];
+    $status = ($status = 200 && !empty($data['status'])) ? $data['status'] : $status;
+    $template = ($status == 200) ? 'success' : 'error';
 
-    return new Response($status, $headers, Raw::render($template, $data, ""));
+    return new Response($status, $headers, Raw::renderSys($template, $data));
 }
 
 /**
- * @param mixed $value
+ * @param $value
  * @param int $flags
  * @return string|false
  */
-function json($value, $flags = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
+function json($value, int $flags = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)
 {
     return json_encode($value, $flags);
 }
@@ -202,7 +223,7 @@ function json($value, $flags = JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNE
  * @param $xml
  * @return Response
  */
-function xml($xml)
+function xml($xml): Response
 {
     if ($xml instanceof SimpleXMLElement) {
         $xml = $xml->asXML();
@@ -215,10 +236,10 @@ function xml($xml)
  * @param string $callback_name
  * @return Response
  */
-function jsonp($data, $callback_name = 'callback')
+function jsonp($data, string $callback_name = 'callback'): Response
 {
-    if (!is_scalar($data) && null !== $data) {
-        $data = json_encode($data);
+    if (!\is_scalar($data) && null !== $data) {
+        $data = \json_encode($data);
     }
     return new Response(200, [], "$callback_name($data)");
 }
@@ -229,7 +250,7 @@ function jsonp($data, $callback_name = 'callback')
  * @param array $headers
  * @return Response
  */
-function redirect(string $location, int $status = 302, array $headers = [])
+function redirect(string $location, int $status = 302, array $headers = []): Response
 {
     $response = new Response($status, ['Location' => $location]);
     if (!empty($headers)) {
@@ -241,11 +262,11 @@ function redirect(string $location, int $status = 302, array $headers = [])
 /**
  * @param string $template
  * @param array $vars
- * @param string $app
+ * @param string|null $app
  * @param int $http_code
  * @return Response
  */
-function view(string $template, array $vars = [], string $app = null, int $http_code = 200)
+function view(string $template, array $vars = [], string $app = null, int $http_code = 200): Response
 {
     $request = \request();
     $plugin =  $request->plugin ?? '';
@@ -260,7 +281,7 @@ function view(string $template, array $vars = [], string $app = null, int $http_
  * @return Response
  * @throws Throwable
  */
-function raw_view(string $template, array $vars = [], string $app = null)
+function raw_view(string $template, array $vars = [], string $app = null): Response
 {
     return new Response(200, [], Raw::render($template, $vars, $app));
 }
@@ -271,7 +292,7 @@ function raw_view(string $template, array $vars = [], string $app = null)
  * @param string|null $app
  * @return Response
  */
-function blade_view(string $template, array $vars = [], string $app = null)
+function blade_view(string $template, array $vars = [], string $app = null): Response
 {
     return new Response(200, [], Blade::render($template, $vars, $app));
 }
@@ -282,7 +303,7 @@ function blade_view(string $template, array $vars = [], string $app = null)
  * @param string|null $app
  * @return Response
  */
-function think_view(string $template, array $vars = [], string $app = null)
+function think_view(string $template, array $vars = [], string $app = null): Response
 {
     return new Response(200, [], ThinkPHP::render($template, $vars, $app));
 }
@@ -293,13 +314,13 @@ function think_view(string $template, array $vars = [], string $app = null)
  * @param string|null $app
  * @return Response
  */
-function twig_view(string $template, array $vars = [], string $app = null)
+function twig_view(string $template, array $vars = [], string $app = null): Response
 {
     return new Response(200, [], Twig::render($template, $vars, $app));
 }
 
 /**
- * @return \localzet\FrameX\Http\Request|null
+ * @return \localzet\FrameX\Http\Request|Request|null
  */
 function request()
 {
@@ -321,7 +342,7 @@ function config(string $key = null, $default = null)
  * @param ...$parameters
  * @return string
  */
-function route(string $name, ...$parameters)
+function route(string $name, ...$parameters): string
 {
     $route = Route::getByName($name);
     if (!$route) {
@@ -332,8 +353,8 @@ function route(string $name, ...$parameters)
         return $route->url();
     }
 
-    if (is_array(current($parameters))) {
-        $parameters = current($parameters);
+    if (\is_array(\current($parameters))) {
+        $parameters = \current($parameters);
     }
 
     return $route->url($parameters);
@@ -346,7 +367,7 @@ function route(string $name, ...$parameters)
  */
 function session($key = null, $default = null)
 {
-    $session = request()->session();
+    $session = \request()->session();
     if (null === $key) {
         return $session;
     }
@@ -368,14 +389,41 @@ function session($key = null, $default = null)
     return $session->get($key, $default);
 }
 
+// /**
+//  * Translation
+//  * @param string $id
+//  * @param array $parameters
+//  * @param string|null $domain
+//  * @param string|null $locale
+//  * @return string
+//  */
+// function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+// {
+//     $res = Translation::trans($id, $parameters, $domain, $locale);
+//     return $res === '' ? $id : $res;
+// }
+
+// /**
+//  * Locale
+//  * @param string|null $locale
+//  * @return void
+//  */
+// function locale(string $locale = null): string
+// {
+//     if (!$locale) {
+//         return Translation::getLocale();
+//     }
+//     Translation::setLocale($locale);
+// }
+
 /**
  * 404 not found
  *
  * @return Response
  */
-function not_found()
+function not_found(): Response
 {
-    return response('Ничего не найдено', 404);
+    return \response('Ничего не найдено', 404);
 }
 
 /**
@@ -388,18 +436,18 @@ function not_found()
  */
 function copy_dir(string $source, string $dest, bool $overwrite = false)
 {
-    if (is_dir($source)) {
-        if (!is_dir($dest)) {
-            mkdir($dest);
+    if (\is_dir($source)) {
+        if (!\is_dir($dest)) {
+            \mkdir($dest);
         }
-        $files = scandir($source);
+        $files = \scandir($source);
         foreach ($files as $file) {
             if ($file !== "." && $file !== "..") {
-                copy_dir("$source/$file", "$dest/$file");
+                \copy_dir("$source/$file", "$dest/$file");
             }
         }
-    } else if (file_exists($source) && ($overwrite || !file_exists($dest))) {
-        copy($source, $dest);
+    } else if (\file_exists($source) && ($overwrite || !\file_exists($dest))) {
+        \copy($source, $dest);
     }
 }
 
@@ -409,16 +457,16 @@ function copy_dir(string $source, string $dest, bool $overwrite = false)
  * @param string $dir
  * @return bool
  */
-function remove_dir(string $dir)
+function remove_dir(string $dir): bool
 {
-    if (is_link($dir) || is_file($dir)) {
-        return unlink($dir);
+    if (\is_link($dir) || \is_file($dir)) {
+        return \unlink($dir);
     }
-    $files = array_diff(scandir($dir), array('.', '..'));
+    $files = \array_diff(\scandir($dir), array('.', '..'));
     foreach ($files as $file) {
-        (is_dir("$dir/$file") && !is_link($dir)) ? remove_dir("$dir/$file") : unlink("$dir/$file");
+        (\is_dir("$dir/$file") && !\is_link($dir)) ? \remove_dir("$dir/$file") : \unlink("$dir/$file");
     }
-    return rmdir($dir);
+    return \rmdir($dir);
 }
 
 /**
@@ -438,12 +486,12 @@ function server_bind($server, $class)
         'onWebSocketConnect'
     ];
     foreach ($callback_map as $name) {
-        if (method_exists($class, $name)) {
+        if (\method_exists($class, $name)) {
             $server->$name = [$class, $name];
         }
     }
-    if (method_exists($class, 'onServerStart')) {
-        call_user_func([$class, 'onServerStart'], $server);
+    if (\method_exists($class, 'onServerStart')) {
+        \call_user_func([$class, 'onServerStart'], $server);
     }
 }
 
@@ -475,7 +523,7 @@ function server_start($process_name, $config)
         require_once base_path() . '/support/bootstrap.php';
 
         foreach ($config['services'] ?? [] as $server) {
-            if (!class_exists($server['handler'])) {
+            if (!\class_exists($server['handler'])) {
                 echo "process error: class {$server['handler']} not exists\r\n";
                 continue;
             }
@@ -484,18 +532,18 @@ function server_start($process_name, $config)
                 echo "listen: {$server['listen']}\n";
             }
             $instance = Container::make($server['handler'], $server['constructor'] ?? []);
-            server_bind($listen, $instance);
+            \server_bind($listen, $instance);
             $listen->listen();
         }
 
         if (isset($config['handler'])) {
-            if (!class_exists($config['handler'])) {
+            if (!\class_exists($config['handler'])) {
                 echo "process error: class {$config['handler']} not exists\r\n";
                 return;
             }
 
             $instance = Container::make($config['handler'], $config['constructor'] ?? []);
-            server_bind($server, $instance);
+            \server_bind($server, $instance);
         }
     };
 }
@@ -509,36 +557,36 @@ function server_start($process_name, $config)
  */
 function get_realpath(string $file_path): string
 {
-    if (strpos($file_path, 'phar://') === 0) {
+    if (\strpos($file_path, 'phar://') === 0) {
         return $file_path;
     } else {
-        return realpath($file_path);
+        return \realpath($file_path);
     }
 }
 
 /**
  * @return bool
  */
-function is_phar()
+function is_phar(): bool
 {
-    return class_exists(\Phar::class, false) && Phar::running();
+    return \class_exists(\Phar::class, false) && Phar::running();
 }
 
 /**
  * @return int
  */
-function cpu_count()
+function cpu_count(): int
 {
     // Винда опять не поддерживает это
     if (\DIRECTORY_SEPARATOR === '\\') {
         return 1;
     }
     $count = 4;
-    if (is_callable('shell_exec')) {
-        if (strtolower(PHP_OS) === 'darwin') {
-            $count = (int)shell_exec('sysctl -n machdep.cpu.core_count');
+    if (\is_callable('shell_exec')) {
+        if (\strtolower(PHP_OS) === 'darwin') {
+            $count = (int)\shell_exec('sysctl -n machdep.cpu.core_count');
         } else {
-            $count = (int)shell_exec('nproc');
+            $count = (int)\shell_exec('nproc');
         }
     }
     return $count > 0 ? $count : 4;

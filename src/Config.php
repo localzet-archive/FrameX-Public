@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
@@ -68,6 +68,14 @@ class Config
     public static function reload(string $config_path, array $exclude_file = [])
     {
         static::load($config_path, $exclude_file);
+    }
+
+    /**
+     * @return void
+     */
+    public static function clear()
+    {
+        static::$_config = [];
     }
 
     /**
@@ -199,18 +207,18 @@ class Config
         }
         $key_array = \explode('.', $key);
         $value = static::$_config;
-        $finded = true;
+        $found = true;
         foreach ($key_array as $index) {
             if (!isset($value[$index])) {
                 if (static::$_loaded) {
                     return $default;
                 }
-                $finded = false;
+                $found = false;
                 break;
             }
             $value = $value[$index];
         }
-        if ($finded) {
+        if ($found) {
             return $value;
         }
         return static::read($key, $default);

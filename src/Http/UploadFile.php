@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX\Http;
@@ -66,15 +66,6 @@ class UploadFile extends File
     }
 
     /**
-     * @deprecated
-     * @return string
-     */
-    public function getUploadMineType()
-    {
-        return $this->_uploadMimeType;
-    }
-
-    /**
      * @return mixed
      */
     public function getUploadExtension()
@@ -96,5 +87,14 @@ class UploadFile extends File
     public function isValid()
     {
         return $this->_uploadErrorCode === UPLOAD_ERR_OK;
+    }
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public function getUploadMineType()
+    {
+        return $this->_uploadMimeType;
     }
 }

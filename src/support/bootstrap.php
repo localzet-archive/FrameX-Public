@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 use support\Log;
@@ -45,6 +45,10 @@ support\App::loadAllConfig(['route']);
 
 foreach (config('autoload.files', []) as $file) {
     include_once $file;
+}
+
+foreach (glob(\base_path() . '/autoload/*.php') as $file) {
+    include_once($file);
 }
 
 // Запрашиваем плагины :))
@@ -114,6 +118,7 @@ foreach (config('plugin', []) as $firm => $projects) {
         Middleware::load($project['middleware'] ?? [], '');
     }
     Middleware::load($projects['middleware'] ?? [], $firm);
+    Middleware::load($projects['global_middleware'] ?? [], '');
     if ($static_middlewares = config("plugin.$firm.static.middleware")) {
         Middleware::load(['__static__' => $static_middlewares], $firm);
     }

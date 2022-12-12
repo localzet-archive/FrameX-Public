@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support;
@@ -20,7 +20,6 @@ use localzet\Core\Server;
 
 /**
  * Class Redis
- * @package support
  *
  * Strings methods
  * @method static int append($key, $value)
@@ -181,7 +180,7 @@ use localzet\Core\Server;
  * @method static mixed watch($keys)
  * @method static mixed unwatch($keys)
  * Scripting methods
- * @method mixed eval($script, $numkeys, $keyOrArg1 = null, $keyOrArgN = null)
+ * @method static mixed eval($script, $numkeys, $keyOrArg1 = null, $keyOrArgN = null)
  * @method static mixed evalSha($scriptSha, $numkeys, ...$arguments)
  * @method static mixed script($command, ...$scripts)
  * @method static mixed client(...$args)

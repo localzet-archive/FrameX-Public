@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support;
@@ -16,7 +16,6 @@ use localzet\FrameX\Exception\NotFoundException;
 
 /**
  * Class Translation
- * @package support
  * @method static string trans(?string $id, array $parameters = [], string $domain = null, string $locale = null)
  * @method static void setLocale(string $locale)
  * @method static string getLocale()

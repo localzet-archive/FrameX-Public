@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX\Route;
@@ -92,7 +92,7 @@ class Route
         if ($middleware === null) {
             return $this->_middlewares;
         }
-        $this->_middlewares = \array_merge($this->_middlewares, (array)$middleware);
+        $this->_middlewares = \array_merge($this->_middlewares, is_array($middleware) ? $middleware : [$middleware]);
         return $this;
     }
 

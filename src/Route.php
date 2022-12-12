@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
@@ -39,7 +39,7 @@ class Route
     /**
      * @var null|callable
      */
-    protected static $_fallback = null;
+    protected static $_fallback = [];
 
     /**
      * @var array
@@ -388,19 +388,20 @@ class Route
 
     /**
      * @param callable $callback
+     * @param string $plugin
      * @return void
      */
-    public static function fallback(callable $callback)
+    public static function fallback(callable $callback, string $plugin = '')
     {
-        static::$_fallback = $callback;
+        static::$_fallback[$plugin] = $callback;
     }
 
     /**
      * @return callable|null
      */
-    public static function getFallback()
+    public static function getFallback(string $plugin = '')
     {
-        return static::$_fallback;
+        return static::$_fallback[$plugin] ?? null;
     }
 
     /**

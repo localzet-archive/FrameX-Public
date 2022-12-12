@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support\bootstrap;
@@ -25,7 +25,6 @@ use localzet\Core\Server;
 
 /**
  * Class Laravel
- * @package support\Bootstrap
  */
 class LaravelDb implements Bootstrap
 {
@@ -88,20 +87,22 @@ class LaravelDb implements Bootstrap
 
         // Paginator
         if (class_exists(Paginator::class)) {
-            Paginator::queryStringResolver(function () {
-                // return request()->queryString();
                 if (method_exists(Paginator::class, 'queryStringResolver')) {
                     Paginator::queryStringResolver(function () {
                         $request = request();
                         return $request ? $request->queryString() : null;
                     });
                 }
-            });
             Paginator::currentPathResolver(function () {
-                return request()->path();
+                $request = request();
+                return $request ? $request->path(): '/';
             });
             Paginator::currentPageResolver(function ($page_name = 'page') {
-                $page = (int)request()->input($page_name, 1);
+                $request = request();
+                if (!$request) {
+                    return 1;
+                }
+                $page = (int)($request->input($page_name, 1));
                 return $page > 0 ? $page : 1;
             });
         }

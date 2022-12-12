@@ -6,7 +6,7 @@
  * 
  * @author      Ivan Zorin (localzet) <creator@localzet.ru>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
- * @license     https://www.localzet.ru/license GNU GPLv3 License
+ * @license     https://www.localzet.com/license GNU GPLv3 License
  * 
  * @see         https://github.com/ThingEngineer/PHP-MySQLi-Database-Class
  */
@@ -15,7 +15,6 @@ namespace support\database;
 
 /**
  * Class MySQL
- * @package support
  * @method static array select(string $query, $bindings = [], $useReadPdo = true)
  * @method static int insert(string $query, $bindings = [])
  * @method static int update(string $query, $bindings = [])
