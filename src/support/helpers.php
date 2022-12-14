@@ -201,9 +201,11 @@ function responseJson($data, $status = 200, $headers = [], $options = JSON_NUMER
  * @param array $headers
  * @return Response
  */
-function responseView($data, $status = null, $headers = [])
+function responseView(array $data, $status = null, $headers = [])
 {
-    $status = ($status == 200 && !empty($data['status']) ?? $data['status'] > 100) ? $data['status'] : $status;
+    if (($status == 200 || $status == 500) && (!empty($data['status']) && is_numeric($data['status']))) {
+        $status = ($data['status'] >= 300) ? $data['status'] : $status + $data['status'];
+    }
     $template = ($status == 200) ? 'success' : 'error';
 
     return new Response($status, $headers, Raw::renderSys($template, $data));

@@ -88,7 +88,7 @@ class ExceptionHandler implements ExceptionHandlerInterface
             return \plugin\auth\app\middleware\Authentication::deauthorization($error);
         }
 
-        return responseView('error', $json);
+        return responseView($json, $json);
     }
 
     /**
