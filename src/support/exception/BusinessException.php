@@ -32,6 +32,6 @@ class BusinessException extends Exception
 
         if ($request->expectsJson()) return responseJson($json);
 
-        return responseView($json);
+        return responseView($json, 500);
     }
 }
