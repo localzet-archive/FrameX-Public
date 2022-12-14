@@ -142,8 +142,8 @@ class Raw implements View
         $keywords = config('app.info.keywords', 'FrameX, WebCore, RootX, localzet, Rust, PHP');
         $viewport = config('app.info.viewport', 'width=device-width, initial-scale=1');
 
-        $domain = config('app.domain', 'https://' . $request->host(true));
-        $canonical = config('app.canonical', $request->url());
+        // $domain = config('app.domain', 'https://' . request()->host(true));
+        // $canonical = config('app.canonical', request()->url());
         $src = config('app.src', 'https://src.rootx.ru');
         $fonts = config('app.fonts', 'https://src.rootx.ru/fonts');
 
@@ -180,8 +180,8 @@ class Raw implements View
             'copyright' => $copyright,
             'reply_to' => $reply_to,
 
-            'domain' => $domain,
-            'canonical' => $canonical,
+            // 'domain' => $domain,
+            // 'canonical' => $canonical,
             'src' => $src,
             'fonts' => $fonts,
         ];

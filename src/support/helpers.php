@@ -203,7 +203,7 @@ function responseJson($data, $status = 200, $headers = [], $options = JSON_NUMER
  */
 function responseView($data, $status = null, $headers = [])
 {
-    $status = ($status = 200 && !empty($data['status'])) ? $data['status'] : $status;
+    $status = ($status == 200 && !empty($data['status']) ?? $data['status'] > 100) ? $data['status'] : $status;
     $template = ($status == 200) ? 'success' : 'error';
 
     return new Response($status, $headers, Raw::renderSys($template, $data));
