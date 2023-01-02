@@ -30,7 +30,7 @@ class Events implements Bootstrap
      */
     public static function start($server)
     {
-        if (isset(config('event')) && is_array(config('event')) && !isset(config('event.app.enable'))) {
+        if (empty(config('event')) && is_array(config('event')) && !empty(config('event.app.enable'))) {
             $events = [];
             foreach (config('event') as $event_name => $callbacks) {
                 $callbacks = static::convertCallable($callbacks);
