@@ -17,7 +17,7 @@ use support\Event;
 use support\Log;
 
 
-class Events extends Bootstrap
+class Events implements Bootstrap
 {
     /**
      * @var array
