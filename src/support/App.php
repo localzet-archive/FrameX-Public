@@ -11,7 +11,7 @@
 
 namespace support;
 
-use FrameX\HttpClient\Curl;
+use support\http\Curl;
 use localzet\FrameX\Config;
 use localzet\FrameX\Util;
 
