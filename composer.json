@@ -45,8 +45,7 @@
         "illuminate/events": "*",
         "symfony/var-dumper": "^6.1",
         "php-di/php-di": "^6.4",
-        "doctrine/annotations": "^1.13",
-        "firebase/php-jwt": "^6.3"
+        "doctrine/annotations": "^1.13"
     },
     "autoload": {
         "psr-4": {
