@@ -51,6 +51,10 @@ foreach (glob(\base_path() . '/autoload/*.php') as $file) {
     include_once($file);
 }
 
+foreach (glob(\base_path() . '/autoload/*/*/*.php') as $file) {
+    include_once($file);
+}
+
 // Запрашиваем плагины :))
 foreach (config('plugin', []) as $firm => $projects) {
     foreach ($projects as $name => $project) {
