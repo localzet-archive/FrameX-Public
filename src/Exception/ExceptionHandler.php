@@ -82,10 +82,12 @@ class ExceptionHandler implements ExceptionHandlerInterface
         // Ответ JSON
         if ($request->expectsJson()) return responseJson($json);
 
-        // DeAuthException - специализированный тип ошибок для деавторизации
-        if ($exception instanceof DeAuthException && class_exists(\plugin\auth\app\middleware\Authentication::class) && config('plugin.auth.app.enabled', false) === true) {
-            $error = empty($exception->getMessage()) ? null : $exception->getMessage();
-            return \plugin\auth\app\middleware\Authentication::deauthorization($error);
+        if (config('plugin.auth.app.enabled', false) === true) {
+            // DeAuthException - специализированный тип ошибок для деавторизации
+            if ($exception instanceof DeAuthException && class_exists(\plugin\auth\app\middleware\Authentication::class)) {
+                $error = empty($exception->getMessage()) ? null : $exception->getMessage();
+                return \plugin\auth\app\middleware\Authentication::deauthorization($error);
+            }
         }
 
         return responseView($json, 500);

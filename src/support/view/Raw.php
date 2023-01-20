@@ -21,7 +21,26 @@ class Raw implements View
     /**
      * @var array
      */
-    protected static $_vars = [];
+    protected static $_vars = [
+        // 'name' => config('app.info.name', 'FrameX App'),
+        // 'description' => config('app.info.description', 'Simple web application on WebCore Server and FrameX Engine'),
+        // 'keywords' => config('app.info.keywords', 'FrameX, WebCore, RootX, localzet, Rust, PHP'),
+        // 'viewport' => config('app.info.viewport', 'width=device-width, initial-scale=1'),
+
+        // 'domain' => config('app.domain', 'https://' . $request->host(true)),
+        // 'canonical' => config('app.canonical', $request->url()),
+        // 'src' => config('app.src', 'https://static.localzet.com'),
+        // 'fonts' => config('app.fonts', 'https://static.localzet.com/fonts'),
+
+        // 'logo' => config('app.info.logo', 'https://static.localzet.com/localzet.svg'),
+        // 'og_image' => config('app.info.og_image', 'https://static.localzet.com/localzet.svg'),
+        
+        // 'owner' => config('app.info.owner', 'Ivan Zorin (localzet) <creator@localzet.ru>'),
+        // 'designer' => config('app.info.designer', 'Ivan Zorin (localzet) <creator@localzet.ru>'),
+        // 'author' => config('app.info.author', 'Ivan Zorin (localzet) <creator@localzet.ru>'),
+        // 'copyright' => config('app.info.copyright', 'Localzet Group'),
+        // 'reply_to' => config('app.info.reply_to', 'support@localzet.com'),
+    ];
 
     /**
      * @param string|array $name
@@ -76,10 +95,14 @@ class Raw implements View
         $author = config('app.info.author', 'Ivan Zorin (localzet) <creator@localzet.ru>');
         $copyright = config('app.info.copyright', 'Localzet Group');
         $reply_to = config('app.info.reply_to', 'support@localzet.com');
-        
-        $_SRC = 'https://src.rootx.ru';
-        $_ROOTX = 'https://www.rootx.ru';
-        $_LOCALZET = 'https://www.localzet.com';
+
+        // Backend
+        $_API = $_CORE = 'https://core.localzet.com';
+        $_STATIC = 'https://static.localzet.com';
+
+        // Frontend
+        $_COM = 'https://www.localzet.com';
+        $_ru = 'https://www.localzet.ru';
 
         $custom = [];
         $assets = [];
@@ -147,18 +170,22 @@ class Raw implements View
         $src = config('app.src', 'https://src.rootx.ru');
         $fonts = config('app.fonts', 'https://src.rootx.ru/fonts');
 
-        $logo = config('app.info.logo', 'https://src.rootx.ru/localzet.svg');
-        $og_image = config('app.info.og_image', 'https://src.rootx.ru/localzet.svg');
+        $logo = config('app.info.logo', 'https://static.localzet.com/localzet.svg');
+        $og_image = config('app.info.og_image', 'https://static.localzet.com/localzet.svg');
 
         $owner = config('app.info.owner', 'Ivan Zorin (localzet) <creator@localzet.ru>');
         $designer = config('app.info.designer', 'Ivan Zorin (localzet) <creator@localzet.ru>');
         $author = config('app.info.author', 'Ivan Zorin (localzet) <creator@localzet.ru>');
         $copyright = config('app.info.copyright', 'Localzet Group');
         $reply_to = config('app.info.reply_to', 'support@localzet.com');
-        
-        $_SRC = 'https://src.rootx.ru';
-        $_ROOTX = 'https://www.rootx.ru';
-        $_LOCALZET = 'https://www.localzet.com';
+
+        // Backend
+        $_API = $_CORE = 'https://core.localzet.com';
+        $_STATIC = 'https://static.localzet.com';
+
+        // Frontend
+        $_COM = 'https://www.localzet.com';
+        $_ru = 'https://www.localzet.ru';
 
         $custom = [];
         $assets = [];

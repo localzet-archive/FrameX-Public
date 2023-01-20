@@ -79,7 +79,6 @@ class App
 
         if ($config['listen']) {
             $server = new Server($config['listen'], $config['context']);
-            !empty($config['code']) && $server->code = $config['code'];
             $property_map = [
                 'name',
                 'count',
