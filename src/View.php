@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
@@ -14,10 +15,11 @@ namespace localzet\FrameX;
 interface View
 {
     /**
-     * @param $template
-     * @param $vars
-     * @param null $app
+     * Render.
+     * @param string $template
+     * @param array $vars
+     * @param string|null $app
      * @return string
      */
-    static function render(string $template, array $vars, string $app = null);
+    static function render(string $template, array $vars, string $app = null): string;
 }

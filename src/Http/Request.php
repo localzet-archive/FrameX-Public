@@ -1,18 +1,27 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX\Http;
 
-use localzet\FrameX\App;
 use localzet\FrameX\Route\Route;
+use function current;
+use function filter_var;
+use function ip2long;
+use function is_array;
+use function strpos;
+use const FILTER_FLAG_IPV4;
+use const FILTER_FLAG_NO_PRIV_RANGE;
+use const FILTER_FLAG_NO_RES_RANGE;
+use const FILTER_VALIDATE_IP;
 
 /**
  * Class Request
@@ -54,24 +63,24 @@ class Request extends \localzet\Core\Protocols\Http\Request
 
     /**
      * @param string $name
-     * @param string|null $default
+     * @param mixed $default
      * @return mixed|null
      */
-    public function input($name, $default = null)
+    public function input(string $name, $default = null)
     {
         $post = $this->post();
         if (isset($post[$name])) {
             return $post[$name];
         }
         $get = $this->get();
-        return isset($get[$name]) ? $get[$name] : $default;
+        return $get[$name] ?? $default;
     }
 
     /**
      * @param array $keys
      * @return array
      */
-    public function only(array $keys)
+    public function only(array $keys): array
     {
         $all = $this->all();
         $result = [];
@@ -108,28 +117,28 @@ class Request extends \localzet\Core\Protocols\Http\Request
         }
         if ($name !== null) {
             // Multi files
-            if (\is_array(\current($files))) {
+            if (is_array(current($files))) {
                 return $this->parseFiles($files);
             }
             return $this->parseFile($files);
         }
-        $upload_files = [];
+        $uploadFiles = [];
         foreach ($files as $name => $file) {
             // Multi files
-            if (\is_array(\current($file))) {
-                $upload_files[$name] = $this->parseFiles($file);
+            if (is_array(current($file))) {
+                $uploadFiles[$name] = $this->parseFiles($file);
             } else {
-                $upload_files[$name] = $this->parseFile($file);
+                $uploadFiles[$name] = $this->parseFile($file);
             }
         }
-        return $upload_files;
+        return $uploadFiles;
     }
 
     /**
      * @param array $file
      * @return UploadFile
      */
-    protected function parseFile(array $file)
+    protected function parseFile(array $file): UploadFile
     {
         return new UploadFile($file['tmp_name'], $file['name'], $file['type'], $file['error']);
     }
@@ -138,66 +147,66 @@ class Request extends \localzet\Core\Protocols\Http\Request
      * @param array $files
      * @return array
      */
-    protected function parseFiles(array $files)
+    protected function parseFiles(array $files): array
     {
-        $upload_files = [];
+        $uploadFiles = [];
         foreach ($files as $key => $file) {
-            if (\is_array(\current($file))) {
-                $upload_files[$key] = $this->parseFiles($file);
+            if (is_array(current($file))) {
+                $uploadFiles[$key] = $this->parseFiles($file);
             } else {
-                $upload_files[$key] = $this->parseFile($file);
+                $uploadFiles[$key] = $this->parseFile($file);
             }
         }
-        return $upload_files;
+        return $uploadFiles;
     }
 
     /**
      * @return string
      */
-    public function getRemoteIp()
+    public function getRemoteIp(): string
     {
-        return App::connection()->getRemoteIp();
+        return $this->connection->getRemoteIp();
     }
 
     /**
      * @return int
      */
-    public function getRemotePort()
+    public function getRemotePort(): int
     {
-        return App::connection()->getRemotePort();
+        return $this->connection->getRemotePort();
     }
 
     /**
      * @return string
      */
-    public function getLocalIp()
+    public function getLocalIp(): string
     {
-        return App::connection()->getLocalIp();
+        return $this->connection->getLocalIp();
     }
 
     /**
      * @return int
      */
-    public function getLocalPort()
+    public function getLocalPort(): int
     {
-        return App::connection()->getLocalPort();
+        return $this->connection->getLocalPort();
     }
 
     /**
-     * @param bool $safe_mode
+     * @param bool $safeMode
      * @return string
      */
-    public function getRealIp(bool $safe_mode = true)
+    public function getRealIp(bool $safeMode = true): string
     {
-        $remote_ip = $this->getRemoteIp();
-        if ($safe_mode && !static::isIntranetIp($remote_ip)) {
-            return $remote_ip;
+        $remoteIp = $this->getRemoteIp();
+        if ($safeMode && !static::isIntranetIp($remoteIp)) {
+            return $remoteIp;
         }
-        return $this->header('client-ip', $this->header(
+        return $this->header('x-real-ip', $this->header(
             'x-forwarded-for',
-            $this->header('x-real-ip', $this->header(
+            $this->header('client-ip', $this->header(
                 'x-client-ip',
-                $this->header('via', $remote_ip)
+                $this->header('via', $remoteIp)
             ))
         ));
     }
@@ -205,7 +214,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return string
      */
-    public function url()
+    public function url(): string
     {
         return '//' . $this->host() . $this->path();
     }
@@ -213,7 +222,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return string
      */
-    public function fullUrl()
+    public function fullUrl(): string
     {
         return '//' . $this->host() . $this->uri();
     }
@@ -221,7 +230,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return bool
      */
-    public function isAjax()
+    public function isAjax(): bool
     {
         return $this->header('X-Requested-With') === 'XMLHttpRequest';
     }
@@ -229,7 +238,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return bool
      */
-    public function isPjax()
+    public function isPjax(): bool
     {
         return (bool)$this->header('X-PJAX');
     }
@@ -237,7 +246,7 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return bool
      */
-    public function expectsJson()
+    public function expectsJson(): bool
     {
         return ($this->isAjax() && !$this->isPjax()) || $this->acceptJson() || strtoupper($this->method()) != 'GET';
     }
@@ -245,38 +254,38 @@ class Request extends \localzet\Core\Protocols\Http\Request
     /**
      * @return bool
      */
-    public function acceptJson()
+    public function acceptJson(): bool
     {
-        return false !== \strpos($this->header('accept', ''), 'json');
+        return false !== strpos($this->header('accept', ''), 'json');
     }
 
     /**
      * @param string $ip
      * @return bool
      */
-    public static function isIntranetIp(string $ip)
+    public static function isIntranetIp(string $ip): bool
     {
         // Не IP.
-        if (!\filter_var($ip, FILTER_VALIDATE_IP)) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             return false;
         }
         // Точно ip Интранета? Для IPv4 FALSE может быть не точным, поэтому нам нужно проверить его вручную ниже.
-        if (!\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
             return true;
         }
         // Ручная проверка IPv4 .
-        if (!\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return false;
         }
 
         // Ручная проверка
-        // $reserved_ips = [
+        // $reservedIps = [
         //     '167772160'  => 184549375,  // 10.0.0.0 -  10.255.255.255
         //     '3232235520' => 3232301055, // 192.168.0.0 - 192.168.255.255
         //     '2130706432' => 2147483647, // 127.0.0.0 - 127.255.255.255
         //     '2886729728' => 2887778303, // 172.16.0.0 -  172.31.255.255
         // ];
-        $reserved_ips = [
+        $reservedIps = [
             1681915904 => 1686110207,   // 100.64.0.0 -  100.127.255.255
             3221225472 => 3221225727,   // 192.0.0.0 - 192.0.0.255
             3221225984 => 3221226239,   // 192.0.2.0 - 192.0.2.255
@@ -287,10 +296,10 @@ class Request extends \localzet\Core\Protocols\Http\Request
             3758096384 => 4026531839,   // 224.0.0.0 - 239.255.255.255
         ];
 
-        $ip_long = \ip2long($ip);
+        $ipLong = ip2long($ip);
 
-        foreach ($reserved_ips as $ip_start => $ip_end) {
-            if (($ip_long >= $ip_start) && ($ip_long <= $ip_end)) {
+        foreach ($reservedIps as $ipStart => $ipEnd) {
+            if (($ipLong >= $ipStart) && ($ipLong <= $ipEnd)) {
                 return true;
             }
         }

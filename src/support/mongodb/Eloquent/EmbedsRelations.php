@@ -1,10 +1,20 @@
 <?php
 
-namespace Jenssegers\Mongodb\Eloquent;
+/**
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
+ * @copyright   Copyright (c) 2018-2022 Localzet Group
+ * @license     https://www.localzet.com/license GNU GPLv3 License
+ */
+
+namespace support\mongodb\Eloquent;
 
 use Illuminate\Support\Str;
-use Jenssegers\Mongodb\Relations\EmbedsMany;
-use Jenssegers\Mongodb\Relations\EmbedsOne;
+use support\mongodb\Relations\EmbedsMany;
+use support\mongodb\Relations\EmbedsOne;
 
 trait EmbedsRelations
 {
@@ -14,7 +24,7 @@ trait EmbedsRelations
      * @param string $localKey
      * @param string $foreignKey
      * @param string $relation
-     * @return \Jenssegers\Mongodb\Relations\EmbedsMany
+     * @return \support\mongodb\Relations\EmbedsMany
      */
     protected function embedsMany($related, $localKey = null, $foreignKey = null, $relation = null)
     {
@@ -48,7 +58,7 @@ trait EmbedsRelations
      * @param string $localKey
      * @param string $foreignKey
      * @param string $relation
-     * @return \Jenssegers\Mongodb\Relations\EmbedsOne
+     * @return \support\mongodb\Relations\EmbedsOne
      */
     protected function embedsOne($related, $localKey = null, $foreignKey = null, $relation = null)
     {

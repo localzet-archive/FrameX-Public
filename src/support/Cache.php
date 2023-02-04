@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
@@ -32,18 +33,18 @@ class Cache
     /**
      * @var Psr16Cache
      */
-    public static $_instance = null;
+    public static $instance = null;
 
     /**
      * @return Psr16Cache
      */
     public static function instance()
     {
-        if (!static::$_instance) {
+        if (!static::$instance) {
             $adapter = new RedisAdapter(Redis::connection()->client());
-            self::$_instance = new Psr16Cache($adapter);
+            self::$instance = new Psr16Cache($adapter);
         }
-        return static::$_instance;
+        return static::$instance;
     }
 
     /**

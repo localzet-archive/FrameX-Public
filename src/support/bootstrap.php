@@ -1,27 +1,24 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
+use Dotenv\Dotenv;
 use support\Log;
 use localzet\FrameX\Bootstrap;
 use localzet\FrameX\Config;
-use localzet\FrameX\Route;
 use localzet\FrameX\Middleware;
+use localzet\FrameX\Route;
 use localzet\FrameX\Util;
 
 $server = $server ?? null;
-
-// Часовой пояс (если есть)
-if ($timezone = config('app.default_timezone')) {
-    date_default_timezone_set($timezone);
-}
 
 // Обработчик ошибок
 set_error_handler(function ($level, $message, $file = '', $line = 0) {
@@ -40,8 +37,22 @@ if ($server) {
     }, time());
 }
 
+if (class_exists('Dotenv\Dotenv') && file_exists(base_path() . '/.env')) {
+    if (method_exists('Dotenv\Dotenv', 'createUnsafeImmutable')) {
+        Dotenv::createUnsafeImmutable(base_path())->load();
+    } else {
+        Dotenv::createMutable(base_path())->load();
+    }
+}
+
 // Перезапросить конфигурацию
+Config::clear();
 support\App::loadAllConfig(['route']);
+
+// Часовой пояс (если есть)
+if ($timezone = config('app.default_timezone')) {
+    date_default_timezone_set($timezone);
+}
 
 foreach (config('autoload.files', []) as $file) {
     include_once $file;
@@ -111,7 +122,7 @@ foreach (config('plugin', []) as $firm => $projects) {
 //     ]
 // ]];
 
-Middleware::load(config('middleware', []), '');
+Middleware::load(config('middleware', []));
 
 // Загружаем промежуточное ПО плагинов
 foreach (config('plugin', []) as $firm => $projects) {
@@ -119,28 +130,28 @@ foreach (config('plugin', []) as $firm => $projects) {
         if (!is_array($project) || $name === 'static') {
             continue;
         }
-        Middleware::load($project['middleware'] ?? [], '');
+        Middleware::load($project['middleware'] ?? []);
     }
     Middleware::load($projects['middleware'] ?? [], $firm);
-    Middleware::load($projects['global_middleware'] ?? [], '');
-    if ($static_middlewares = config("plugin.$firm.static.middleware")) {
-        Middleware::load(['__static__' => $static_middlewares], $firm);
+    Middleware::load($projects['global_middleware'] ?? []);
+    if ($staticMiddlewares = config("plugin.$firm.static.middleware")) {
+        Middleware::load(['__static__' => $staticMiddlewares], $firm);
     }
 }
 
 // Загружаем статическое промежуточное ПО
-Middleware::load(['__static__' => config('static.middleware', [])], '');
+Middleware::load(['__static__' => config('static.middleware', [])]);
 
 // Запуск системы из конфигурации
-foreach (config('bootstrap', []) as $class_name) {
-    if (!class_exists($class_name)) {
-        $log = "Warning: Class $class_name setting in config/bootstrap.php not found\r\n";
+foreach (config('bootstrap', []) as $className) {
+    if (!class_exists($className)) {
+        $log = "Warning: Class $className setting in config/bootstrap.php not found\r\n";
         echo $log;
         Log::error($log);
         continue;
     }
-    /** @var \localzet\FrameX\Bootstrap $class_name */
-    $class_name::start($server);
+    /** @var Bootstrap $className */
+    $className::start($server);
 }
 
 // Запуск плагинов
@@ -149,26 +160,27 @@ foreach (config('plugin', []) as $firm => $projects) {
         if (!is_array($project)) {
             continue;
         }
-        foreach ($project['bootstrap'] ?? [] as $class_name) {
-            if (!class_exists($class_name)) {
-                $log = "Warning: Class $class_name setting in config/plugin/$firm/$name/bootstrap.php not found\r\n";
+        foreach ($project['bootstrap'] ?? [] as $className) {
+            if (!class_exists($className)) {
+                $log = "Warning: Class $className setting in config/plugin/$firm/$name/bootstrap.php not found\r\n";
                 echo $log;
                 Log::error($log);
                 continue;
             }
-            /** @var \localzet\FrameX\Bootstrap $class_name */
-            $class_name::start($server);
+            /** @var Bootstrap $className */
+            $className::start($server);
         }
     }
-    foreach ($projects['bootstrap'] ?? [] as $class_name) {
-        if (!class_exists($class_name)) {
-            $log = "Warning: Class $class_name setting in plugin/$firm/config/bootstrap.php not found\r\n";
+    foreach ($projects['bootstrap'] ?? [] as $className) {
+        /** @var string $className */
+        if (!class_exists($className)) {
+            $log = "Warning: Class $className setting in plugin/$firm/config/bootstrap.php not found\r\n";
             echo $log;
             Log::error($log);
             continue;
         }
-        /** @var Bootstrap $class_name */
-        $class_name::start($server);
+        /** @var Bootstrap $className */
+        $className::start($server);
     }
 }
 

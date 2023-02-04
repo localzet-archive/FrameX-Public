@@ -13,9 +13,8 @@
 namespace support;
 
 /**
- * Class Request
+ * Class Context
  */
-class Request extends \localzet\FrameX\Http\Request
+class Context extends \localzet\FrameX\Context
 {
-    public ?string $exception_id;
 }

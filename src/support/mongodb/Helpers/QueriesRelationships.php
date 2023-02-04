@@ -1,6 +1,16 @@
 <?php
 
-namespace Jenssegers\Mongodb\Helpers;
+/**
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
+ * @copyright   Copyright (c) 2018-2022 Localzet Group
+ * @license     https://www.localzet.com/license GNU GPLv3 License
+ */
+
+namespace support\mongodb\Helpers;
 
 use Closure;
 use Exception;
@@ -9,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Jenssegers\Mongodb\Eloquent\Model;
+use support\mongodb\Eloquent\Model;
 
 trait QueriesRelationships
 {

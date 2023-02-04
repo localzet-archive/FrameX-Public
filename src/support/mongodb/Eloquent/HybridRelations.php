@@ -1,16 +1,26 @@
 <?php
 
-namespace Jenssegers\Mongodb\Eloquent;
+/**
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
+ * @copyright   Copyright (c) 2018-2022 Localzet Group
+ * @license     https://www.localzet.com/license GNU GPLv3 License
+ */
+
+namespace support\mongodb\Eloquent;
 
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
-use Jenssegers\Mongodb\Helpers\EloquentBuilder;
-use Jenssegers\Mongodb\Relations\BelongsTo;
-use Jenssegers\Mongodb\Relations\BelongsToMany;
-use Jenssegers\Mongodb\Relations\HasMany;
-use Jenssegers\Mongodb\Relations\HasOne;
-use Jenssegers\Mongodb\Relations\MorphMany;
-use Jenssegers\Mongodb\Relations\MorphTo;
+use support\mongodb\Helpers\EloquentBuilder;
+use support\mongodb\Relations\BelongsTo;
+use support\mongodb\Relations\BelongsToMany;
+use support\mongodb\Relations\HasMany;
+use support\mongodb\Relations\HasOne;
+use support\mongodb\Relations\MorphMany;
+use support\mongodb\Relations\MorphTo;
 
 trait HybridRelations
 {
@@ -24,7 +34,7 @@ trait HybridRelations
     public function hasOne($related, $foreignKey = null, $localKey = null)
     {
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::hasOne($related, $foreignKey, $localKey);
         }
 
@@ -49,7 +59,7 @@ trait HybridRelations
     public function morphOne($related, $name, $type = null, $id = null, $localKey = null)
     {
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::morphOne($related, $name, $type, $id, $localKey);
         }
 
@@ -72,7 +82,7 @@ trait HybridRelations
     public function hasMany($related, $foreignKey = null, $localKey = null)
     {
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::hasMany($related, $foreignKey, $localKey);
         }
 
@@ -97,7 +107,7 @@ trait HybridRelations
     public function morphMany($related, $name, $type = null, $id = null, $localKey = null)
     {
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::morphMany($related, $name, $type, $id, $localKey);
         }
 
@@ -135,7 +145,7 @@ trait HybridRelations
         }
 
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::belongsTo($related, $foreignKey, $otherKey, $relation);
         }
 
@@ -230,7 +240,7 @@ trait HybridRelations
         }
 
         // Check if it is a relation with an original model.
-        if (! is_subclass_of($related, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (! is_subclass_of($related, \support\mongodb\Eloquent\Model::class)) {
             return parent::belongsToMany(
                 $related,
                 $collection,
@@ -293,7 +303,7 @@ trait HybridRelations
      */
     public function newEloquentBuilder($query)
     {
-        if (is_subclass_of($this, \Jenssegers\Mongodb\Eloquent\Model::class)) {
+        if (is_subclass_of($this, \support\mongodb\Eloquent\Model::class)) {
             return new Builder($query);
         }
 

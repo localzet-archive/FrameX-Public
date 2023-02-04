@@ -1,35 +1,42 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace localzet\FrameX;
 
+use RuntimeException;
+use function array_merge;
+use function array_reverse;
+use function is_array;
+use function method_exists;
+
 class Middleware
 {
     /**
      * @var array
      */
-    protected static $_instances = [];
+    protected static $instances = [];
 
     /**
-     * @param array $all_middlewares
+     * @param array $allMiddlewares
      * @param string $plugin
      * @return void
      */
-    public static function load($all_middlewares, string $plugin = '')
+    public static function load($allMiddlewares, string $plugin = '')
     {
-        if (!\is_array($all_middlewares)) {
+        if (!is_array($allMiddlewares)) {
             return;
         }
 
-        // $all_middlewares = [
+        // $allMiddlewares = [
         //     'app1' => [
         //         'Class1',
         //         'Class2',
@@ -42,16 +49,16 @@ class Middleware
         //     ]
         // ];
 
-        foreach ($all_middlewares as $app_name => $middlewares) {
-            if (!\is_array($middlewares)) {
-                throw new \RuntimeException('Некорректная конфигурация промежуточного ПО');
+        foreach ($allMiddlewares as $appName => $middlewares) {
+            if (!is_array($middlewares)) {
+                throw new RuntimeException('Некорректная конфигурация промежуточного ПО');
             }
-            foreach ($middlewares as $class_name) {
-                if (\method_exists($class_name, 'process')) {
-                    static::$_instances[$plugin][$app_name][] = [$class_name, 'process'];
+            foreach ($middlewares as $className) {
+                if (method_exists($className, 'process')) {
+                    static::$instances[$plugin][$appName][] = [$className, 'process'];
                 } else {
                     // @todo Log
-                    echo "Промежуточный $class_name::process не существует\n";
+                    echo "Промежуточный $className::process не существует\n";
                 }
             }
         }
@@ -59,36 +66,19 @@ class Middleware
 
     /**
      * @param string $plugin
-     * @param string $app_name
-     * @param bool $with_global_middleware
+     * @param string $appName
+     * @param bool $withGlobalMiddleware
      * @return array|mixed
      */
-    public static function getMiddleware(string $plugin, string $app_name, bool $with_global_middleware = true)
+    public static function getMiddleware(string $plugin, string $appName, bool $withGlobalMiddleware = true)
     {
         // Глобальная midleware
-        $global_middleware = $with_global_middleware && isset(static::$_instances[$plugin]['']) ? static::$_instances[$plugin][''] : [];
-        if ($app_name === '') {
-            return \array_reverse($global_middleware);
+        $globalMiddleware = $withGlobalMiddleware && isset(static::$instances[$plugin]['']) ? static::$instances[$plugin][''] : [];
+        if ($appName === '') {
+            return array_reverse($globalMiddleware);
         }
         // midleware приложения
-        $app_middleware = static::$_instances[$plugin][$app_name] ?? [];
-        return \array_reverse(\array_merge($global_middleware, $app_middleware));
-    }
-
-    /**
-     * @param $app_name
-     * @return bool
-     */
-    public static function hasMiddleware($app_name)
-    {
-        return isset(static::$_instances[$app_name]);
-    }
-
-    /**
-     * @deprecated
-     * @return void
-     */
-    public static function container($_)
-    {
+        $appMiddleware = static::$instances[$plugin][$appName] ?? [];
+        return array_reverse(array_merge($globalMiddleware, $appMiddleware));
     }
 }

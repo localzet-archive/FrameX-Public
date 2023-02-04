@@ -1,6 +1,16 @@
 <?php
 
-namespace Jenssegers\Mongodb\Eloquent;
+/**
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
+ * @copyright   Copyright (c) 2018-2022 Localzet Group
+ * @license     https://www.localzet.com/license GNU GPLv3 License
+ */
+
+namespace support\mongodb\Eloquent;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\QueueableCollection;
@@ -10,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
-use Jenssegers\Mongodb\Query\Builder as QueryBuilder;
+use support\mongodb\Query\Builder as QueryBuilder;
 use MongoDB\BSON\Binary;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;

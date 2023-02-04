@@ -1,10 +1,20 @@
 <?php
 
-namespace Jenssegers\Mongodb;
+/**
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
+ * 
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
+ * @copyright   Copyright (c) 2018-2022 Localzet Group
+ * @license     https://www.localzet.com/license GNU GPLv3 License
+ */
+
+namespace support\mongodb;
 
 use Illuminate\Queue\Failed\NullFailedJobProvider;
 use Illuminate\Queue\QueueServiceProvider;
-use Jenssegers\Mongodb\Queue\Failed\MongoFailedJobProvider;
+use support\mongodb\Queue\Failed\MongoFailedJobProvider;
 
 class MongodbQueueServiceProvider extends QueueServiceProvider
 {

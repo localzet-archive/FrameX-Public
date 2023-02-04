@@ -1,23 +1,30 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
 namespace support;
 
+use Dotenv\Dotenv;
+use RuntimeException;
 use support\http\Curl;
 use localzet\FrameX\Config;
 use localzet\FrameX\Util;
-
 use localzet\Core\Connection\TcpConnection;
-use localzet\Core\Protocols\Http;
 use localzet\Core\Server;
+use function base_path;
+use function call_user_func;
+use function is_dir;
+use function opcache_get_status;
+use function opcache_invalidate;
+use const DIRECTORY_SEPARATOR;
 
 class App
 {
@@ -28,36 +35,44 @@ class App
     {
         ini_set('display_errors', 'on');
 
+        if (class_exists(Dotenv::class) && file_exists(run_path('.env'))) {
+            if (method_exists(Dotenv::class, 'createUnsafeImmutable')) {
+                Dotenv::createUnsafeImmutable(run_path())->load();
+            } else {
+                Dotenv::createMutable(run_path())->load();
+            }
+        }
+
         static::loadAllConfig(['route', 'container']);
 
-        $error_reporting = config('app.error_reporting', E_ALL);
-        if (isset($error_reporting)) {
-            error_reporting($error_reporting);
+        $errorReporting = config('app.error_reporting', E_ALL);
+        if (isset($errorReporting)) {
+            error_reporting($errorReporting);
         }
         if ($timezone = config('app.default_timezone')) {
             date_default_timezone_set($timezone);
         }
 
-        $runtime_logs_path = runtime_path() . DIRECTORY_SEPARATOR . 'logs';
-        if (!file_exists($runtime_logs_path) || !is_dir($runtime_logs_path)) {
-            if (!mkdir($runtime_logs_path, 0777, true)) {
-                throw new \RuntimeException("Failed to create runtime logs directory. Please check the permission.");
+        $runtimeLogsPath = runtime_path() . DIRECTORY_SEPARATOR . 'logs';
+        if (!file_exists($runtimeLogsPath) || !is_dir($runtimeLogsPath)) {
+            if (!mkdir($runtimeLogsPath, 0777, true)) {
+                throw new RuntimeException("Failed to create runtime logs directory. Please check the permission.");
             }
         }
 
-        $runtime_views_path = runtime_path() . DIRECTORY_SEPARATOR . 'views';
-        if (!file_exists($runtime_views_path) || !is_dir($runtime_views_path)) {
-            if (!mkdir($runtime_views_path, 0777, true)) {
-                throw new \RuntimeException("Failed to create runtime views directory. Please check the permission.");
+        $runtimeViewsPath = runtime_path() . DIRECTORY_SEPARATOR . 'views';
+        if (!file_exists($runtimeViewsPath) || !is_dir($runtimeViewsPath)) {
+            if (!mkdir($runtimeViewsPath, 0777, true)) {
+                throw new RuntimeException("Failed to create runtime views directory. Please check the permission.");
             }
         }
 
         Server::$onMasterReload = function () {
             if (function_exists('opcache_get_status')) {
-                if ($status = \opcache_get_status()) {
+                if ($status = opcache_get_status()) {
                     if (isset($status['scripts']) && $scripts = $status['scripts']) {
                         foreach (array_keys($scripts) as $file) {
-                            \opcache_invalidate($file, true);
+                            opcache_invalidate($file, true);
                         }
                     }
                 }
@@ -79,7 +94,7 @@ class App
 
         if ($config['listen']) {
             $server = new Server($config['listen'], $config['context']);
-            $property_map = [
+            $propertyMap = [
                 'name',
                 'count',
                 'user',
@@ -88,7 +103,7 @@ class App
                 'transport',
                 'protocol'
             ];
-            foreach ($property_map as $property) {
+            foreach ($propertyMap as $property) {
                 if (isset($config[$property])) {
                     $server->$property = $config[$property];
                 }
@@ -129,7 +144,7 @@ class App
                     ]]);
                 }
 
-                require_once \base_path() . '/support/bootstrap.php';
+                require_once base_path() . '/support/bootstrap.php';
                 $app = new \localzet\FrameX\App(config('app.request_class', Request::class), Log::channel('default'), app_path(), public_path());
                 $server->onMessage = [$app, 'onMessage'];
                 \call_user_func([$app, 'onServerStart'], $server);
@@ -173,21 +188,21 @@ class App
         }
 
         // Windows does not support custom processes.
-        if (\DIRECTORY_SEPARATOR === '/') {
-            foreach (config('process', []) as $process_name => $config) {
-                server_start($process_name, $config);
+        if (DIRECTORY_SEPARATOR === '/') {
+            foreach (config('process', []) as $processName => $config) {
+                server_start($processName, $config);
             }
             foreach (config('plugin', []) as $firm => $projects) {
                 foreach ($projects as $name => $project) {
                     if (!is_array($project)) {
                         continue;
                     }
-                    foreach ($project['process'] ?? [] as $process_name => $config) {
-                        server_start("plugin.$firm.$name.$process_name", $config);
+                    foreach ($project['process'] ?? [] as $processName => $config) {
+                        server_start("plugin.$firm.$name.$processName", $config);
                     }
                 }
-                foreach ($projects['process'] ?? [] as $process_name => $config) {
-                    server_start("plugin.$firm.$process_name", $config);
+                foreach ($projects['process'] ?? [] as $processName => $config) {
+                    server_start("plugin.$firm.$processName", $config);
                 }
             }
         }
@@ -207,7 +222,7 @@ class App
         $directory = base_path() . '/plugin';
         foreach (Util::scanDir($directory, false) as $name) {
             $dir = "$directory/$name/config";
-            if (\is_dir($dir)) {
+            if (is_dir($dir)) {
                 Config::load($dir, $excludes, "plugin.$name");
             }
         }

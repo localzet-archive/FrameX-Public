@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
@@ -21,9 +22,8 @@ class Install
     protected static $pathRelation = [
         'start.php' => 'start.php',
         'windows.php' => 'windows.php',
-        'support/helpers.php' => 'support/helpers.php',
         'support/bootstrap.php' => 'support/bootstrap.php',
-        // 'support/Plugin.php' => 'support/Plugin.php',
+        'support/helpers.php' => 'support/helpers.php',
     ];
 
     /**
@@ -32,10 +32,6 @@ class Install
      */
     public static function install()
     {
-        // $support_dir = __DIR__ . '/../../../../support';
-        // if (is_dir($support_dir)) {
-        //     remove_dir($support_dir);
-        // }
         static::installByRelation();
     }
 
@@ -48,20 +44,24 @@ class Install
     }
 
     /**
-     * installByRelation
+     * InstallByRelation
      * @return void
      */
     public static function installByRelation()
     {
         foreach (static::$pathRelation as $source => $dest) {
             if ($pos = strrpos($dest, '/')) {
-                $parent_dir = base_path() . '/' . substr($dest, 0, $pos);
-                if (!is_dir($parent_dir)) {
-                    mkdir($parent_dir, 0777, true);
+                $parentDir = base_path() . '/' . substr($dest, 0, $pos);
+                if (!is_dir($parentDir)) {
+                    mkdir($parentDir, 0777, true);
                 }
             }
-            copy_dir(__DIR__ . "/$source", base_path() . "/$dest", true);
+            $sourceFile = __DIR__ . "/$source";
+            copy_dir($sourceFile, base_path() . "/$dest", true);
             echo "Создан $dest\r\n";
+            if (is_file($sourceFile)) {
+                @unlink($sourceFile);
+            }
         }
     }
 }

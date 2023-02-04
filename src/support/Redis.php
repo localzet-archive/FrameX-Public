@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     FrameX (FX) Engine
- * @link        https://localzet.gitbook.io/framex
+ * @package     Triangle Engine (FrameX)
+ * @link        https://github.com/localzet/FrameX
+ * @link        https://github.com/Triangle-org/Engine
  * 
- * @author      Ivan Zorin (localzet) <creator@localzet.ru>
+ * @author      Ivan Zorin (localzet) <creator@localzet.com>
  * @copyright   Copyright (c) 2018-2022 Localzet Group
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
@@ -12,10 +13,13 @@
 namespace support;
 
 use Illuminate\Events\Dispatcher;
-use Illuminate\Redis\Events\CommandExecuted;
+use Illuminate\Redis\Connections\Connection;
 use Illuminate\Redis\RedisManager;
 use localzet\Core\Timer;
 use localzet\Core\Server;
+use function class_exists;
+use function config;
+use function in_array;
 
 
 /**
@@ -205,7 +209,7 @@ class Redis
     /**
      * @var RedisManager
      */
-    protected static $_instance = null;
+    protected static $instance = null;
 
     /**
      * need to install phpredis extension
@@ -221,7 +225,7 @@ class Redis
     /**
      * Support client collection
      */
-    static $_allowClient = [
+    static $allowClient = [
         self::PHPREDIS_CLIENT,
         self::PREDIS_CLIENT
     ];
@@ -229,26 +233,26 @@ class Redis
     /**
      * @return RedisManager
      */
-    public static function instance()
+    public static function instance(): ?RedisManager
     {
-        if (!static::$_instance) {
-            $config = \config('redis');
+        if (!static::$instance) {
+            $config = config('redis');
             $client = $config['client'] ?? self::PHPREDIS_CLIENT;
 
-            if (!\in_array($client, static::$_allowClient)) {
+            if (!in_array($client, static::$allowClient)) {
                 $client = self::PHPREDIS_CLIENT;
             }
 
-            static::$_instance = new RedisManager('', $client, $config);
+            static::$instance = new RedisManager('', $client, $config);
         }
-        return static::$_instance;
+        return static::$instance;
     }
 
     /**
      * @param string $name
-     * @return \Illuminate\Redis\Connections\Connection
+     * @return Connection
      */
-    public static function connection(string $name = 'default')
+    public static function connection(string $name = 'default'): Connection
     {
         static $timers = [];
         $connection = static::instance()->connection($name);
@@ -256,7 +260,7 @@ class Redis
             $timers[$name] = Server::getAllServers() ? Timer::add(55, function () use ($connection) {
                 $connection->get('ping');
             }) : 1;
-            if (\class_exists(Dispatcher::class)) {
+            if (class_exists(Dispatcher::class)) {
                 $connection->setEventDispatcher(new Dispatcher());
             }
         }
@@ -270,6 +274,6 @@ class Redis
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        return static::connection('default')->{$name}(...$arguments);
+        return static::connection()->{$name}(...$arguments);
     }
 }
