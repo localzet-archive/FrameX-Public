@@ -20,6 +20,7 @@ class Install
      * @var array
      */
     protected static $pathRelation = [
+        'master' => 'master',
         'start.php' => 'start.php',
         'windows.php' => 'windows.php',
         'support/bootstrap.php' => 'support/bootstrap.php',

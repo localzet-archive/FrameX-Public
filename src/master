@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @package     FrameX (FX) CLI Plugin
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
+use localzet\FrameX\Config;
+use support\console\Application;
+
+require_once __DIR__ . './vendor/autoload.php';
+
+if (!in_array($argv[1] ?? '', ['start', 'restart', 'stop', 'status', 'reload', 'connections'])) {
+    require_once __DIR__ . '/support/bootstrap.php';
+} else {
+    Config::load(config_path(), ['route', 'container']);
+}
+
+$cli = new Application();
+$cli->setName('localzet cli');
+if (is_dir($command_path = app_path() . '/command')) {
+    $dir_iterator = new \RecursiveDirectoryIterator($command_path);
+    $iterator = new \RecursiveIteratorIterator($dir_iterator);
+    foreach ($iterator as $file) {
+        if (is_dir($file)) {
+            continue;
+        }
+        $class_name = 'app\\command\\' . basename($file, '.php');
+        if (!is_a($class_name, Commands::class, true)) {
+            continue;
+        }
+        $this->add(new $class_name);
+    }
+}
+
+foreach (config('plugin', []) as $firm => $projects) {
+    foreach ($projects as $name => $project) {
+        foreach ($project['command'] ?? [] as $command) {
+            $cli->add(new $command);
+        }
+    }
+}
+
+$cli->run();
