@@ -215,7 +215,8 @@ trait Update
         if ($request instanceof RequestInterface) {
             $rawBody = (string) $request->getBody();
         } else {
-            $rawBody = file_get_contents('php://input');
+            $rawBody = request()->rawBody();
+            // $rawBody = file_get_contents('php://input');
         }
 
         return json_decode($rawBody, true);
