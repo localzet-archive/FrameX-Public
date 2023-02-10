@@ -270,7 +270,7 @@ class MySQL
 
         if (config('database.connections', false) && is_array(config('database.connections', false))) {
             foreach (config('database.connections') as $connection => $params) {
-                $this->addConnection($connection, $params + ['socket' => null]);
+                if ($params['driver'] == 'mysql') $this->addConnection($connection, $params + ['socket' => null]);
             }
         }
 
@@ -311,6 +311,7 @@ class MySQL
             throw new \Exception('MySQL host or socket is not set');
         }
 
+        /** @var mysqli $mysqlic */
         $mysqlic = new \ReflectionClass('mysqli');
         $mysqli = $mysqlic->newInstanceArgs($params);
 
