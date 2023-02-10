@@ -21,10 +21,9 @@ class Api
     use Events\EmitsEvents;
 
     use Traits\Http;
-
     use Traits\CommandsHandler;
-
     use Traits\HasContainer;
+
     use Methods\Chat;
     use Methods\Commands;
     use Methods\EditMessage;
@@ -50,7 +49,6 @@ class Api
      *
      * @param string                   $token             The Telegram Bot API Access Token.
      * @param bool                     $async             (Optional) Indicates if the request to Telegram will be asynchronous (non-blocking).
-     * @param HttpClientInterface|null $httpClientHandler (Optional) Custom HTTP Client Handler.
      *
      * @throws TelegramSDKException
      */
@@ -60,25 +58,10 @@ class Api
 
         $this->validateAccessToken();
         $this->setAsyncRequest($async);
-
-        $this->httpClientHandler = null;
     }
 
     /**
-     * @deprecated This method will be removed in SDK v4.
-     * Invoke Bots Manager.
-     *
-     * @param array $config
-     *
-     * @return BotsManager
-     */
-    public static function manager($config): BotsManager
-    {
-        return new BotsManager($config);
-    }
-
-    /**
-     * Magic method to process any dynamic method calls.
+     * Метод для обработки любых динамических методов.
      *
      * @param $method
      * @param $arguments
@@ -95,12 +78,12 @@ class Api
             return call_user_func_array([$this, $method], $arguments);
         }
 
-        //If the method does not exist on the API, try the commandBus.
+        // Если метод не существует в API - пробуем commandBus.
         if (preg_match('/^\w+Commands?/', $method, $matches)) {
             return call_user_func_array([$this->getCommandBus(), $matches[0]], $arguments);
         }
 
-        throw new BadMethodCallException("Method [$method] does not exist.");
+        throw new BadMethodCallException("Метод [$method] не существует.");
     }
 
     /**

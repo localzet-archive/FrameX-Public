@@ -2,7 +2,6 @@
 
 namespace support\telegram\Traits;
 
-use Psr\Http\Message\RequestInterface;
 use support\telegram\Commands\CommandBus;
 use support\telegram\Objects\Update;
 
@@ -35,23 +34,21 @@ trait CommandsHandler
      * Processes Inbound Commands.
      *
      * @param bool $webhook
-     * @param RequestInterface|null $request
      * @return Update|Update[]
      */
-    public function commandsHandler(bool $webhook = false, ?RequestInterface $request = null)
+    public function commandsHandler(bool $webhook = false)
     {
-        return $webhook ? $this->useWebHook($request) : $this->useGetUpdates();
+        return $webhook ? $this->useWebHook() : $this->useGetUpdates();
     }
 
     /**
      * Process the update object for a command from your webhook.
      *
-     * @param RequestInterface|null $request
      * @return Update
      */
-    protected function useWebHook(?RequestInterface $request = null): Update
+    protected function useWebHook(): Update
     {
-        $update = $this->getWebhookUpdate(true, $request);
+        $update = $this->getWebhookUpdate(true);
         $this->processCommand($update);
 
         return $update;

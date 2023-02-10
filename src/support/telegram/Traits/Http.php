@@ -26,9 +26,6 @@ trait Http
     /** @var TelegramClient The Telegram client service. */
     protected $client = null;
 
-    /** @var HttpClientInterface|null Http Client Handler */
-    protected $httpClientHandler = null;
-
     /** @var bool Indicates if the request to Telegram will be asynchronous (non-blocking). */
     protected $isAsyncRequest = false;
 
@@ -42,20 +39,6 @@ trait Http
     protected $lastResponse;
 
     /**
-     * Set Http Client Handler.
-     *
-     * @param HttpClientInterface $httpClientHandler
-     *
-     * @return $this
-     */
-    public function setHttpClientHandler(HttpClientInterface $httpClientHandler)
-    {
-        $this->httpClientHandler = $httpClientHandler;
-
-        return $this;
-    }
-
-    /**
      * Returns the TelegramClient service.
      *
      * @return TelegramClient
@@ -63,7 +46,7 @@ trait Http
     protected function getClient(): TelegramClient
     {
         if ($this->client === null) {
-            $this->client = new TelegramClient($this->httpClientHandler);
+            $this->client = new TelegramClient();
         }
 
         return $this->client;

@@ -21,12 +21,10 @@ class TelegramClient
 
     /**
      * Instantiates a new TelegramClient object.
-     *
-     * @param HttpClientInterface|null $httpClientHandler
      */
-    public function __construct(HttpClientInterface $httpClientHandler = null)
+    public function __construct()
     {
-        $this->httpClientHandler = $httpClientHandler ?? new GuzzleHttpClient();
+        $this->httpClientHandler = new GuzzleHttpClient();
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace support\telegram\Methods;
 
-use Psr\Http\Message\RequestInterface;
 use support\telegram\Events\UpdateWasReceived;
 use support\telegram\Exceptions\TelegramSDKException;
 use support\telegram\FileUpload\InputFile;
@@ -151,14 +150,13 @@ trait Update
      * Works only if you set a webhook.
      *
      * @param bool $shouldEmitEvent
-     * @param RequestInterface|null $request
      * @return UpdateObject
      * @see setWebhook
      *
      */
-    public function getWebhookUpdate($shouldEmitEvent = true, ?RequestInterface $request = null): UpdateObject
+    public function getWebhookUpdate($shouldEmitEvent = true): UpdateObject
     {
-        $body = $this->getRequestBody($request);
+        $body = $this->getRequestBody();
 
         $update = new UpdateObject($body);
 
@@ -207,18 +205,11 @@ trait Update
     }
 
     /**
-     * @param RequestInterface|null $request
      * @return mixed
      */
-    private function getRequestBody(?RequestInterface $request)
+    private function getRequestBody()
     {
-        if ($request instanceof RequestInterface) {
-            $rawBody = (string) $request->getBody();
-        } else {
-            $rawBody = request()->rawBody();
-            // $rawBody = file_get_contents('php://input');
-        }
-
+        $rawBody = request()->rawBody();
         return json_decode($rawBody, true);
     }
 }
