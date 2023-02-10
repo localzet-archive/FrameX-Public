@@ -57,9 +57,9 @@ class MarkdownDescriptor extends Descriptor
         $this->write(
             '#### `'.($argument->getName() ?: '<none>')."`\n\n"
             .($argument->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $argument->getDescription())."\n\n" : '')
-            .'* Is required: '.($argument->isRequired() ? 'yes' : 'no')."\n"
-            .'* Is array: '.($argument->isArray() ? 'yes' : 'no')."\n"
-            .'* Default: `'.str_replace("\n", '', var_export($argument->getDefault(), true)).'`'
+            .'* Обязателен: '.($argument->isRequired() ? 'Да' : 'Нет')."\n"
+            .'* Массив: '.($argument->isArray() ? 'Да' : 'Нет')."\n"
+            .'* По умолчанию: `'.str_replace("\n", '', var_export($argument->getDefault(), true)).'`'
         );
     }
 
@@ -79,11 +79,11 @@ class MarkdownDescriptor extends Descriptor
         $this->write(
             '#### `'.$name.'`'."\n\n"
             .($option->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $option->getDescription())."\n\n" : '')
-            .'* Accept value: '.($option->acceptValue() ? 'yes' : 'no')."\n"
-            .'* Is value required: '.($option->isValueRequired() ? 'yes' : 'no')."\n"
-            .'* Is multiple: '.($option->isArray() ? 'yes' : 'no')."\n"
-            .'* Is negatable: '.($option->isNegatable() ? 'yes' : 'no')."\n"
-            .'* Default: `'.str_replace("\n", '', var_export($option->getDefault(), true)).'`'
+            .'* Принимает значения: '.($option->acceptValue() ? 'Да' : 'Нет')."\n"
+            .'* Значение обязательно: '.($option->isValueRequired() ? 'Да' : 'Нет')."\n"
+            .'* Несколько значений: '.($option->isArray() ? 'Да' : 'Нет')."\n"
+            .'* Is negatable: '.($option->isNegatable() ? 'Да' : 'Нет')."\n"
+            .'* По умолчанию: `'.str_replace("\n", '', var_export($option->getDefault(), true)).'`'
         );
     }
 
@@ -93,7 +93,7 @@ class MarkdownDescriptor extends Descriptor
     protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
         if ($showArguments = \count($definition->getArguments()) > 0) {
-            $this->write('### Arguments');
+            $this->write('### Аргументы');
             foreach ($definition->getArguments() as $argument) {
                 $this->write("\n\n");
                 if (null !== $describeInputArgument = $this->describeInputArgument($argument)) {
@@ -107,7 +107,7 @@ class MarkdownDescriptor extends Descriptor
                 $this->write("\n\n");
             }
 
-            $this->write('### Options');
+            $this->write('### Опции');
             foreach ($definition->getOptions() as $option) {
                 $this->write("\n\n");
                 if (null !== $describeInputOption = $this->describeInputOption($option)) {
@@ -127,7 +127,7 @@ class MarkdownDescriptor extends Descriptor
                 '`'.$command->getName()."`\n"
                 .str_repeat('-', Helper::width($command->getName()) + 2)."\n\n"
                 .($command->getDescription() ? $command->getDescription()."\n\n" : '')
-                .'### Usage'."\n\n"
+                .'### Использование'."\n\n"
                 .array_reduce($command->getAliases(), function ($carry, $usage) {
                     return $carry.'* `'.$usage.'`'."\n";
                 })
@@ -142,7 +142,7 @@ class MarkdownDescriptor extends Descriptor
             '`'.$command->getName()."`\n"
             .str_repeat('-', Helper::width($command->getName()) + 2)."\n\n"
             .($command->getDescription() ? $command->getDescription()."\n\n" : '')
-            .'### Usage'."\n\n"
+            .'### Использование'."\n\n"
             .array_reduce(array_merge([$command->getSynopsis()], $command->getAliases(), $command->getUsages()), function ($carry, $usage) {
                 return $carry.'* `'.$usage.'`'."\n";
             })
@@ -201,6 +201,6 @@ class MarkdownDescriptor extends Descriptor
             return $application->getName();
         }
 
-        return 'Console Tool';
+        return 'Инструмент консоли';
     }
 }

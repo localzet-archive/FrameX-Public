@@ -39,21 +39,21 @@ class HelpCommand extends Command
         $this
             ->setName('help')
             ->setDefinition([
-                new InputArgument('command_name', InputArgument::OPTIONAL, 'The command name', 'help'),
-                new InputOption('format', null, InputOption::VALUE_REQUIRED, 'The output format (txt, xml, json, or md)', 'txt'),
-                new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command help'),
+                new InputArgument('command_name', InputArgument::OPTIONAL, 'Название команды', 'help'),
+                new InputOption('format', null, InputOption::VALUE_REQUIRED, 'Формат вывода (txt, xml, json, or md)', 'txt'),
+                new InputOption('raw', null, InputOption::VALUE_NONE, 'Черновой вывод справки'),
             ])
-            ->setDescription('Display help for a command')
+            ->setDescription('Отображает справку о командах')
             ->setHelp(<<<'EOF'
-The <info>%command.name%</info> command displays help for a given command:
+Команда <info>%command.name%</info> отображает справку о любой команде:
 
-  <info>%command.full_name% list</info>
+    "<info>%command.full_name% list</info>" - справка о команде "list"
 
-You can also output the help in other formats by using the <comment>--format</comment> option:
+Вы можете получить вывод в разных форматах, используя опцию <comment>--format</comment>:
 
-  <info>%command.full_name% --format=xml list</info>
+    <info>%command.full_name% --format=xml list</info>
 
-To display the list of available commands, please use the <info>list</info> command.
+Для отображения списка доступных команд используйте команду "<info>list</info>".
 EOF
             )
         ;

@@ -23,12 +23,12 @@ use support\console\Input\InputOption;
 class ReloadCommand extends Command
 {
     protected static $defaultName = 'reload';
-    protected static $defaultDescription = 'Перезагрузить код. Используй -g для изящной перезагрузки.';
+    protected static $defaultDescription = 'Перезагрузить код. Используй -g для плавной перезагрузки.';
 
     protected function configure(): void
     {
         $this
-            ->addOption('graceful', 'd', InputOption::VALUE_NONE, 'graceful reload');
+            ->addOption('graceful', 'd', InputOption::VALUE_NONE, 'плавная перезагрузка');
     }
 
     /**

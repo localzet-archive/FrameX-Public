@@ -27,7 +27,7 @@ class StatusCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('live', 'd', InputOption::VALUE_NONE, 'show live status');
+        $this->addOption('live', 'd', InputOption::VALUE_NONE, 'статус в реальном времени');
     }
 
     /**

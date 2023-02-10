@@ -23,13 +23,13 @@ use support\console\Input\InputOption;
 class ReStartCommand extends Command
 {
     protected static $defaultName = 'restart';
-    protected static $defaultDescription = 'Перезапустить сервер. Используй -d для запуска в режиме демона. Используй -g, чтобы изящно остановиться.';
+    protected static $defaultDescription = 'Перезапустить сервер. Используй -d для запуска в фоновом режиме. Используй -g для плавной остановки.';
 
     protected function configure(): void
     {
         $this
-            ->addOption('daemon', 'd', InputOption::VALUE_NONE, 'DAEMON mode')
-            ->addOption('graceful', 'g', InputOption::VALUE_NONE, 'graceful stop');
+            ->addOption('daemon', 'd', InputOption::VALUE_NONE, 'фоновый режим')
+            ->addOption('graceful', 'g', InputOption::VALUE_NONE, 'плавная остановка');
     }
 
     /**

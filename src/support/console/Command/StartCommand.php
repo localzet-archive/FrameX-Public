@@ -23,11 +23,11 @@ use support\console\Input\InputOption;
 class StartCommand extends Command
 {
     protected static $defaultName = 'start';
-    protected static $defaultDescription = 'Запуск сервера в режиме отладки. Используй -d для запуска в режиме демона.';
+    protected static $defaultDescription = 'Запуск сервера в режиме отладки. Используй -d для запуска в фоновом режиме.';
 
     protected function configure(): void
     {
-        $this->addOption('daemon', 'd', InputOption::VALUE_NONE, 'DAEMON mode');
+        $this->addOption('daemon', 'd', InputOption::VALUE_NONE, 'фоновый режим');
     }
 
     /**

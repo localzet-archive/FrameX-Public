@@ -31,7 +31,7 @@ class PluginExportCommand extends Command
     protected function configure()
     {
         $this->addOption('name', 'name', InputOption::VALUE_REQUIRED, 'Название плагина (framex/plugin)');
-        $this->addOption('source', 'source', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Директории для экспорта');
+        $this->addOption('source', 'source', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Папки для экспорта');
     }
 
     /**
@@ -112,7 +112,6 @@ class Install
      */
     public static function uninstall()
     {
-        self::uninstallByRelation();
     }
 
     /**
@@ -122,14 +121,17 @@ class Install
     {
         foreach (static::\$pathRelation as \$source => \$dest) {
             if (\$pos = strrpos(\$dest, '/')) {
-                \$parent_dir = base_path().'/'.substr(\$dest, 0, \$pos);
-                if (!is_dir(\$parent_dir)) {
-                    mkdir(\$parent_dir, 0777, true);
+                \$parentDir = base_path() . '/' . substr(\$dest, 0, \$pos);
+                if (!is_dir(\$parentDir)) {
+                    mkdir(\$parentDir, 0777, true);
                 }
             }
-            //symlink(__DIR__ . "/\$source", base_path()."/\$dest");
-            copy_dir(__DIR__ . "/\$source", base_path()."/\$dest");
-            echo "Создание \$dest\r\n";
+            \$sourceFile = __DIR__ . "/\$source";
+            copy_dir(\$sourceFile, base_path() . "/\$dest", true);
+            echo "Создан \$dest\r\n";
+            if (is_file(\$sourceFile)) {
+                @unlink(\$sourceFile);
+            }
         }
     }
 
@@ -145,7 +147,7 @@ class Install
             }
             echo "Удаление \$dest\r\n";
             if (is_file(\$path) || is_link(\$path)) {
-                unlink(\$path);
+                @unlink(\$path);
                 continue;
             }
             remove_dir(\$path);
