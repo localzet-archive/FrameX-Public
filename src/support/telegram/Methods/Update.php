@@ -131,21 +131,6 @@ trait Update
     }
 
     /**
-     * Alias for getWebhookUpdate.
-     *
-     * @deprecated Call method getWebhookUpdate (note lack of letter s at end)
-     *             To be removed in next major version.
-     *
-     * @param bool $shouldEmitEvent
-     *
-     * @return UpdateObject
-     */
-    public function getWebhookUpdates($shouldEmitEvent = true): UpdateObject
-    {
-        return $this->getWebhookUpdate($shouldEmitEvent);
-    }
-
-    /**
      * Returns a webhook update sent by Telegram.
      * Works only if you set a webhook.
      *

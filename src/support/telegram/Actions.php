@@ -23,20 +23,8 @@ class Actions
     /** Sets chat status as Sending Video. */
     public const UPLOAD_VIDEO = 'upload_video';
 
-    /**
-     * @deprecated Please use RECORD_VOICE (the correct one)
-     * Sets chat status as Recording Audio.
-     */
-    public const RECORD_AUDIO = 'record_voice';
-
     /** Sets chat status as Recording Voice. */
     public const RECORD_VOICE = 'record_voice';
-
-    /**
-     * @deprecated Please use UPLOAD_VOICE (the correct one)
-     * Sets chat status as Sending Audio.
-     */
-    public const UPLOAD_AUDIO = 'upload_voice';
 
     /** Sets chat status as Sending Voice. */
     public const UPLOAD_VOICE = 'upload_voice';
