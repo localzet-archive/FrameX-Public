@@ -10,8 +10,9 @@ use support\telegram\Objects\Chat;
  * Абстрактный контроллер Telegram-бота
  * 
  * **Использование:**
- *      1. Задай $accessToken и $async
- *      2. !!! controller_reuse => false !!!
+ *      1. !!! controller_reuse => false !!!
+ *      2. Задай $accessToken и $async
+ *      2. Настрой WebHook @see https://api.telegram.org/bot{TOKEN}/setWebhook?url={URL}
  */
 abstract class TelegramBotController
 {
@@ -102,7 +103,7 @@ abstract class TelegramBotController
         $result = [
             'chat_id' => $chat_id,
             'text' => $text,
-            'parse_mode' => $options['parse_mode'] ? $options['parse_mode'] : 'HTML',
+            'parse_mode' => !empty($options['parse_mode']) ? $options['parse_mode'] : 'HTML',
         ];
 
         $this->api->sendMessage($result + $options);
