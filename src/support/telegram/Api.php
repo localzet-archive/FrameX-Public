@@ -54,7 +54,7 @@ class Api
      *
      * @throws TelegramSDKException
      */
-    public function __construct(string $accessToken, bool $async = true)
+    public function __construct(string $accessToken, bool $async = false)
     {
         $this->accessToken = $accessToken;
 
