@@ -723,18 +723,6 @@ class Builder extends BaseBuilder
     }
 
     /**
-     * Get an array with the values of a given column.
-     * @param string $column
-     * @param string $key
-     * @return array
-     * @deprecated
-     */
-    public function lists($column, $key = null)
-    {
-        return $this->pluck($column, $key);
-    }
-
-    /**
      * @inheritdoc
      */
     public function raw($expression = null)
