@@ -21,7 +21,7 @@ use support\console\Output\OutputInterface;
 class VersionCommand extends Command
 {
     protected static $defaultName = 'version';
-    protected static $defaultDescription = 'Показать версию FrameX';
+    protected static $defaultDescription = 'Показать версии Triangle';
 
     /**
      * @param InputInterface $input
@@ -34,8 +34,47 @@ class VersionCommand extends Command
         if (is_file($installed_file)) {
             $version_info = include $installed_file;
         }
-        $framex_framework_version = $version_info['versions']['localzet/framex']['pretty_version'] ?? '';
-        $output->writeln("FrameX $framex_framework_version");
+
+        $old = ['localzet/core', 'localzet/framex', 'localzet/webkit'];
+        $new = ['triangle/server', 'triangle/engine', 'triangle/framework'];
+        foreach ($old + $new as $package) {
+            $out = '';
+            if (isset($version_info['versions'][$package])) {
+                if (in_array($package, $old)) {
+                    $output->writeln('Пакет Triangle v1');
+                    switch ($package) {
+                        case 'localzet/core':
+                            $out .= 'WebCore Server';
+                            break;
+                        case 'localzet/framex':
+                            $out .= 'FrameX Engine';
+                            break;
+                        case 'localzet/webkit':
+                            $out .= 'WebKit';
+                            break;
+                    }
+                }
+
+                if (in_array($package, $new)) {
+                    $output->writeln('Пакет Triangle v2');
+                    switch ($package) {
+                        case 'triangle/server':
+                            $out .= 'Server';
+                            break;
+                        case 'triangle/engine':
+                            $out .= 'Engine';
+                            break;
+                        case 'triangle/framework':
+                            $out .= 'Framework';
+                            break;
+                    }
+                }
+
+                $out .= ': ' . $version_info['versions'][$package]['pretty_version'];
+                $output->writeln("$out");
+            }
+        }
+
         return self::SUCCESS;
     }
 }

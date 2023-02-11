@@ -10,8 +10,10 @@
  * @license     https://www.localzet.com/license GNU GPLv3 License
  */
 
+use support\Db;
 use support\Request;
 use support\Response;
+use support\Container;
 use support\Translation;
 use support\database\MySQL;
 use support\view\Blade;
@@ -26,7 +28,6 @@ use localzet\FrameX\Config;
 use localzet\FrameX\Route;
 use localzet\Core\Server;
 
-
 define('BASE_PATH', dirname(__DIR__));
 
 // Совместимость версий
@@ -38,14 +39,22 @@ define('WEBCORE_VERSION', '2.0.0');
 define('WEBKIT_VERSION', '1.1.9');
 define('FRAMEX_VERSION', '1.2.9');
 
-
 /** 
- * @deprecated 
- * @see MySQL()
+ * @return \support\mongodb\Connection|\support\mongodb\Query\Builder
  */
-function db(string $connection = NULL)
+function MongoDB(string $connection = NULL, string $collection = NULL)
 {
-    return MySQL($connection);
+    if (empty($connection)) {
+        $connection = config('database.default', 'default');
+    }
+
+    if (!in_array($connection, array_keys(config('database.connections'))) || config("database.connections.$connection.driver") == 'mongodb') {
+        throw new Exception("MongoDB соединения не существует в конфигурации");
+    }
+
+    /** @var \support\mongodb\Connection $db */
+    $db = Db::connection($connection);
+    return empty($collection) ? $db : $db->collection($collection);
 }
 
 function MySQL(string $connection = NULL)

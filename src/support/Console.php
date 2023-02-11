@@ -12,16 +12,11 @@
 
 namespace support;
 
-use support\console\lib\Application;
-use support\console\lib\Command\Command as Commands;
+use support\console\Application;
+use support\console\Command\Command as Commands;
 
 class Console extends Application
 {
-    public function installInternalCommands()
-    {
-        $this->installCommands(__DIR__ . '/console/Commands', 'support\console\Commands');
-    }
-
     public function installCommands($path, $namspace = 'app\command')
     {
         $dir_iterator = new \RecursiveDirectoryIterator($path);

@@ -23,11 +23,11 @@ use support\console\Input\InputOption;
 class StopCommand extends Command
 {
     protected static $defaultName = 'stop';
-    protected static $defaultDescription = 'Остановить сервер. Используй -g, чтобы изящно остановиться.';
+    protected static $defaultDescription = 'Остановить сервер. Используй -g для плавной остановки.';
     protected function configure(): void
     {
         $this
-            ->addOption('graceful', 'g', InputOption::VALUE_NONE, 'graceful stop');
+            ->addOption('graceful', 'g', InputOption::VALUE_NONE, 'плавная остановка');
     }
     /**
      * @param InputInterface $input
