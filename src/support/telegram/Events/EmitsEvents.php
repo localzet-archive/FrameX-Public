@@ -62,9 +62,9 @@ trait EmitsEvents
     /**
      * Returns an event emitter.
      *
-     * @return Emitter
+     * @return EmitterInterface
      */
-    public function getEventEmitter(): Emitter
+    public function getEventEmitter(): EmitterInterface
     {
         return $this->eventEmitter;
     }

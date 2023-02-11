@@ -50,11 +50,10 @@ class BotsManager
     /**
      * Get the configuration for a bot.
      *
-     * @param string|null $name
+     * @param  string|null  $name
+     * @return array
      *
      * @throws InvalidArgumentException
-     *
-     * @return array
      */
     public function getBotConfig($name = null): array
     {
@@ -74,10 +73,10 @@ class BotsManager
     /**
      * Get a bot instance.
      *
-     * @param string|null $name
+     * @param  string|null  $name
+     * @return Api
      *
      * @throws TelegramSDKException
-     * @return Api
      */
     public function bot($name = null): Api
     {
@@ -93,10 +92,10 @@ class BotsManager
     /**
      * Reconnect to the given bot.
      *
-     * @param string|null $name
+     * @param  string|null  $name
+     * @return Api
      *
      * @throws TelegramSDKException
-     * @return Api
      */
     public function reconnect($name = null): Api
     {
@@ -109,8 +108,7 @@ class BotsManager
     /**
      * Disconnect from the given bot.
      *
-     * @param string|null $name
-     *
+     * @param  string|null  $name
      * @return BotsManager
      */
     public function disconnect($name = null): self
@@ -124,9 +122,8 @@ class BotsManager
     /**
      * Get the specified configuration value for Telegram.
      *
-     * @param string $key
-     * @param mixed  $default
-     *
+     * @param  string  $key
+     * @param  mixed  $default
      * @return mixed
      */
     public function getConfig($key, $default = null)
@@ -147,8 +144,7 @@ class BotsManager
     /**
      * Set the default bot name.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return BotsManager
      */
     public function setDefaultBot($name): self
@@ -171,8 +167,7 @@ class BotsManager
     /**
      * De-duplicate an array.
      *
-     * @param array $array
-     *
+     * @param  array  $array
      * @return array
      */
     protected function deduplicateArray(array $array): array
@@ -183,10 +178,10 @@ class BotsManager
     /**
      * Make the bot instance.
      *
-     * @param string $name
+     * @param  string  $name
+     * @return Api
      *
      * @throws TelegramSDKException
-     * @return Api
      */
     protected function makeBot($name): Api
     {
@@ -197,7 +192,8 @@ class BotsManager
         $telegram = new Api(
             $token,
             $this->getConfig('async_requests', false),
-            $this->getConfig('http_client_handler', null)
+            $this->getConfig('http_client_handler', null),
+            $this->getConfig('base_bot_url', null)
         );
 
         // Check if DI needs to be enabled for Commands
@@ -274,11 +270,11 @@ class BotsManager
     /**
      * Magically pass methods to the default bot.
      *
-     * @param string $method
-     * @param array  $parameters
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
      *
      * @throws TelegramSDKException
-     * @return mixed
      */
     public function __call($method, $parameters)
     {

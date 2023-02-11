@@ -47,17 +47,37 @@ class Api
      * Instantiates a new Telegram super-class object.
      *
      *
-     * @param string                   $token             The Telegram Bot API Access Token.
-     * @param bool                     $async             (Optional) Indicates if the request to Telegram will be asynchronous (non-blocking).
+     * @param  string  $token             The Telegram Bot API Access Token.
+     * @param  bool  $async             (Optional) Indicates if the request to Telegram will be asynchronous (non-blocking).
+     * @param  HttpClientInterface|null  $httpClientHandler (Optional) Custom HTTP Client Handler.
+     * @param  string|null  $base_bot_url (Optional) Custom base bot url.
      *
      * @throws TelegramSDKException
      */
-    public function __construct(string $accessToken, bool $async = false)
+    public function __construct($token = null, $async = false, $httpClientHandler = null, $base_bot_url = null)
     {
-        $this->accessToken = $accessToken;
-
+        $this->accessToken = $token ?? getenv(static::BOT_TOKEN_ENV_NAME);
         $this->validateAccessToken();
-        $this->setAsyncRequest($async);
+
+        if ($async) {
+            $this->setAsyncRequest($async);
+        }
+
+        $this->httpClientHandler = $httpClientHandler;
+
+        $this->baseBotUrl = $base_bot_url;
+    }
+
+    /**
+     * @deprecated This method will be removed in SDK v4.
+     * Invoke Bots Manager.
+     *
+     * @param  array  $config
+     * @return BotsManager
+     */
+    public static function manager($config): BotsManager
+    {
+        return new BotsManager($config);
     }
 
     /**
@@ -91,7 +111,7 @@ class Api
      */
     private function validateAccessToken()
     {
-        if (! $this->accessToken || ! is_string($this->accessToken)) {
+        if (!$this->accessToken || !is_string($this->accessToken)) {
             throw TelegramSDKException::tokenNotProvided(static::BOT_TOKEN_ENV_NAME);
         }
     }

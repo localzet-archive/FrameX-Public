@@ -115,7 +115,7 @@ trait CommandsHandler
      */
     public function triggerCommand(string $name, Update $update, $entity = null)
     {
-        $entity = $entity ?? ['offset' => 0, 'length' => strlen($name) + 1, 'type' => "bot_command"];
+        $entity = $entity ?? ['offset' => 0, 'length' => strlen($name) + 1, 'type' => 'bot_command'];
 
         return $this->getCommandBus()->execute(
             $name,
