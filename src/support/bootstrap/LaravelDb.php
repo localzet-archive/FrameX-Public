@@ -21,8 +21,8 @@ use support\mongodb\Connection as MongodbConnection;
 use support\Container;
 use Throwable;
 use localzet\FrameX\Bootstrap;
-use localzet\Core\Timer;
-use localzet\Core\Server;
+use localzet\Server\Timer;
+use localzet\Server\Server;
 use function class_exists;
 use function config;
 

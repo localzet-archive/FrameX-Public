@@ -21,7 +21,7 @@ use function gmdate;
 /**
  * Class Response
  */
-class Response extends \localzet\Core\Protocols\Http\Response
+class Response extends \localzet\Server\Protocols\Http\Response
 {
     /**
      * @var Throwable

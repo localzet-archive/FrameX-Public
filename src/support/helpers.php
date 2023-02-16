@@ -26,7 +26,7 @@ use Twig\Error\SyntaxError;
 use localzet\FrameX\App;
 use localzet\FrameX\Config;
 use localzet\FrameX\Route;
-use localzet\Core\Server;
+use localzet\Server\Server;
 
 define('BASE_PATH', dirname(__DIR__));
 

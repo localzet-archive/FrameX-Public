@@ -15,7 +15,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Dotenv\Dotenv;
 use process\Monitor;
 use support\App;
-use localzet\Core\Server;
+use localzet\Server\Server;
 
 ini_set('display_errors', 'on');
 
@@ -68,7 +68,7 @@ function write_process_file($runtimeProcessPath, $processName, $firm): string
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use localzet\Core\Server;
+use localzet\Server\Server;
 use localzet\Framex\Config;
 use support\App;
 

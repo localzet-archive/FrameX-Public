@@ -26,7 +26,7 @@ use const FILTER_VALIDATE_IP;
 /**
  * Class Request
  */
-class Request extends \localzet\Core\Protocols\Http\Request
+class Request extends \localzet\Server\Protocols\Http\Request
 {
     /**
      * @var string

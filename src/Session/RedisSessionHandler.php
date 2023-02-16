@@ -12,7 +12,7 @@
 
 namespace localzet\FrameX\Session;
 
-use localzet\Core\Protocols\Http\Session\RedisSessionHandler as RedisHandler;
+use localzet\Server\Protocols\Http\Session\RedisSessionHandler as RedisHandler;
 
 /**
  * Class FileSessionHandler

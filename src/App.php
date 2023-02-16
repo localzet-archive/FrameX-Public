@@ -31,9 +31,9 @@ use localzet\FrameX\Exception\ExceptionHandlerInterface;
 use localzet\FrameX\Http\Request;
 use localzet\FrameX\Http\Response;
 use localzet\FrameX\Route\Route as RouteObject;
-use localzet\Core\Connection\TcpConnection;
-use localzet\Core\Protocols\Http;
-use localzet\Core\Server;
+use localzet\Server\Connection\TcpConnection;
+use localzet\Server\Protocols\Http;
+use localzet\Server\Server;
 use function array_merge;
 use function array_pop;
 use function array_reduce;
@@ -68,9 +68,7 @@ use function strtolower;
 use function substr;
 use function trim;
 
-/**
- * Class App
- */
+/** @deprecated */
 class App
 {
     /**

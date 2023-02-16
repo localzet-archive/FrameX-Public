@@ -1,6 +1,6 @@
 {
     "name": "localzet/framex",
-    "description": "Triangle Engine (FrameX) - Ядро нового поколения.",
+    "description": "Triangle Engine (FrameX)",
     "type": "library",
     "keywords": [
         "localzet",
@@ -36,7 +36,7 @@
         "php": ">=8.1",
         "ext-curl": "*",
         "ext-mysqli": "*",
-        "localzet/core": ">=2.0.0",
+        "localzet/server": "v2.2.2",
         "localzet/psr7": "*",
         "psr/container": ">=1.0",
         "nikic/fast-route": "^1.3",

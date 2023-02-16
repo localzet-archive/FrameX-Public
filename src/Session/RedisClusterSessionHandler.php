@@ -12,7 +12,7 @@
 
 namespace localzet\FrameX\Session;
 
-use localzet\Core\Protocols\Http\Session\RedisClusterSessionHandler as RedisClusterHandler;
+use localzet\Server\Protocols\Http\Session\RedisClusterSessionHandler as RedisClusterHandler;
 
 class RedisClusterSessionHandler extends RedisClusterHandler
 {

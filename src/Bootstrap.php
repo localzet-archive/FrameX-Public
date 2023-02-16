@@ -12,7 +12,7 @@
 
 namespace localzet\FrameX;
 
-use localzet\Core\Server;
+use localzet\Server\Server;
 
 interface Bootstrap
 {

@@ -13,9 +13,9 @@
 namespace support\bootstrap;
 
 use localzet\FrameX\Bootstrap;
-use localzet\Core\Protocols\Http;
-use localzet\Core\Protocols\Http\Session as SessionBase;
-use localzet\Core\Server;
+use localzet\Server\Protocols\Http;
+use localzet\Server\Protocols\Http\Session as SessionBase;
+use localzet\Server\Server;
 use function config;
 use function property_exists;
 

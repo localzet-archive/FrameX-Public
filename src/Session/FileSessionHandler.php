@@ -12,7 +12,7 @@
 
 namespace localzet\FrameX\Session;
 
-use localzet\Core\Protocols\Http\Session\FileSessionHandler as FileHandler;
+use localzet\Server\Protocols\Http\Session\FileSessionHandler as FileHandler;
 
 /**
  * Class FileSessionHandler

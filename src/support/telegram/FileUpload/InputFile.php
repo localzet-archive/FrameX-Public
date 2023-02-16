@@ -2,7 +2,7 @@
 
 namespace support\telegram\FileUpload;
 
-use localzet\Core\Psr7\LazyOpenStream;
+use localzet\Server\Psr7\LazyOpenStream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use support\telegram\Exceptions\CouldNotUploadInputFile;
